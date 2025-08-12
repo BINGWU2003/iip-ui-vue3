@@ -181,7 +181,7 @@ app.use(IipUI, {
 如果您想在本地开发和调试，可以克隆仓库并安装依赖：
 
 ```bash
-git clone https://github.com/your-org/iip-ui-vue3.git
+git clone https://github.com/BINGWU2003/iip-ui-vue3.git
 cd iip-ui-vue3
 pnpm install
 pnpm dev

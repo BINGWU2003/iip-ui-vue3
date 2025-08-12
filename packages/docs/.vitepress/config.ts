@@ -50,7 +50,8 @@ export default defineConfig({
           text: '基础组件',
           items: [
             { text: 'Input 输入框', link: '/components/input' },
-            { text: 'Select 选择器', link: '/components/select' }
+            { text: 'Select 选择器', link: '/components/select' },
+            { text: 'Table 表格', link: '/components/table' }
           ]
         },
         {
@@ -64,7 +65,7 @@ export default defineConfig({
     },
 
     // 社交链接
-    socialLinks: [{ icon: 'github', link: 'https://github.com/your-org/iip-ui-vue3' }],
+    socialLinks: [{ icon: 'github', link: 'https://github.com/BINGWU2003/iip-ui-vue3' }],
 
     // 页脚
     footer: {
@@ -79,7 +80,7 @@ export default defineConfig({
 
     // 编辑链接
     editLink: {
-      pattern: 'https://github.com/your-org/iip-ui-vue3/edit/main/packages/docs/:path',
+      pattern: 'https://github.com/BINGWU2003/iip-ui-vue3/edit/main/packages/docs/:path',
       text: '在 GitHub 上编辑此页'
     },
 

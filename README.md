@@ -113,6 +113,7 @@ const options = [
 
 - ✅ **IipInput** - 增强的输入框组件
 - ✅ **IipSelect** - 增强的选择器组件
+- ✅ **IipTable** - 基于 vxe-table 的表格组件
 
 ### 主题组件
 
@@ -122,7 +123,6 @@ const options = [
 ### 计划中
 
 - 🔄 **IipButton** - 按钮组件
-- 🔄 **IipTable** - 表格组件
 - 🔄 **IipForm** - 表单组件
 - 🔄 **IipDialog** - 对话框组件
 

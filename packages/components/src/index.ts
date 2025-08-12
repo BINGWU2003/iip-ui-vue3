@@ -1,13 +1,13 @@
 import type { App, Component } from 'vue'
 
 // 导入所有组件
-import { IipInput, IipSelect, IipThemeProvider, IipThemeSwitcher } from './components'
+import { IipInput, IipSelect, IipTable, IipThemeProvider, IipThemeSwitcher } from './components'
 
 // 注意：样式需要用户手动引入
 // import '@iip-ui/theme/dist/index.css'
 
 // 所有组件列表
-const components: Component[] = [IipInput, IipSelect, IipThemeProvider, IipThemeSwitcher]
+const components: Component[] = [IipInput, IipSelect, IipTable, IipThemeProvider, IipThemeSwitcher]
 
 // 定义 install 方法
 const install = (app: App): void => {
@@ -26,6 +26,7 @@ export {
   // 导出所有组件
   IipInput,
   IipSelect,
+  IipTable,
   IipThemeProvider,
   IipThemeSwitcher,
 

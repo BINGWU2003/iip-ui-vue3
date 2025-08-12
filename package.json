@@ -62,7 +62,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/iip-ui-vue3.git"
+    "url": "https://github.com/BINGWU2003/iip-ui-vue3.git"
   },
   "lint-staged": {
     "*.{vue,js,ts,jsx,tsx}": [

@@ -74,8 +74,8 @@ IIP UI Vue3 是一个基于 Element Plus、Vue 3 和 TypeScript 技术栈构建�
 
 ## 贡献
 
-我们欢迎所有的贡献。请阅读我们的 [贡献指南](https://github.com/your-org/iip-ui-vue3/blob/main/CONTRIBUTING.md) 了解如何参与贡献。
+我们欢迎所有的贡献。请阅读我们的 [贡献指南](https://github.com/BINGWU2003/iip-ui-vue3/blob/main/CONTRIBUTING.md) 了解如何参与贡献。
 
 ## 许可证
 
-[MIT](https://github.com/your-org/iip-ui-vue3/blob/main/LICENSE)
+[MIT](https://github.com/BINGWU2003/iip-ui-vue3/blob/main/LICENSE)

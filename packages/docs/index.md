@@ -17,7 +17,7 @@ hero:
       link: /components/input
     - theme: alt
       text: 在 GitHub 查看
-      link: https://github.com/your-org/iip-ui-vue3
+      link: https://github.com/BINGWU2003/iip-ui-vue3
 
 features:
   - icon: ⚡️

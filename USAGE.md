@@ -44,13 +44,20 @@ app.mount('#app')
 ```typescript
 // main.ts
 import { createApp } from 'vue'
-import { IipInput, IipSelect, IipThemeProvider, IipThemeSwitcher } from '@bingwu/iip-ui-components'
+import {
+  IipInput,
+  IipSelect,
+  IipTable,
+  IipThemeProvider,
+  IipThemeSwitcher
+} from '@bingwu/iip-ui-components'
 import '@bingwu/iip-ui-theme/dist/index.css'
 import App from './App.vue'
 
 const app = createApp(App)
 app.component('IipInput', IipInput)
 app.component('IipSelect', IipSelect)
+app.component('IipTable', IipTable)
 app.component('IipThemeProvider', IipThemeProvider)
 app.component('IipThemeSwitcher', IipThemeSwitcher)
 app.mount('#app')
@@ -287,6 +294,89 @@ const id = generateId() // 'iip-1234567890'
 ## 🤝 贡献
 
 欢迎提交 Issue 和 Pull Request！
+
+### IipTable 表格
+
+```vue
+<template>
+  <div>
+    <!-- 基础表格 -->
+    <iip-table :data="tableData" :columns="columns" border stripe />
+
+    <!-- 带复选框和分页 -->
+    <iip-table
+      :data="paginatedData"
+      :columns="columns"
+      :pagination="paginationConfig"
+      show-checkbox
+      show-seq
+      border
+      @checkbox-change="handleCheckboxChange"
+      @page-change="handlePageChange"
+    />
+
+    <!-- 自定义列 -->
+    <iip-table :data="tableData" :columns="customColumns" border>
+      <template #status="{ row }">
+        <el-tag :type="getStatusType(row.status)">
+          {{ getStatusText(row.status) }}
+        </el-tag>
+      </template>
+    </iip-table>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+
+const tableData = ref([
+  { id: 1, name: '张三', age: 25, email: 'zhangsan@example.com', status: 1 },
+  { id: 2, name: '李四', age: 30, email: 'lisi@example.com', status: 2 },
+  { id: 3, name: '王五', age: 28, email: 'wangwu@example.com', status: 0 }
+])
+
+const columns = [
+  { field: 'name', title: '姓名', width: 120 },
+  { field: 'age', title: '年龄', width: 80, sortable: true },
+  { field: 'email', title: '邮箱', minWidth: 200 }
+]
+
+const customColumns = [
+  ...columns,
+  { field: 'status', title: '状态', width: 100, slotName: 'status' }
+]
+
+const paginationConfig = ref({
+  currentPage: 1,
+  pageSize: 10,
+  total: tableData.value.length
+})
+
+const paginatedData = computed(() => {
+  const start = (paginationConfig.value.currentPage - 1) * paginationConfig.value.pageSize
+  const end = start + paginationConfig.value.pageSize
+  return tableData.value.slice(start, end)
+})
+
+const handleCheckboxChange = params => {
+  console.log('选中行变化:', params)
+}
+
+const handlePageChange = params => {
+  paginationConfig.value.currentPage = params.currentPage
+}
+
+const getStatusType = (status: number): 'success' | 'warning' | 'info' => {
+  const types: ('success' | 'warning' | 'info')[] = ['info', 'success', 'warning']
+  return types[status] || 'info'
+}
+
+const getStatusText = (status: number) => {
+  const texts = ['禁用', '正常', '待审核']
+  return texts[status] || '未知'
+}
+</script>
+```
 
 ## 📄 许可证
 
