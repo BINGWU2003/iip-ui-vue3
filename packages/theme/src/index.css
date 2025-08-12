@@ -1,0 +1,3 @@
+@use './themes/light.scss';
+@use './themes/dark.scss';
+@use './global.scss';

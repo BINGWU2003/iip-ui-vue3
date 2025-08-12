@@ -12,5 +12,8 @@ export * from './dom'
 // 验证工具
 export * from './validate'
 
+// 主题工具
+export * from './theme'
+
 // Vue 工具
 export * from './vue'

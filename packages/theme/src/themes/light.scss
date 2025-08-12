@@ -1,0 +1,175 @@
+// 亮色主题变量定义
+:root {
+  // 主色调
+  --iip-color-primary: #409eff;
+  --iip-color-primary-light-1: #53a8ff;
+  --iip-color-primary-light-2: #66b1ff;
+  --iip-color-primary-light-3: #79bbff;
+  --iip-color-primary-light-4: #8cc5ff;
+  --iip-color-primary-light-5: #a0cfff;
+  --iip-color-primary-light-6: #b3d8ff;
+  --iip-color-primary-light-7: #c6e2ff;
+  --iip-color-primary-light-8: #d9ecff;
+  --iip-color-primary-light-9: #ecf5ff;
+  --iip-color-primary-dark-1: #337ecc;
+  --iip-color-primary-dark-2: #2d70b3;
+
+  // 功能色
+  --iip-color-success: #67c23a;
+  --iip-color-success-light-1: #75c947;
+  --iip-color-success-light-2: #83d054;
+  --iip-color-success-light-3: #91d661;
+  --iip-color-success-light-4: #9fdd6e;
+  --iip-color-success-light-5: #ade47b;
+  --iip-color-success-light-6: #bbea88;
+  --iip-color-success-light-7: #c9f195;
+  --iip-color-success-light-8: #d7f8a2;
+  --iip-color-success-light-9: #e5feaf;
+  --iip-color-success-dark-1: #529b2e;
+  --iip-color-success-dark-2: #467a27;
+
+  --iip-color-warning: #e6a23c;
+  --iip-color-warning-light-1: #e9ad4f;
+  --iip-color-warning-light-2: #ecb862;
+  --iip-color-warning-light-3: #efc375;
+  --iip-color-warning-light-4: #f2ce88;
+  --iip-color-warning-light-5: #f5d99b;
+  --iip-color-warning-light-6: #f8e4ae;
+  --iip-color-warning-light-7: #fbefc1;
+  --iip-color-warning-light-8: #fefad4;
+  --iip-color-warning-light-9: #fdf6e7;
+  --iip-color-warning-dark-1: #b88230;
+  --iip-color-warning-dark-2: #a37229;
+
+  --iip-color-danger: #f56c6c;
+  --iip-color-danger-light-1: #f67979;
+  --iip-color-danger-light-2: #f78686;
+  --iip-color-danger-light-3: #f89393;
+  --iip-color-danger-light-4: #f9a0a0;
+  --iip-color-danger-light-5: #faadad;
+  --iip-color-danger-light-6: #fbbaba;
+  --iip-color-danger-light-7: #fcc7c7;
+  --iip-color-danger-light-8: #fdd4d4;
+  --iip-color-danger-light-9: #fee1e1;
+  --iip-color-danger-dark-1: #c45656;
+  --iip-color-danger-dark-2: #b04a4a;
+
+  --iip-color-info: #909399;
+  --iip-color-info-light-1: #9da0a6;
+  --iip-color-info-light-2: #aaadb3;
+  --iip-color-info-light-3: #b7bac0;
+  --iip-color-info-light-4: #c4c7cd;
+  --iip-color-info-light-5: #d1d4da;
+  --iip-color-info-light-6: #dee1e7;
+  --iip-color-info-light-7: #ebeef4;
+  --iip-color-info-light-8: #f8fbff;
+  --iip-color-info-light-9: #f4f4f5;
+  --iip-color-info-dark-1: #73767a;
+  --iip-color-info-dark-2: #5d6064;
+
+  // 中性色
+  --iip-color-white: #ffffff;
+  --iip-color-black: #000000;
+  --iip-color-text-primary: #303133;
+  --iip-color-text-regular: #606266;
+  --iip-color-text-secondary: #909399;
+  --iip-color-text-placeholder: #a8abb2;
+  --iip-color-text-disabled: #c0c4cc;
+
+  // 边框色
+  --iip-border-color: #dcdfe6;
+  --iip-border-color-light: #e4e7ed;
+  --iip-border-color-lighter: #ebeef5;
+  --iip-border-color-extra-light: #f2f6fc;
+  --iip-border-color-dark: #d4d7de;
+  --iip-border-color-darker: #cdd0d6;
+
+  // 填充色
+  --iip-fill-color: #f0f2f5;
+  --iip-fill-color-light: #f5f7fa;
+  --iip-fill-color-lighter: #fafafa;
+  --iip-fill-color-extra-light: #fafcff;
+  --iip-fill-color-dark: #ebedf0;
+  --iip-fill-color-darker: #e6e8eb;
+  --iip-fill-color-blank: #ffffff;
+
+  // 背景色
+  --iip-bg-color: #ffffff;
+  --iip-bg-color-page: #f2f3f5;
+  --iip-bg-color-overlay: #ffffff;
+
+  // 字体
+  --iip-font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+  --iip-font-size-extra-large: 20px;
+  --iip-font-size-large: 18px;
+  --iip-font-size-medium: 16px;
+  --iip-font-size-base: 14px;
+  --iip-font-size-small: 13px;
+  --iip-font-size-extra-small: 12px;
+
+  // 字重
+  --iip-font-weight-primary: 500;
+  --iip-font-weight-secondary: 100;
+
+  // 行高
+  --iip-line-height-primary: 24px;
+  --iip-line-height-secondary: 16px;
+
+  // 间距
+  --iip-spacing-xs: 4px;
+  --iip-spacing-sm: 8px;
+  --iip-spacing-md: 12px;
+  --iip-spacing-lg: 16px;
+  --iip-spacing-xl: 20px;
+  --iip-spacing-xxl: 24px;
+
+  // 圆角
+  --iip-border-radius-base: 4px;
+  --iip-border-radius-small: 2px;
+  --iip-border-radius-large: 6px;
+  --iip-border-radius-round: 20px;
+  --iip-border-radius-circle: 100%;
+
+  // 边框宽度
+  --iip-border-width: 1px;
+  --iip-border-style: solid;
+  --iip-border: var(--iip-border-width) var(--iip-border-style) var(--iip-border-color);
+
+  // 阴影
+  --iip-box-shadow-base: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
+  --iip-box-shadow-light: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  --iip-box-shadow-lighter: 0 2px 4px 0 rgba(0, 0, 0, 0.12);
+  --iip-box-shadow-dark: 0 4px 8px 0 rgba(0, 0, 0, 0.12);
+
+  // 禁用状态
+  --iip-disabled-bg-color: var(--iip-fill-color-light);
+  --iip-disabled-text-color: var(--iip-color-text-placeholder);
+  --iip-disabled-border-color: var(--iip-border-color-light);
+
+  // 遮罩
+  --iip-overlay-color: rgba(0, 0, 0, 0.8);
+  --iip-overlay-color-light: rgba(0, 0, 0, 0.7);
+  --iip-overlay-color-lighter: rgba(0, 0, 0, 0.5);
+
+  // 遮罩层
+  --iip-mask-color: rgba(255, 255, 255, 0.9);
+  --iip-mask-color-extra-light: rgba(255, 255, 255, 0.3);
+
+  // 过渡动画
+  --iip-transition-duration: 0.3s;
+  --iip-transition-duration-fast: 0.2s;
+  --iip-transition-function-ease-in-out-bezier: cubic-bezier(0.645, 0.045, 0.355, 1);
+  --iip-transition-function-fast-bezier: cubic-bezier(0.23, 1, 0.32, 1);
+  --iip-transition-all: all var(--iip-transition-duration) var(--iip-transition-function-ease-in-out-bezier);
+  --iip-transition-fade: opacity var(--iip-transition-duration) var(--iip-transition-function-fast-bezier);
+  --iip-transition-md-fade: transform var(--iip-transition-duration) var(--iip-transition-function-fast-bezier), opacity var(--iip-transition-duration) var(--iip-transition-function-fast-bezier);
+  --iip-transition-fade-linear: opacity var(--iip-transition-duration-fast) linear;
+  --iip-transition-border: border-color var(--iip-transition-duration-fast) var(--iip-transition-function-ease-in-out-bezier);
+  --iip-transition-box-shadow: box-shadow var(--iip-transition-duration-fast) var(--iip-transition-function-ease-in-out-bezier);
+  --iip-transition-color: color var(--iip-transition-duration-fast) var(--iip-transition-function-ease-in-out-bezier);
+
+  // 组件尺寸
+  --iip-component-size-large: 40px;
+  --iip-component-size: 32px;
+  --iip-component-size-small: 24px;
+}

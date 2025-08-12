@@ -1,86 +1,52 @@
 // IipInput 组件样式
+
 .iip-input {
   // 基础样式
-  &__error {
+  .el-input {
+    // 继承 Element Plus 的样式，这里可以添加自定义样式
+  }
+
+  // 验证状态样式
+  &.is-error {
+    .el-input__inner {
+      border-color: var(--iip-color-danger);
+    }
+  }
+
+  &.is-success {
+    .el-input__inner {
+      border-color: var(--iip-color-success);
+    }
+  }
+
+  // 字符计数样式
+  .el-input__count {
+    color: var(--iip-color-text-secondary);
+    font-size: var(--iip-font-size-small);
+  }
+
+  // 验证消息样式
+  .iip-input__validate-message {
     margin-top: var(--iip-spacing-xs);
     font-size: var(--iip-font-size-small);
-    line-height: 1.2;
-    color: var(--iip-color-danger);
-    transition: all 0.3s ease;
-  }
-  
-  // 错误状态
-  &--error {
-    .el-input__wrapper {
-      border-color: var(--iip-color-danger) !important;
-      box-shadow: 0 0 0 1px var(--iip-color-danger) inset !important;
-      
-      &:hover {
-        border-color: var(--iip-color-danger) !important;
-      }
-      
-      &.is-focus {
-        border-color: var(--iip-color-danger) !important;
-        box-shadow: 0 0 0 1px var(--iip-color-danger) inset !important;
-      }
+    line-height: 1.4;
+
+    &.is-error {
+      color: var(--iip-color-danger);
+    }
+
+    &.is-success {
+      color: var(--iip-color-success);
     }
   }
-  
+
   // 禁用状态
-  &--disabled {
-    .el-input__wrapper {
-      color: var(--el-disabled-text-color);
+  &.is-disabled {
+    .el-input__inner {
+      background-color: var(--iip-disabled-bg-color);
+      border-color: var(--iip-disabled-border-color);
+      color: var(--iip-disabled-text-color);
       cursor: not-allowed;
-      background-color: var(--el-disabled-bg-color);
-      border-color: var(--el-disabled-border-color);
-      
-      .el-input__inner {
-        color: var(--el-disabled-text-color);
-        cursor: not-allowed;
-      }
-    }
-  }
-  
-  // 只读状态
-  &--readonly {
-    .el-input__wrapper {
-      background-color: var(--el-fill-color-light);
-      border-color: var(--el-border-color);
-      
-      .el-input__inner {
-        cursor: default;
-      }
-    }
-  }
-  
-  // 尺寸变体
-  &--large {
-    .el-input__wrapper {
-      font-size: var(--iip-font-size-large);
-    }
-  }
-  
-  &--small {
-    .el-input__wrapper {
-      font-size: var(--iip-font-size-small);
-    }
-    
-    .iip-input__error {
-      font-size: 11px;
-    }
-  }
-  
-  // 动画效果
-  .el-input__wrapper {
-    transition: all 0.3s ease;
-    
-    &:hover {
-      border-color: var(--el-border-color-hover);
-    }
-    
-    &.is-focus {
-      border-color: var(--iip-color-primary);
-      box-shadow: 0 0 0 1px var(--iip-color-primary) inset;
     }
   }
 }

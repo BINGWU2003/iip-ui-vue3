@@ -90,12 +90,43 @@
         />
       </div>
     </section>
+
+    <!-- 主题切换演示 -->
+    <section class="demo-section">
+      <h2>主题切换</h2>
+
+      <div class="demo-item">
+        <h3>主题切换器 - 按钮类型</h3>
+        <iip-theme-switcher
+          v-model="themeMode"
+          type="button"
+          show-text
+          @change="handleThemeChange"
+        />
+      </div>
+
+      <div class="demo-item">
+        <h3>主题切换器 - 开关类型</h3>
+        <iip-theme-switcher v-model="themeMode" type="switch" @change="handleThemeChange" />
+      </div>
+
+      <div class="demo-item">
+        <h3>主题切换器 - 下拉类型</h3>
+        <iip-theme-switcher
+          v-model="themeMode"
+          type="dropdown"
+          show-text
+          @change="handleThemeChange"
+        />
+      </div>
+    </section>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { IipInput, IipSelect } from '../src'
+import { IipInput, IipSelect, IipThemeSwitcher } from '../src'
+import type { ThemeMode } from '@iip-ui/utils'
 
 // Input 相关数据
 const inputValue1 = ref('')
@@ -108,6 +139,9 @@ const selectValue1 = ref('')
 const selectValue2 = ref([])
 const selectValue3 = ref('')
 const selectValue4 = ref('')
+
+// 主题相关数据
+const themeMode = ref<ThemeMode>('light')
 
 // 基础选项
 const basicOptions = [
@@ -148,6 +182,10 @@ const groupOptions = [
 // 事件处理
 const handleValidate = (isValid: boolean, message?: string) => {
   console.log('验证结果:', isValid, message)
+}
+
+const handleThemeChange = (mode: ThemeMode) => {
+  console.log('主题切换:', mode)
 }
 </script>
 
