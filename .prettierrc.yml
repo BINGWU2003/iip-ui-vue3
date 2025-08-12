@@ -1,0 +1,13 @@
+# Prettier 配置文件
+semi: false
+singleQuote: true
+printWidth: 100
+tabWidth: 2
+useTabs: false
+trailingComma: 'none'
+bracketSpacing: true
+bracketSameLine: false
+arrowParens: 'avoid'
+endOfLine: 'lf'
+vueIndentScriptAndStyle: false
+singleAttributePerLine: false

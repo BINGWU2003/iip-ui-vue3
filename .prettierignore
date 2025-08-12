@@ -1,0 +1,19 @@
+# 忽略文件和目录
+dist
+node_modules
+*.d.ts
+auto-imports.d.ts
+components.d.ts
+coverage
+.nyc_output
+.vitepress/dist
+.vitepress/cache
+
+# 忽略特定文件类型
+*.min.js
+*.min.css
+
+# 忽略配置文件
+pnpm-lock.yaml
+package-lock.json
+yarn.lock

@@ -1,0 +1,26 @@
+{
+  "name": "@iip-ui/theme",
+  "version": "1.0.0",
+  "description": "iip-ui-vue3 主题样式",
+  "type": "module",
+  "main": "./dist/index.css",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "sass src/index.scss dist/index.css --style=compressed",
+    "dev": "sass src/index.scss dist/index.css --watch",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "sass": "^1.69.5"
+  },
+  "keywords": [
+    "theme",
+    "scss",
+    "element-plus"
+  ],
+  "author": "iip-ui-vue3 Team",
+  "license": "MIT"
+}

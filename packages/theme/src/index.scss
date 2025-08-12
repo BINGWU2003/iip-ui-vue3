@@ -1,0 +1,10 @@
+// iip-ui-vue3 主题样式入口文件
+
+// 自定义组件样式
+@use './components/index.scss';
+
+// 全局样式
+@use './global.scss';
+
+// 导入 Element Plus 默认样式
+@import 'element-plus/dist/index.css';

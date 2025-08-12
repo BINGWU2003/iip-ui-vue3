@@ -1,0 +1,33 @@
+{
+  "name": "@iip-ui/docs",
+  "version": "1.0.0",
+  "description": "iip-ui-vue3 文档站点",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview",
+    "clean": "rm -rf .vitepress/dist"
+  },
+  "dependencies": {
+    "@iip-ui/components": "workspace:*",
+    "@iip-ui/theme": "workspace:*",
+    "@iip-ui/utils": "workspace:*",
+    "element-plus": "^2.4.4",
+    "vue": "^3.3.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.9.0",
+    "sass": "^1.69.5",
+    "typescript": "^5.3.2",
+    "vitepress": "^1.0.0-rc.31"
+  },
+  "keywords": [
+    "docs",
+    "vitepress",
+    "vue3"
+  ],
+  "author": "iip-ui-vue3 Team",
+  "license": "MIT"
+}
