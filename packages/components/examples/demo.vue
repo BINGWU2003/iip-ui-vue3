@@ -126,7 +126,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { IipInput, IipSelect, IipThemeSwitcher } from '../src'
-import type { ThemeMode } from '@iip-ui/utils'
+import type { ThemeMode } from '@bingwu/iip-ui-utils'
 
 // Input 相关数据
 const inputValue1 = ref('')

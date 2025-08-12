@@ -1,8 +1,8 @@
 # IIP UI Vue3
 
-[![npm version](https://badge.fury.io/js/@iip-ui%2Fcomponents.svg)](https://badge.fury.io/js/@iip-ui%2Fcomponents)
-[![license](https://img.shields.io/npm/l/@iip-ui/components.svg)](https://github.com/BINGWU2003/iip-ui-vue3/blob/master/LICENSE)
-[![downloads](https://img.shields.io/npm/dm/@iip-ui/components.svg)](https://www.npmjs.com/package/@iip-ui/components)
+[![npm version](https://badge.fury.io/js/@bingwu%2Fiip-ui-components.svg)](https://badge.fury.io/js/@bingwu%2Fiip-ui-components)
+[![license](https://img.shields.io/npm/l/@bingwu/iip-ui-components.svg)](https://github.com/BINGWU2003/iip-ui-vue3/blob/master/LICENSE)
+[![downloads](https://img.shields.io/npm/dm/@bingwu/iip-ui-components.svg)](https://www.npmjs.com/package/@bingwu/iip-ui-components)
 
 基于 Element Plus、Vue 3 和 TypeScript 的企业级组件库
 
@@ -21,13 +21,13 @@
 
 ```bash
 # npm
-npm install @iip-ui/components @iip-ui/theme
+npm install @bingwu/iip-ui-components @bingwu/iip-ui-theme
 
 # yarn
-yarn add @iip-ui/components @iip-ui/theme
+yarn add @bingwu/iip-ui-components @bingwu/iip-ui-theme
 
 # pnpm
-pnpm add @iip-ui/components @iip-ui/theme
+pnpm add @bingwu/iip-ui-components @bingwu/iip-ui-theme
 ```
 
 ## 🚀 快速开始
@@ -39,8 +39,8 @@ pnpm add @iip-ui/components @iip-ui/theme
 import { createApp } from 'vue'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
-import IipUI from '@iip-ui/components'
-import '@iip-ui/theme/dist/index.css'
+import IipUI from '@bingwu/iip-ui-components'
+import '@bingwu/iip-ui-theme/dist/index.css'
 import App from './App.vue'
 
 const app = createApp(App)
@@ -54,8 +54,8 @@ app.mount('#app')
 ```typescript
 // main.ts
 import { createApp } from 'vue'
-import { IipInput, IipSelect } from '@iip-ui/components'
-import '@iip-ui/theme/dist/index.css'
+import { IipInput, IipSelect } from '@bingwu/iip-ui-components'
+import '@bingwu/iip-ui-theme/dist/index.css'
 
 const app = createApp(App)
 app.component('IipInput', IipInput)
@@ -129,7 +129,7 @@ const options = [
 ## 🎨 主题定制
 
 ```typescript
-import { setTheme, toggleTheme } from '@iip-ui/utils'
+import { setTheme, toggleTheme } from '@bingwu/iip-ui-utils'
 
 // 设置主题
 setTheme({

@@ -2,7 +2,7 @@ import DefaultTheme from 'vitepress/theme'
 import { App } from 'vue'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
-import '../../../theme/dist/index.css'
+import '@bingwu/iip-ui-theme/dist/index.css'
 import IipUI from '@bingwu/iip-ui-components'
 
 export default {

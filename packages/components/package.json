@@ -1,6 +1,6 @@
 {
   "name": "@bingwu/iip-ui-components",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "iip-ui-vue3 核心组件库",
   "type": "module",
   "main": "./dist/index.umd.js",
@@ -26,7 +26,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@bingwu/iip-ui-utils": "workspace:*",
+    "@bingwu/iip-ui-utils": "^1.0.0",
     "vue": "^3.3.8"
   },
   "peerDependencies": {

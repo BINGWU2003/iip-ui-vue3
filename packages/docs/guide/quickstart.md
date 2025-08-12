@@ -11,15 +11,15 @@
 ::: code-group
 
 ```bash [npm]
-npm install @iip-ui/components @iip-ui/theme
+npm install @bingwu/iip-ui-components @bingwu/iip-ui-theme
 ```
 
 ```bash [yarn]
-yarn add @iip-ui/components @iip-ui/theme
+yarn add @bingwu/iip-ui-components @bingwu/iip-ui-theme
 ```
 
 ```bash [pnpm]
-pnpm add @iip-ui/components @iip-ui/theme
+pnpm add @bingwu/iip-ui-components @bingwu/iip-ui-theme
 ```
 
 :::
@@ -33,8 +33,8 @@ pnpm add @iip-ui/components @iip-ui/theme
 import { createApp } from 'vue'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
-import IipUI from '@iip-ui/components'
-import '@iip-ui/theme/dist/index.css'
+import IipUI from '@bingwu/iip-ui-components'
+import '@bingwu/iip-ui-theme/dist/index.css'
 import App from './App.vue'
 
 const app = createApp(App)
@@ -82,7 +82,7 @@ export default defineConfig({
           if (componentName.startsWith('Iip')) {
             return {
               name: componentName,
-              from: '@iip-ui/components'
+              from: '@bingwu/iip-ui-components'
             }
           }
         }
@@ -130,7 +130,7 @@ const options = [
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { IipInput, IipSelect } from '@iip-ui/components'
+import { IipInput, IipSelect } from '@bingwu/iip-ui-components'
 
 const value = ref('')
 const selected = ref('')
@@ -147,7 +147,7 @@ const options = [
 
 ```typescript
 import { createApp } from 'vue'
-import IipUI from '@iip-ui/components'
+import IipUI from '@bingwu/iip-ui-components'
 
 const app = createApp(App)
 app.use(IipUI, {
@@ -171,7 +171,7 @@ app.use(IipUI, {
 {
   "compilerOptions": {
     // ...
-    "types": ["@iip-ui/components/global"]
+    "types": ["@bingwu/iip-ui-components/global"]
   }
 }
 ```
