@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from 'vue'
-import { createThemeManager, type ThemeConfig } from '@iip-ui/utils'
+import { createThemeManager, type ThemeConfig } from '@bingwu/iip-ui-utils'
 import type { IipThemeProviderProps, IipThemeProviderEmits, IipThemeProviderExpose } from './types'
 
 defineOptions({

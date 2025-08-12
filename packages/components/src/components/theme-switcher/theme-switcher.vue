@@ -68,7 +68,7 @@ import {
   ElIcon
 } from 'element-plus'
 import { Sunny, Moon, Monitor, ArrowDown } from '@element-plus/icons-vue'
-import { themeManager, type ThemeMode } from '@iip-ui/utils'
+import { themeManager, type ThemeMode } from '@bingwu/iip-ui-utils'
 import type { IipThemeSwitcherProps, IipThemeSwitcherEmits, IipThemeSwitcherExpose } from './types'
 
 defineOptions({

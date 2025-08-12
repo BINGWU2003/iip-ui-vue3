@@ -71,7 +71,7 @@ importers:
 
   packages/components:
     dependencies:
-      '@iip-ui/utils':
+      '@bingwu/iip-ui-utils':
         specifier: workspace:*
         version: link:../utils
       vue:
@@ -120,13 +120,13 @@ importers:
 
   packages/docs:
     dependencies:
-      '@iip-ui/components':
+      '@bingwu/iip-ui-components':
         specifier: workspace:*
         version: link:../components
-      '@iip-ui/theme':
+      '@bingwu/iip-ui-theme':
         specifier: workspace:*
         version: link:../theme
-      '@iip-ui/utils':
+      '@bingwu/iip-ui-utils':
         specifier: workspace:*
         version: link:../utils
       element-plus:

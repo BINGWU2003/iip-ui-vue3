@@ -1,5 +1,5 @@
 {
-  "name": "@iip-ui/components",
+  "name": "@bingwu/iip-ui-components",
   "version": "1.0.0",
   "description": "iip-ui-vue3 核心组件库",
   "type": "module",
@@ -26,7 +26,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@iip-ui/utils": "workspace:*",
+    "@bingwu/iip-ui-utils": "workspace:*",
     "vue": "^3.3.8"
   },
   "peerDependencies": {
@@ -53,8 +53,26 @@
     "vue3",
     "typescript",
     "element-plus",
-    "components"
+    "components",
+    "ui",
+    "vue-components",
+    "frontend",
+    "theme",
+    "enterprise"
   ],
   "author": "iip-ui-vue3 Team",
-  "license": "MIT"
+  "license": "MIT",
+  "homepage": "https://github.com/BINGWU2003/iip-ui-vue3#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BINGWU2003/iip-ui-vue3.git",
+    "directory": "packages/components"
+  },
+  "bugs": {
+    "url": "https://github.com/BINGWU2003/iip-ui-vue3/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
 }

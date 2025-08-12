@@ -3,7 +3,7 @@ import { App } from 'vue'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import '../../../theme/dist/index.css'
-import IipUI from '../../../components/dist/index.es.js'
+import IipUI from '@bingwu/iip-ui-components'
 
 export default {
   extends: DefaultTheme,

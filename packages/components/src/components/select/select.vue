@@ -88,7 +88,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { ElSelect, ElOption, ElOptionGroup, ElCheckbox } from 'element-plus'
-import { debounce } from '@iip-ui/utils'
+import { debounce } from '@bingwu/iip-ui-utils'
 import type { IipSelectProps, IipSelectEmits, IipSelectExpose, SelectOption } from './types'
 
 defineOptions({

@@ -20,7 +20,9 @@
     "format": "prettier --write .",
     "prepare": "husky install",
     "clean": "pnpm -r clean && rm -rf node_modules",
-    "preinstall": "npx only-allow pnpm"
+    "preinstall": "npx only-allow pnpm",
+    "publish:all": "node scripts/publish.cjs",
+    "publish:npm": "pnpm -r publish --access public"
   },
   "devDependencies": {
     "@commitlint/cli": "^18.4.3",

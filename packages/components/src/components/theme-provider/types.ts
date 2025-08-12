@@ -1,4 +1,4 @@
-import type { ThemeConfig } from '@iip-ui/utils'
+import type { ThemeConfig } from '@bingwu/iip-ui-utils'
 
 export interface IipThemeProviderProps {
   /** 主题配置 */

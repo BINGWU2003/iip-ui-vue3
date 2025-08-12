@@ -1,124 +1,192 @@
-# iip-ui-vue3
+# IIP UI Vue3
+
+[![npm version](https://badge.fury.io/js/@iip-ui%2Fcomponents.svg)](https://badge.fury.io/js/@iip-ui%2Fcomponents)
+[![license](https://img.shields.io/npm/l/@iip-ui/components.svg)](https://github.com/BINGWU2003/iip-ui-vue3/blob/master/LICENSE)
+[![downloads](https://img.shields.io/npm/dm/@iip-ui/components.svg)](https://www.npmjs.com/package/@iip-ui/components)
 
 基于 Element Plus、Vue 3 和 TypeScript 的企业级组件库
 
-## 项目简介
+## ✨ 特性
 
-iip-ui-vue3 是一个基于 `Element Plus`、`Vue 3` 和 `TypeScript` 技术栈构建的二次封装组件库，旨在为企业级中后台管理系统提供统一的视觉与交互风格。
+- 🚀 **现代化技术栈** - 基于 Vue 3 + TypeScript + Vite
+- 📦 **开箱即用** - 丰富的高质量组件
+- 🎨 **主题定制** - 支持亮色/暗色主题，动态切换
+- 🌍 **TypeScript** - 完整的类型定义支持
+- 📱 **响应式设计** - 移动端友好
+- ⚡ **按需引入** - 支持 Tree Shaking
+- 🧪 **测试覆盖** - 完整的单元测试
+- 📚 **文档完善** - 详细的使用文档和示例
 
-## 技术栈
-
-- **前端框架：** Vue 3
-- **编程语言：** TypeScript
-- **基础组件库：** Element Plus
-- **构建工具：** Vite + Rollup
-- **项目管理：** Monorepo + pnpm
-- **文档工具：** VitePress
-- **测试框架：** Vitest + Cypress
-
-## 项目结构
-
-```
-iip-ui-vue3/
-├── packages/
-│   ├── components/          # 核心组件库
-│   ├── docs/               # 文档站点
-│   ├── utils/              # 工具函数库
-│   └── theme/              # 主题样式
-├── pnpm-workspace.yaml     # pnpm 工作空间配置
-├── package.json            # 根目录依赖配置
-└── README.md
-```
-
-## 快速开始
-
-### 环境要求
-
-- Node.js >= 16.0.0
-- pnpm >= 8.0.0
-
-### 安装依赖
+## 📦 安装
 
 ```bash
+# npm
+npm install @iip-ui/components @iip-ui/theme
+
+# yarn
+yarn add @iip-ui/components @iip-ui/theme
+
+# pnpm
+pnpm add @iip-ui/components @iip-ui/theme
+```
+
+## 🚀 快速开始
+
+### 完整引入
+
+```typescript
+// main.ts
+import { createApp } from 'vue'
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+import IipUI from '@iip-ui/components'
+import '@iip-ui/theme/dist/index.css'
+import App from './App.vue'
+
+const app = createApp(App)
+app.use(ElementPlus)
+app.use(IipUI)
+app.mount('#app')
+```
+
+### 按需引入
+
+```typescript
+// main.ts
+import { createApp } from 'vue'
+import { IipInput, IipSelect } from '@iip-ui/components'
+import '@iip-ui/theme/dist/index.css'
+
+const app = createApp(App)
+app.component('IipInput', IipInput)
+app.component('IipSelect', IipSelect)
+app.mount('#app')
+```
+
+### 使用示例
+
+```vue
+<template>
+  <div>
+    <!-- 输入框 -->
+    <iip-input
+      v-model="inputValue"
+      placeholder="请输入内容"
+      clearable
+      show-word-limit
+      :maxlength="20"
+      validate-rule="email"
+    />
+
+    <!-- 选择器 -->
+    <iip-select
+      v-model="selectValue"
+      :options="options"
+      multiple
+      show-select-all
+      filterable
+      clearable
+    />
+
+    <!-- 主题切换器 -->
+    <iip-theme-switcher v-model="themeMode" type="button" show-text />
+  </div>
+</template>
+
+<script setup>
+import { ref } from 'vue'
+
+const inputValue = ref('')
+const selectValue = ref([])
+const themeMode = ref('light')
+const options = [
+  { value: '1', label: '选项一' },
+  { value: '2', label: '选项二' },
+  { value: '3', label: '选项三' }
+]
+</script>
+```
+
+## 📋 组件列表
+
+### 基础组件
+
+- ✅ **IipInput** - 增强的输入框组件
+- ✅ **IipSelect** - 增强的选择器组件
+
+### 主题组件
+
+- ✅ **IipThemeProvider** - 主题提供者
+- ✅ **IipThemeSwitcher** - 主题切换器
+
+### 计划中
+
+- 🔄 **IipButton** - 按钮组件
+- 🔄 **IipTable** - 表格组件
+- 🔄 **IipForm** - 表单组件
+- 🔄 **IipDialog** - 对话框组件
+
+## 🎨 主题定制
+
+```typescript
+import { setTheme, toggleTheme } from '@iip-ui/utils'
+
+// 设置主题
+setTheme({
+  mode: 'dark',
+  primaryColor: '#409eff',
+  namespace: 'my-app'
+})
+
+// 切换主题
+toggleTheme()
+```
+
+## 🛠️ 开发
+
+```bash
+# 克隆项目
+git clone https://github.com/BINGWU2003/iip-ui-vue3.git
+
+# 安装依赖
 pnpm install
-```
 
-### 开发
-
-```bash
-# 启动组件开发
+# 启动开发服务器
 pnpm dev
+
+# 构建所有包
+pnpm build:all
+
+# 运行测试
+pnpm test
 
 # 启动文档站点
 pnpm docs:dev
 ```
 
-### 构建
+## 📖 文档
 
-```bash
-# 构建所有包
-pnpm build:all
+- [在线文档](https://your-docs-site.com) (即将上线)
+- [组件示例](./packages/components/examples)
+- [更新日志](./CHANGELOG.md)
 
-# 构建组件库
-pnpm build
+## 🤝 贡献
 
-# 构建文档
-pnpm docs:build
-```
+欢迎提交 Issue 和 Pull Request！
 
-### 测试
+1. Fork 本仓库
+2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 打开 Pull Request
 
-```bash
-# 运行所有测试
-pnpm test
+## 📄 许可证
 
-# 运行单元测试
-pnpm test:unit
-```
+[MIT](./LICENSE) © 2024 IIP UI Vue3 Team
 
-### 代码规范
+## 🙏 致谢
 
-```bash
-# 代码检查
-pnpm lint
-
-# 样式检查
-pnpm lint:style
-
-# 代码格式化
-pnpm format
-```
-
-## 开发规范
-
-### Git 提交规范
-
-本项目使用 [Conventional Commits](https://www.conventionalcommits.org/) 规范：
-
-- `feat`: 新功能
-- `fix`: 修复bug
-- `docs`: 文档变更
-- `style`: 代码格式变更
-- `refactor`: 重构
-- `perf`: 性能优化
-- `test`: 增加测试
-- `chore`: 构建过程或辅助工具的变动
-
-### 代码风格
-
-项目使用 ESLint + Prettier + Stylelint 进行代码规范检查，并通过 Husky 在提交前自动执行检查。
-
-## 许可证
-
-MIT License
-
-## 贡献指南
-
-欢迎提交 Issue 和 Pull Request 来帮助改进项目。
-
-## 联系我们
-
-如有问题或建议，请通过以下方式联系我们：
-
-- 提交 Issue
-- 发送邮件至项目维护者
+- [Vue.js](https://vuejs.org/) - 渐进式 JavaScript 框架
+- [Element Plus](https://element-plus.org/) - 基于 Vue 3 的组件库
+- [TypeScript](https://www.typescriptlang.org/) - JavaScript 的超集
+- [Vite](https://vitejs.dev/) - 下一代前端构建工具

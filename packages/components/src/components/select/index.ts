@@ -1,4 +1,4 @@
-import { withInstall } from '@iip-ui/utils'
+import { withInstall } from '@bingwu/iip-ui-utils'
 import Select from './select.vue'
 
 export const IipSelect = withInstall(Select)

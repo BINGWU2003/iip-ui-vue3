@@ -1,5 +1,5 @@
 {
-  "name": "@iip-ui/utils",
+  "name": "@bingwu/iip-ui-utils",
   "version": "1.0.0",
   "description": "iip-ui-vue3 工具函数库",
   "type": "module",
@@ -35,8 +35,24 @@
   "keywords": [
     "utils",
     "typescript",
-    "vue3"
+    "vue3",
+    "theme",
+    "validate",
+    "tools"
   ],
   "author": "iip-ui-vue3 Team",
-  "license": "MIT"
+  "license": "MIT",
+  "homepage": "https://github.com/BINGWU2003/iip-ui-vue3#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BINGWU2003/iip-ui-vue3.git",
+    "directory": "packages/utils"
+  },
+  "bugs": {
+    "url": "https://github.com/BINGWU2003/iip-ui-vue3/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
 }

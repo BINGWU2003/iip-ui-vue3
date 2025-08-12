@@ -34,8 +34,8 @@
 <script setup lang="ts">
 import { ref, computed, watch, nextTick } from 'vue'
 import { ElInput } from 'element-plus'
-import { debounce } from '@iip-ui/utils'
-import { isEmail, isPhone, isIdCard, isUrl } from '@iip-ui/utils'
+import { debounce } from '@bingwu/iip-ui-utils'
+import { isEmail, isPhone, isIdCard, isUrl } from '@bingwu/iip-ui-utils'
 import type { IipInputProps, IipInputEmits, IipInputExpose } from './types'
 
 defineOptions({

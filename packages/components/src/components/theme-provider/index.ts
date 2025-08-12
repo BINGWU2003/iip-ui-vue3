@@ -1,4 +1,4 @@
-import { withInstall } from '@iip-ui/utils'
+import { withInstall } from '@bingwu/iip-ui-utils'
 import ThemeProvider from './theme-provider.vue'
 
 export const IipThemeProvider = withInstall(ThemeProvider)

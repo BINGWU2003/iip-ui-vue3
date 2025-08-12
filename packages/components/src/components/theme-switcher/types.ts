@@ -1,4 +1,4 @@
-import type { ThemeMode } from '@iip-ui/utils'
+import type { ThemeMode } from '@bingwu/iip-ui-utils'
 
 export interface IipThemeSwitcherProps {
   /** 当前主题模式 */

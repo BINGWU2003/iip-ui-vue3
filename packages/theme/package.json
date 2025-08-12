@@ -1,5 +1,5 @@
 {
-  "name": "@iip-ui/theme",
+  "name": "@bingwu/iip-ui-theme",
   "version": "1.0.0",
   "description": "iip-ui-vue3 主题样式",
   "type": "module",
@@ -19,8 +19,26 @@
   "keywords": [
     "theme",
     "scss",
-    "element-plus"
+    "element-plus",
+    "css",
+    "vue3",
+    "ui-theme",
+    "dark-theme",
+    "light-theme"
   ],
   "author": "iip-ui-vue3 Team",
-  "license": "MIT"
+  "license": "MIT",
+  "homepage": "https://github.com/BINGWU2003/iip-ui-vue3#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BINGWU2003/iip-ui-vue3.git",
+    "directory": "packages/theme"
+  },
+  "bugs": {
+    "url": "https://github.com/BINGWU2003/iip-ui-vue3/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  }
 }
