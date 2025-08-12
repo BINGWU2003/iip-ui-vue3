@@ -71,6 +71,9 @@ importers:
 
   packages/components:
     dependencies:
+      '@iip-ui/utils':
+        specifier: workspace:*
+        version: link:../utils
       vue:
         specifier: ^3.3.8
         version: 3.5.18(typescript@5.9.2)
@@ -166,6 +169,9 @@ importers:
       vitest:
         specifier: ^0.34.6
         version: 0.34.6(jsdom@23.2.0)(sass@1.90.0)
+      vue:
+        specifier: ^3.3.8
+        version: 3.5.18(typescript@5.9.2)
 
 packages:
 

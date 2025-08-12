@@ -25,4 +25,5 @@ export interface BaseProps {
 }
 
 // 导出所有组件类型
-// export * from '../components/button/types'
+export * from '../components/input/types'
+export * from '../components/select/types'

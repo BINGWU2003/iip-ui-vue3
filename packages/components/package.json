@@ -26,6 +26,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
+    "@iip-ui/utils": "workspace:*",
     "vue": "^3.3.8"
   },
   "peerDependencies": {

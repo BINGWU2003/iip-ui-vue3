@@ -34,7 +34,7 @@ export function throttle<T extends (...args: any[]) => any>(
 ): (...args: Parameters<T>) => void {
   let inThrottle: boolean
 
-  return function executedFunction(...args: Parameters<T>) {
+  return function executedFunction(this: any, ...args: Parameters<T>) {
     if (!inThrottle) {
       func.apply(this, args)
       inThrottle = true
@@ -66,5 +66,5 @@ export function deepClone<T>(obj: T): T {
  * 生成唯一ID
  */
 export function generateId(prefix = 'id'): string {
-  return `${prefix}-${Math.random().toString(36).substr(2, 9)}`
+  return `${prefix}-${Math.random().toString(36).substring(2, 11)}`
 }

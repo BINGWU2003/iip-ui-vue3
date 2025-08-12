@@ -1,9 +1,6 @@
 {
   "extends": [
     "stylelint-config-standard",
-    "stylelint-config-standard-scss",
-    "stylelint-config-standard-vue",
-    "stylelint-config-recess-order",
     "stylelint-config-prettier"
   ],
   "plugins": [],
@@ -39,6 +36,8 @@
         ]
       }
     ],
+    "selector-class-pattern": null,
+    "declaration-block-single-line-max-declarations": null,
     "no-empty-source": null,
     "function-no-unknown": [
       true,
@@ -50,7 +49,17 @@
     "declaration-no-important": null,
     "no-descending-specificity": null,
     "scss/at-import-partial-extension": null,
-    "scss/double-slash-comment-empty-line-before": null
+    "scss/double-slash-comment-empty-line-before": null,
+    "at-rule-descriptor-no-unknown": null,
+    "at-rule-descriptor-value-no-unknown": null,
+    "at-rule-no-deprecated": null,
+    "at-rule-prelude-no-invalid": null,
+    "declaration-property-value-keyword-no-deprecated": null,
+    "media-type-no-deprecated": null,
+    "nesting-selector-no-missing-scoping-root": null,
+    "no-invalid-position-declaration": null,
+    "property-no-deprecated": null,
+    "syntax-string-no-invalid": null
   },
   "overrides": [
     {

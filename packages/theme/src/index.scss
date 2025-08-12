@@ -7,4 +7,4 @@
 @use './global.scss';
 
 // 导入 Element Plus 默认样式
-@import 'element-plus/dist/index.css';
+@import url('element-plus/dist/index.css');

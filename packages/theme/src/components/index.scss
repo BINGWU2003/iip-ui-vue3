@@ -1,6 +1,5 @@
 // 组件样式入口文件
 
 // 导入所有组件样式
-// @import './button.scss';
-// @import './table.scss';
-// @import './form.scss';
+@import url('./input.scss');
+@import url('./select.scss');

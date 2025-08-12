@@ -21,12 +21,16 @@
     "test": "vitest",
     "clean": "rm -rf dist"
   },
+  "peerDependencies": {
+    "vue": "^3.3.0"
+  },
   "devDependencies": {
     "@types/node": "^20.9.0",
     "typescript": "^5.3.2",
     "vite": "^5.0.0",
     "vite-plugin-dts": "^3.6.3",
-    "vitest": "^0.34.6"
+    "vitest": "^0.34.6",
+    "vue": "^3.3.8"
   },
   "keywords": [
     "utils",

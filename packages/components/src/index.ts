@@ -1,15 +1,13 @@
 import type { App, Component } from 'vue'
 
 // 导入所有组件
-// import { Button } from './components'
+import { IipInput, IipSelect } from './components'
 
 // 导入样式
 import '@iip-ui/theme/dist/index.css'
 
 // 所有组件列表
-const components: Component[] = [
-  // Button,
-]
+const components: Component[] = [IipInput, IipSelect]
 
 // 定义 install 方法
 const install = (app: App): void => {
@@ -26,7 +24,8 @@ const version = '1.0.0'
 
 export {
   // 导出所有组件
-  // Button,
+  IipInput,
+  IipSelect,
 
   // 导出 install 方法和版本号
   install,
