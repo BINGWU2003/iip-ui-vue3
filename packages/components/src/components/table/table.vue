@@ -10,7 +10,7 @@
       :border="border"
       :stripe="stripe"
       :show-header="showHeader"
-      :resizable="resizable"
+      :column-config="{ resizable }"
       :loading="loading"
       :empty-text="emptyText"
       :row-config="{ keyField: rowKey }"
