@@ -8,6 +8,6 @@ trailingComma: 'none'
 bracketSpacing: true
 bracketSameLine: false
 arrowParens: 'avoid'
-endOfLine: 'lf'
+endOfLine: 'auto'
 vueIndentScriptAndStyle: false
 singleAttributePerLine: false
