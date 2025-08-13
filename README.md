@@ -180,6 +180,37 @@ pnpm docs:dev
 4. 推送到分支 (`git push origin feature/AmazingFeature`)
 5. 打开 Pull Request
 
+## 🚀 发布与部署
+
+### 快速发布
+
+```bash
+# 发布补丁版本 (bug 修复)
+pnpm release:patch
+
+# 发布次版本 (新功能)
+pnpm release:minor
+
+# 发布主版本 (破坏性变更)
+pnpm release:major
+
+# 验证发布结果
+pnpm verify:release
+```
+
+### 发布文档
+
+- [构建与发布指南](./docs/BUILD_AND_PUBLISH.md) - 详细的构建和发布流程
+- [发布前检查清单](./docs/RELEASE_CHECKLIST.md) - 发布前必须完成的检查项
+- [更新日志](./CHANGELOG.md) - 版本更新记录
+
+### 发布脚本
+
+- `scripts/release.js` - 自动化发布脚本
+- `scripts/quick-release.sh` - 快速发布脚本 (Linux/Mac)
+- `scripts/quick-release.bat` - 快速发布脚本 (Windows)
+- `scripts/verify-release.js` - 发布验证脚本
+
 ## 📄 许可证
 
 [MIT](./LICENSE) © 2024 IIP UI Vue3 Team

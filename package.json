@@ -22,7 +22,17 @@
     "clean": "pnpm -r clean && rm -rf node_modules",
     "preinstall": "npx only-allow pnpm",
     "publish:all": "node scripts/publish.cjs",
-    "publish:npm": "pnpm -r publish --access public"
+    "publish:npm": "pnpm -r publish --access public",
+    "release": "node scripts/release.js",
+    "release:patch": "node scripts/release.js patch",
+    "release:minor": "node scripts/release.js minor",
+    "release:major": "node scripts/release.js major",
+    "version:patch": "npm version patch",
+    "version:minor": "npm version minor",
+    "version:major": "npm version major",
+    "test:all": "pnpm -r test",
+    "docs:preview": "pnpm --filter @iip-ui/docs preview",
+    "verify:release": "node scripts/verify-release.js"
   },
   "devDependencies": {
     "@commitlint/cli": "^18.4.3",

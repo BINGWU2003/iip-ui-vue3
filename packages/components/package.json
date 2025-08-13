@@ -18,12 +18,13 @@
     "dist"
   ],
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --config vite.dev.config.ts",
+    "dev:build": "vite build --config vite.dev.config.ts",
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist dev-dist"
   },
   "dependencies": {
     "@bingwu/iip-ui-utils": "^1.0.0",
