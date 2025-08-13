@@ -78,8 +78,8 @@ importers:
         specifier: ^3.3.8
         version: 3.5.18(typescript@5.9.2)
       vxe-table:
-        specifier: ^4.7.0
-        version: 4.7.0
+        specifier: ^4.15.6
+        version: 4.15.6(vue@3.5.18)
       xe-utils:
         specifier: ^3.7.8
         version: 3.7.8
@@ -2081,10 +2081,13 @@ packages:
       - '@vue/composition-api'
       - vue
 
-  /@vxe-ui/core@1.0.13:
-    resolution: {integrity: sha512-Cjp52VaUB4XK3tL2n/ZEgHlKxkwkznx2aWeXEiO1lqHoWIJ8PfJtIO1MGHfsbM/qnIR1YAtHh7IMNoDU1h3XDQ==}
+  /@vxe-ui/core@4.2.9(vue@3.5.18):
+    resolution: {integrity: sha512-dDCRGfvYdp1AOeqwPnNTBsui0J0Jo8u7XjqRl9uvJAMegd29+0A4KV6BYbOWa68cHJ+GxqtnxuwvRFaqZK7PlQ==}
+    peerDependencies:
+      vue: ^3.2.0
     dependencies:
       dom-zindex: 1.0.6
+      vue: 3.5.18(typescript@5.9.2)
       xe-utils: 3.7.8
     dev: false
 
@@ -6043,16 +6046,20 @@ packages:
       '@vue/shared': 3.5.18
       typescript: 5.9.2
 
-  /vxe-pc-ui@1.9.25:
-    resolution: {integrity: sha512-pxnZKR1OrQgN5tQANFPqFxt80VuFXCspiIZIIDJln7JZVpbkwKT8LRLar537v3+FDs3x0MIDnaikQPNjSRy7Jg==}
+  /vxe-pc-ui@4.8.13(vue@3.5.18):
+    resolution: {integrity: sha512-1lAuni9nhpsPIUlT17TGAH6FR0Jws8/CqX4D1ksyfqNP5CV/X530B8mdPbKbRsAVKAYWVGliLXpXhBMWEay/wg==}
     dependencies:
-      '@vxe-ui/core': 1.0.13
+      '@vxe-ui/core': 4.2.9(vue@3.5.18)
+    transitivePeerDependencies:
+      - vue
     dev: false
 
-  /vxe-table@4.7.0:
-    resolution: {integrity: sha512-gwEn1cqdYmpiHG7+OLTHtHCCj6AzNnqv9f1QCDlW9PTLAqEsGXO/SRciLHnmUrwp48Q1864RLccAxDg7Iwj75g==}
+  /vxe-table@4.15.6(vue@3.5.18):
+    resolution: {integrity: sha512-nukG6ZdjkRy2pVNqXH0FbtS5yPAxfhUuNG1/Q8dJ6+SnvDcUem5lxLrpF9cREhuNvxRQKda6MaCPutgVRpo6zw==}
     dependencies:
-      vxe-pc-ui: 1.9.25
+      vxe-pc-ui: 4.8.13(vue@3.5.18)
+    transitivePeerDependencies:
+      - vue
     dev: false
 
   /w3c-xmlserializer@5.0.0:
