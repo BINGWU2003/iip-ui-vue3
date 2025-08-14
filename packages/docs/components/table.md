@@ -257,31 +257,32 @@ const toggleLoading = () => {
 
 ### Table Props
 
-| 参数         | 说明             | 类型                            | 默认值       |
-| ------------ | ---------------- | ------------------------------- | ------------ |
-| data         | 表格数据         | `any[]`                         | `[]`         |
-| columns      | 表格列配置       | `TableColumn[]`                 | `[]`         |
-| height       | 表格高度         | `number \| string`              | -            |
-| maxHeight    | 表格最大高度     | `number \| string`              | -            |
-| border       | 是否显示边框     | `boolean`                       | `true`       |
-| stripe       | 是否显示斑马纹   | `boolean`                       | `false`      |
-| showHeader   | 是否显示表头     | `boolean`                       | `true`       |
-| showCheckbox | 是否显示复选框   | `boolean`                       | `false`      |
-| showSeq      | 是否显示序号     | `boolean`                       | `false`      |
-| resizable    | 是否可调整列宽   | `boolean`                       | `true`       |
-| loading      | 加载状态         | `boolean`                       | `false`      |
-| emptyText    | 空数据提示文本   | `string`                        | `'暂无数据'` |
-| rowKey       | 行键名           | `string`                        | `'id'`       |
-| size         | 表格尺寸         | `'mini' \| 'small' \| 'medium'` | `'medium'`   |
-| autoResize   | 是否自适应父容器 | `boolean`                       | `true`       |
-| pagination   | 分页配置         | `PaginationConfig`              | -            |
+| 参数                 | 说明             | 类型                            | 默认值       |
+| -------------------- | ---------------- | ------------------------------- | ------------ |
+| data                 | 表格数据         | `any[]`                         | `[]`         |
+| columns              | 表格列配置       | `TableColumn[]`                 | `[]`         |
+| checkBoxColumnConfig | 复选框列配置     | `checkBoxColumnConfigProps`     | -            |
+| seqColumnConfig      | 序号列配置       | `seqColumnConfigProps`          | -            |
+| expandColumnConfig   | 展开列配置       | `expandColumnConfigProps`       | -            |
+| radioColumnConfig    | 单选框列配置     | `radioColumnConfigProps`        | -            |
+| height               | 表格高度         | `number \| string`              | -            |
+| maxHeight            | 表格最大高度     | `number \| string`              | -            |
+| border               | 是否显示边框     | `boolean`                       | `true`       |
+| stripe               | 是否显示斑马纹   | `boolean`                       | `false`      |
+| showHeader           | 是否显示表头     | `boolean`                       | `true`       |
+| resizable            | 是否可调整列宽   | `boolean`                       | `true`       |
+| loading              | 加载状态         | `boolean`                       | `false`      |
+| emptyText            | 空数据提示文本   | `string`                        | `'暂无数据'` |
+| rowKey               | 行键名           | `string`                        | `'id'`       |
+| size                 | 表格尺寸         | `'mini' \| 'small' \| 'medium'` | `'medium'`   |
+| autoResize           | 是否自适应父容器 | `boolean`                       | `true`       |
+| pagination           | 分页配置         | `PaginationConfig`              | -            |
 
 ### TableColumn
 
 | 参数             | 说明           | 类型             | 默认值 |
 | ---------------- | -------------- | ---------------- | ------ |
 | tableColumnProps | 表格列原生属性 | `VxeColumnProps` | -      |
-| slotConfig       | 自定义插槽配置 | `SlotConfig`     | -      |
 
 #### VxeColumnProps (表格列原生属性)
 
@@ -297,12 +298,35 @@ const toggleLoading = () => {
 | fixed      | 是否固定列     | `'left' \| 'right'`                 | -        |
 | formatter  | 自定义渲染函数 | `(params: any) => string \| number` | -        |
 
-#### SlotConfig (插槽配置)
+### 特殊列配置
 
-| 参数     | 说明                            | 类型                                | 默认值 |
-| -------- | ------------------------------- | ----------------------------------- | ------ |
-| slotType | 插槽类型，参考vxe-table插槽类型 | `'default' \| 'header' \| 'edit'`   | -      |
-| slotArea | 插槽区域                        | `'column' \| 'table' \| 'checkbox'` | -      |
+#### checkBoxColumnConfigProps (复选框列配置)
+
+| 参数             | 说明             | 类型             | 默认值 |
+| ---------------- | ---------------- | ---------------- | ------ |
+| show             | 是否显示复选框   | `boolean`        | -      |
+| tableColumnProps | 复选框列原生属性 | `VxeColumnProps` | -      |
+
+#### seqColumnConfigProps (序号列配置)
+
+| 参数             | 说明           | 类型             | 默认值 |
+| ---------------- | -------------- | ---------------- | ------ |
+| show             | 是否显示序号   | `boolean`        | -      |
+| tableColumnProps | 序号列原生属性 | `VxeColumnProps` | -      |
+
+#### expandColumnConfigProps (展开列配置)
+
+| 参数             | 说明           | 类型             | 默认值 |
+| ---------------- | -------------- | ---------------- | ------ |
+| show             | 是否显示展开列 | `boolean`        | -      |
+| tableColumnProps | 展开列原生属性 | `VxeColumnProps` | -      |
+
+#### radioColumnConfigProps (单选框列配置)
+
+| 参数             | 说明             | 类型             | 默认值 |
+| ---------------- | ---------------- | ---------------- | ------ |
+| show             | 是否显示单选框   | `boolean`        | -      |
+| tableColumnProps | 单选框列原生属性 | `VxeColumnProps` | -      |
 
 ### PaginationConfig
 
@@ -343,26 +367,32 @@ const toggleLoading = () => {
 
 ### Table Slots
 
-| 插槽名                       | 说明           | 参数                        |
-| ---------------------------- | -------------- | --------------------------- |
-| [field]-slot-column-default  | 自定义列内容   | `{ row, rowIndex, column }` |
-| [field]-slot-column-header   | 自定义列头     | `{ column }`                |
-| [field]-slot-column-edit     | 自定义编辑内容 | `{ row, rowIndex, column }` |
-| checkbox-slot-column-default | 自定义复选框列 | `{ row, rowIndex }`         |
+| 插槽名                       | 说明             | 参数                        |
+| ---------------------------- | ---------------- | --------------------------- |
+| [field]-slot-column-default  | 自定义列内容     | `{ row, rowIndex, column }` |
+| [field]-slot-column-header   | 自定义列头       | `{ column }`                |
+| checkbox-slot-column-default | 自定义复选框列   | `{ row, rowIndex }`         |
+| seq-slot-column-default      | 自定义序号列     | `{ rowIndex }`              |
+| expand-slot-column-content   | 自定义展开列内容 | `{ row, rowIndex }`         |
+| radio-slot-column-default    | 自定义单选框列   | `{ row, rowIndex }`         |
 
 **插槽命名规则：**
 
-- 列内容插槽：`{field}-slot-column-{slotType}`
-- 复选框插槽：`checkbox-slot-column-default`
+- 普通列插槽：`{field}-slot-column-{slotType}`
+- 特殊列插槽：
+  - 复选框：`checkbox-slot-column-default`
+  - 序号：`seq-slot-column-default`
+  - 展开：`expand-slot-column-content`
+  - 单选框：`radio-slot-column-default`
 - `{field}` 为列的 field 属性值
-- `{slotType}` 为插槽类型 (default、header、edit 等)
+- `{slotType}` 为插槽类型 (default、header 等)
 
 ## 注意事项
 
 1. 使用 Table 组件需要安装 `vxe-table@^4.7.0` 和 `xe-utils` 依赖
-2. 自定义列内容需要在 `columns` 中设置 `slotConfig` 属性，并按照命名规则定义插槽
-3. 插槽命名必须严格按照 `{field}-slot-{slotArea}-{slotType}` 格式
-4. 复选框插槽固定使用 `checkbox-slot-column-default` 命名
+2. 自定义列内容需要按照插槽命名规则定义插槽
+3. 特殊列（复选框、序号、展开、单选框）通过对应的配置属性控制显示
+4. 插槽命名必须严格按照命名规则
 5. 分页功能使用 `vxe-pager` 组件，需要手动处理数据分页逻辑
 6. 表格的高级功能（如虚拟滚动、树形数据等）可以通过 `getTableInstance` 方法获取原始实例来实现
 7. 分页器支持多种布局配置，可通过 `pagination` 配置项控制显示内容
