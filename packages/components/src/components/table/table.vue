@@ -21,22 +21,26 @@
         v-bind="column.tableColumnProps"
       >
         <template #default="slotData">
-          <template v-if="getSlotKey(column) in getColumnSlot('default')">
-            <slot :name="getSlotKey(column)" v-bind="slotData"></slot>
+          <template v-if="getSlotKey(column, 'default') in getColumnSlot('default')">
+            <slot :name="getSlotKey(column, 'default')" v-bind="slotData"></slot>
           </template>
           <template v-else>
             {{ slotData.row[column.tableColumnProps.field || ''] }}
           </template>
         </template>
         <template #header="slotData">
-          <template v-if="getSlotKey(column) in getColumnSlot('header')">
-            <slot :name="getSlotKey(column)" v-bind="slotData"></slot>
+          <template v-if="getSlotKey(column, 'header') in getColumnSlot('header')">
+            <slot :name="getSlotKey(column, 'header')" v-bind="slotData"></slot>
           </template>
           <template v-else>
             {{ slotData.column.title }}
           </template>
         </template>
       </vxe-column>
+      <!-- vxe表格插槽 -->
+      <template v-for="(_, slotKey) in slots" :key="slotKey + 'table'" #[slotKey]="slotData">
+        <slot :name="slotKey" v-bind="slotData"></slot>
+      </template>
     </vxe-table>
 
     <!-- 分页器 -->
@@ -61,21 +65,21 @@ const props = defineProps<IipTableProps>()
 // 解构 props
 const { pagination, columns, checkBoxColumnConfig } = toRefs<IipTableProps>(props)
 const getColumnSlot = (slotType: string) => {
-  const columnSlot = columns?.value?.filter(column => column.slotConfig?.slotType === slotType)
+  const columnSlot = columns?.value
   if (columnSlot && columnSlot.length > 0) {
-    const defaultColumnSlotMap: Record<string, any> = {}
+    const columnSlotMap: Record<string, any> = {}
     columnSlot.forEach(column => {
-      const slotKey = getSlotKey(column)
+      const slotKey = getSlotKey(column, slotType)
       if (slots[slotKey]) {
-        defaultColumnSlotMap[slotKey] = slots[slotKey]
+        columnSlotMap[slotKey] = slots[slotKey]
       }
     })
-    return defaultColumnSlotMap
+    return columnSlotMap
   }
   return {}
 }
-const getSlotKey = (column: TableColumn) => {
-  return `${column.tableColumnProps.field}-slot-${column.slotConfig?.slotArea}-${column.slotConfig?.slotType}`
+const getSlotKey = (column: TableColumn, slotType: string) => {
+  return `${column.tableColumnProps.field}-slot-column-${slotType}`
 }
 const getCheckBoxSlot = computed(() => {
   return slots['checkbox-slot-column-default']

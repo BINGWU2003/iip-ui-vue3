@@ -3,18 +3,11 @@ import type { VxePagerProps } from 'vxe-pc-ui'
 export interface TableColumn {
   /** 表格列原生属性 */
   tableColumnProps: VxeColumnProps
-  /** 自定义插槽配置 */
-  slotConfig?: {
-    /** 插槽类型 参考vxe-table,vxe-column插槽类型 */
-    slotType: string
-    /** 插槽区域 */
-    slotArea: 'column' | 'table' | 'checkbox'
-  }
 }
 export interface checkBoxColumnConfigProps {
   /** 是否显示复选框 */
   show?: boolean
-  tableColumnProps?: TableColumn
+  tableColumnProps?: VxeColumnProps
 }
 export interface IipTableProps {
   /** 表格列配置 */
