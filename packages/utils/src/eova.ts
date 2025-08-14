@@ -43,87 +43,115 @@ type TableColumnProps = {
   fixed?: 'left' | 'right'
   sortable?: boolean
 }
-type TableProps = {
-  showAddButton?: boolean
-  showEditButton?: boolean
-  showDeleteButton?: boolean
-  showViewButton?: boolean
-}
-type CheckBoxColumnConfig = {
-  show?: boolean
-  tableColumnProps?: TableColumnProps
-}
 
 class EovaToAvueConverter {
+  private readonly _fieldTypeMap: Record<string, string>
+
   /**
    * 构造函数
    */
   constructor() {
-    this.fieldTypeMap = {
+    this._fieldTypeMap = {
+      // 基础输入组件
       文本框: 'input',
       文本域: 'textarea',
       数字框: 'number',
+      自增框: 'input',
+      密码框: 'password',
+
+      // 日期时间组件
       日期框: 'date',
       时间框: 'datetime',
       时间框2: 'datetime',
+      年: 'year',
+      月: 'month',
+      日: 'date',
+
+      // 选择组件
       下拉框: 'select',
       单选框: 'radio',
       复选框: 'checkbox',
       布尔框: 'switch',
+      查找框: 'select',
+      下拉树: 'tree',
+      输入选择框: 'select',
+
+      // 媒体组件
       图片框: 'upload',
       多图框: 'upload',
       多图框2: 'upload',
-      编辑框: 'ueditor',
-      查找框: 'select',
-      下拉树: 'tree',
-      年: 'year',
-      月: 'month',
-      日: 'date',
-      // 根据meta.md补充的映射关系
-      JSON: 'textarea',
       文件框: 'upload',
+
+      // 富文本和特殊组件
+      编辑框: 'ueditor',
+      JSON: 'textarea',
+      JSON框: 'textarea',
       图标框: 'icon',
-      自增框: 'input',
-      密码框: 'password',
       颜色框: 'color',
       坐标框: 'input',
-      SVG: 'input',
-      输入选择框: 'select',
-      JSON框: 'textarea'
+      SVG: 'input'
     }
   }
 
-  get fieldTypeMap() {
-    return this.fieldTypeMap
+  /**
+   * 获取字段类型映射（只读副本）
+   */
+  get fieldTypeMap(): Record<string, string> {
+    return { ...this._fieldTypeMap }
   }
+
+  /**
+   * 设置字段类型映射
+   */
   set fieldTypeMap(fieldTypeMap: Record<string, string>) {
-    this.fieldTypeMap = fieldTypeMap
+    Object.assign(this._fieldTypeMap, fieldTypeMap)
   }
 
-  convertColumns(fields: EovaField[]) {
-    // 过滤掉cn为空字符的字段
-    return fields
-      .filter(field => field.cn && field.cn.trim() !== '')
-      .map(field => {
-        const tableColumnProps: TableColumnProps = {}
-        // 列字段转换
-        tableColumnProps.field = field.en
-        tableColumnProps.title = field.cn
-        // 宽度转换
-        if (!isNullOrUndefined(field.width)) {
-          tableColumnProps.width = field.width
-        }
-        // 根据meta.md，如果is_show为false，则不在列表显示
-        if (!isNullOrUndefined(field.is_show)) {
-          tableColumnProps.visible = field.is_show
-        }
-        // 可排序转换
-        if (!isNullOrUndefined(field.is_order)) {
-          tableColumnProps.sortable = field.is_order
-        }
+  /**
+   * 转换字段数组为表格列配置
+   * @param fields Eova字段数组
+   * @returns 表格列配置数组
+   */
+  convertColumns(fields: EovaField[]): TableColumnProps[] {
+    return fields.filter(this._isValidField).map(this._convertField.bind(this))
+  }
 
-        return tableColumnProps
-      })
+  /**
+   * 检查字段是否有效
+   * @param field Eova字段
+   * @returns 是否有效
+   */
+  private _isValidField(field: EovaField): boolean {
+    return Boolean(field.cn?.trim())
+  }
+
+  /**
+   * 转换单个字段
+   * @param field Eova字段
+   * @returns 表格列属性
+   */
+  private _convertField(field: EovaField): TableColumnProps {
+    const tableColumnProps: TableColumnProps = {
+      field: field.en,
+      title: field.cn
+    }
+
+    // 宽度转换
+    if (!isNullOrUndefined(field.width)) {
+      tableColumnProps.width = field.width
+    }
+
+    // 显示状态转换
+    if (!isNullOrUndefined(field.is_show)) {
+      tableColumnProps.visible = field.is_show
+    }
+
+    // 排序转换
+    if (!isNullOrUndefined(field.is_order)) {
+      tableColumnProps.sortable = field.is_order
+    }
+
+    return tableColumnProps
   }
 }
 

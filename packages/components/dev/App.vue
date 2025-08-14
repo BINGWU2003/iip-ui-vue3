@@ -173,6 +173,7 @@ onMounted(() => {
     const instance = tableRef.value?.getTableInstance()
     console.log(instance?.getTableData())
   }, 1000)
+  console.log(eovaConverter)
 })
 </script>
 
