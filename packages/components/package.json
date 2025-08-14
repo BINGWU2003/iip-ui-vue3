@@ -29,6 +29,7 @@
   "dependencies": {
     "@bingwu/iip-ui-utils": "^1.0.0",
     "vue": "^3.3.8",
+    "vxe-pc-ui": "4.8.15",
     "vxe-table": "^4.15.6",
     "xe-utils": "^3.7.8"
   },

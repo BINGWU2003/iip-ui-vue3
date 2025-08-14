@@ -248,6 +248,7 @@ const toggleLoading = () => {
 
 1. 使用 Table 组件需要安装 `vxe-table@^4.7.0` 和 `xe-utils` 依赖
 2. 自定义列内容需要在 `columns` 中设置 `slotName` 属性
-3. 分页功能需要手动处理数据分页逻辑
+3. 分页功能使用 `vxe-pager` 组件，需要手动处理数据分页逻辑
 4. 表格的高级功能（如虚拟滚动、树形数据等）可以通过 `getTableInstance` 方法获取原始实例来实现
-5. 当前版本基于 vxe-table 4.7.0，已适配最新 API（如 `column-config` 替代废弃的 `resizable` 属性）
+5. 分页器支持多种布局配置，可通过 `pagination` 配置项控制显示内容
+6. 当前版本基于 vxe-table 4.7.0，已适配最新 API（如 `column-config` 替代废弃的 `resizable` 属性）
