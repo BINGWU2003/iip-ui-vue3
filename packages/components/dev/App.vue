@@ -74,7 +74,7 @@
 import { ref, computed, onMounted, reactive } from 'vue'
 import { ElButton, ElMessage } from 'element-plus'
 import type { IipTableExpose } from '../src/components/table/types'
-
+import { eovaConverter } from '@bingwu/iip-ui-utils'
 const tableRef = ref<IipTableExpose | null>(null)
 // 基础方法
 const showMessage = () => {

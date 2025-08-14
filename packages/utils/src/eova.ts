@@ -127,5 +127,11 @@ class EovaToAvueConverter {
   }
 }
 
-// 导出转换工具
+// 导出转换工具类
+export { EovaToAvueConverter }
+
+// 导出转换工具实例
+export const eovaConverter = new EovaToAvueConverter()
+
+// 默认导出实例（向后兼容）
 export default new EovaToAvueConverter()

@@ -72,7 +72,7 @@ importers:
   packages/components:
     dependencies:
       '@bingwu/iip-ui-utils':
-        specifier: ^1.0.0
+        specifier: ^1.2.1
         version: link:../utils
       vue:
         specifier: ^3.3.8
