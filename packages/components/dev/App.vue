@@ -27,13 +27,33 @@
             @checkbox-all="selectAllChangeEvent"
             @checkbox-change="selectChangeEvent"
             :checkbox-config="{ highlight: true }"
-            :check-box-column-config="{ show: true, tableColumnProps: { width: 60 } }"
-            @page-change="pageChangeEvent"
+            :check-box-column-config="{ show: true, tableColumnProps: { width: 120 } }"
+            :seq-column-config="{ show: true, tableColumnProps: { width: 60 } }"
+            :expand-column-config="{ show: true, tableColumnProps: { width: 60 } }"
+            :radio-column-config="{ show: true, tableColumnProps: { width: 60 } }"
+            :edit-config="{ trigger: 'click', mode: 'cell' }"
+            :column-config="{ resizable: true }"
           >
-            <template #checkbox-slot-column="{ row }"> 你好 {{ row.name }} </template>
-
-            <template #department-slot-column="{ row }"> 你好 {{ row.department }} </template>
-            <template #createTime-slot-column="{ row }"> 你好 {{ row.createTime }} </template>
+            <template #checkbox-slot-column-default="{ row }"> 复选框插槽 {{ row.name }} </template>
+            <template #radio-slot-column-default="{ row }"> 单选框插槽 {{ row.name }} </template>
+            <template #department-slot-column-default="{ row }">
+              默认插槽 {{ row.department }}
+            </template>
+            <template #department-slot-column-header="{ column }">
+              列头插槽 {{ column.title }}
+            </template>
+            <template #createTime-slot-column-default="{ row }">
+              默认插槽 {{ row.createTime }}
+            </template>
+            <template #expand-slot-column-content="{ row }"> 展开插槽 {{ row.name }} </template>
+            <template #empty>
+              <span style="color: red">
+                <img
+                  src="https://n.sinaimg.cn/sinacn17/w120h120/20180314/89fc-fyscsmv5911424.gif"
+                />
+                <p>没有更多数据了！</p>
+              </span>
+            </template>
           </iip-table>
         </div>
       </div>
@@ -42,11 +62,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, reactive } from 'vue'
 import { ElButton, ElMessage } from 'element-plus'
+import type { IipTableExpose } from '../src/components/table/types'
 
-const tableRef = ref(null)
-
+const tableRef = ref<IipTableExpose | null>(null)
 // 基础方法
 const showMessage = () => {
   ElMessage.success('开发环境配置成功！')
@@ -59,68 +79,58 @@ const pageChangeEvent = (params: any) => {
 // Table 数据
 const tableData = ref([
   {
-    id: 1,
     name: '张三',
-    age: 25,
+    age: 18,
     email: 'zhangsan@example.com',
-    department: '技术部',
-    status: 1,
-    createTime: '2024-01-15'
+    department: '研发部',
+    createTime: '2021-01-01'
   },
   {
-    id: 2,
-    name: '李四',
-    age: 30,
-    email: 'lisi@example.com',
-    department: '产品部',
-    status: 2,
-    createTime: '2024-02-20'
+    name: '张三',
+    age: 18,
+    email: 'zhangsan@example.com',
+    department: '研发部',
+    createTime: '2021-01-01'
   },
   {
-    id: 3,
-    name: '王五',
-    age: 28,
-    email: 'wangwu@example.com',
-    department: '设计部',
-    status: 1,
-    createTime: '2024-03-10'
+    name: '张三',
+    age: 18,
+    email: 'zhangsan@example.com',
+    department: '研发部',
+    createTime: '2021-01-01'
   },
   {
-    id: 4,
-    name: '赵六',
-    age: 32,
-    email: 'zhaoliu@example.com',
-    department: '运营部',
-    status: 0,
-    createTime: '2024-04-05'
-  },
-  {
-    id: 5,
-    name: '钱七',
-    age: 27,
-    email: 'qianqi@example.com',
-    department: '技术部',
-    status: 1,
-    createTime: '2024-05-12'
+    name: '张三',
+    age: 18,
+    email: 'zhangsan@example.com',
+    department: '研发部',
+    createTime: '2021-01-01'
   }
 ])
 
 // 基础列配置
 const basicColumns = [
-  { tableColumnProps: { field: 'name', title: '姓名', width: 120 } },
   {
-    tableColumnProps: { field: 'age', title: '年龄', width: 80, sortable: true }
+    tableColumnProps: { field: 'name', title: '姓名', width: 120 }
+  },
+  {
+    tableColumnProps: {
+      field: 'age',
+      title: '年龄',
+      width: 200,
+      sortable: true,
+      editRender: { name: 'input', attrs: { type: 'number' } }
+    }
   },
   { tableColumnProps: { field: 'email', title: '邮箱', minWidth: 200 } },
   {
-    tableColumnProps: { field: 'department', title: '部门', width: 120 },
-    slotName: 'department-slot'
+    tableColumnProps: { field: 'department', title: '部门', width: 120 }
   },
   {
-    tableColumnProps: { field: 'createTime', title: '创建时间', width: 120 },
-    slotName: 'createTime-slot'
+    tableColumnProps: { field: 'createTime', title: '创建时间', width: 120 }
   }
 ]
+
 const selectAllChangeEvent = (params: any) => {
   console.log(params)
 }
@@ -138,7 +148,10 @@ const paginationConfig = ref({
 })
 
 onMounted(() => {
-  tableRef.value?.getTableInstance()
+  setTimeout(() => {
+    const instance = tableRef.value?.getTableInstance()
+    console.log(instance?.getTableData())
+  }, 1000)
 })
 </script>
 
