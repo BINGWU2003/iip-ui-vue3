@@ -28,7 +28,9 @@ const columns = [
 </script>
 ```
 
-## 带复选框和序号
+## 特殊列配置
+
+### 复选框和序号列
 
 表格支持复选框选择和序号显示。
 
@@ -38,6 +40,7 @@ const columns = [
     :data="tableData"
     :columns="columns"
     :check-box-column-config="{ show: true }"
+    :seq-column-config="{ show: true }"
     border
     @checkbox-change="handleCheckboxChange"
     @checkbox-all="handleCheckboxAll"
@@ -45,6 +48,12 @@ const columns = [
 </template>
 
 <script setup>
+const columns = [
+  { tableColumnProps: { field: 'name', title: '姓名', width: 120 } },
+  { tableColumnProps: { field: 'age', title: '年龄', width: 80 } },
+  { tableColumnProps: { field: 'email', title: '邮箱', minWidth: 200 } }
+]
+
 const handleCheckboxChange = params => {
   console.log('复选框变化:', params)
 }
@@ -53,6 +62,93 @@ const handleCheckboxAll = params => {
   console.log('全选变化:', params)
 }
 </script>
+```
+
+### 单选框列
+
+支持单选框选择模式。
+
+```vue
+<template>
+  <iip-table
+    :data="tableData"
+    :columns="columns"
+    :radio-column-config="{ show: true }"
+    border
+    @radio-change="handleRadioChange"
+  />
+</template>
+
+<script setup>
+const handleRadioChange = params => {
+  console.log('单选框变化:', params)
+}
+</script>
+```
+
+### 展开列
+
+支持行展开功能。
+
+```vue
+<template>
+  <iip-table :data="tableData" :columns="columns" :expand-column-config="{ show: true }" border>
+    <!-- 展开内容自定义 -->
+    <template #expand-slot-column-content="{ row }">
+      <div class="expand-content">
+        <p><strong>详细信息:</strong></p>
+        <p>ID: {{ row.id }}</p>
+        <p>创建时间: {{ row.createTime }}</p>
+        <p>备注: {{ row.remark || '无' }}</p>
+      </div>
+    </template>
+  </iip-table>
+</template>
+
+<style>
+.expand-content {
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 4px;
+}
+</style>
+```
+
+### 自定义特殊列
+
+所有特殊列都支持自定义渲染。
+
+```vue
+<template>
+  <iip-table
+    :data="tableData"
+    :columns="columns"
+    :check-box-column-config="{ show: true }"
+    :seq-column-config="{ show: true }"
+    border
+  >
+    <!-- 自定义序号列 -->
+    <template #seq-slot-column-default="{ rowIndex }">
+      <span class="custom-seq">No.{{ rowIndex + 1 }}</span>
+    </template>
+
+    <!-- 自定义复选框列 -->
+    <template #checkbox-slot-column-default="{ row }">
+      <span class="custom-checkbox"> <i class="el-icon-check"></i> {{ row.name }} </span>
+    </template>
+  </iip-table>
+</template>
+
+<style>
+.custom-seq {
+  color: #409eff;
+  font-weight: bold;
+}
+
+.custom-checkbox {
+  color: #67c23a;
+}
+</style>
 ```
 
 ## 分页表格
@@ -136,18 +232,10 @@ const customColumns = [
     tableColumnProps: { field: 'email', title: '邮箱', minWidth: 200 }
   },
   {
-    tableColumnProps: { field: 'status', title: '状态', width: 100 },
-    slotConfig: {
-      slotType: 'default',
-      slotArea: 'column'
-    }
+    tableColumnProps: { field: 'status', title: '状态', width: 100 }
   },
   {
-    tableColumnProps: { field: 'actions', title: '操作', width: 160 },
-    slotConfig: {
-      slotType: 'default',
-      slotArea: 'column'
-    }
+    tableColumnProps: { field: 'actions', title: '操作', width: 160 }
   }
 ]
 
@@ -193,21 +281,13 @@ const deleteRow = row => {
 <script setup>
 const headerColumns = [
   {
-    tableColumnProps: { field: 'name', title: '姓名', width: 120 },
-    slotConfig: {
-      slotType: 'header',
-      slotArea: 'column'
-    }
-  },
-  {
-    tableColumnProps: { field: 'name', title: '姓名', width: 120 },
-    slotConfig: {
-      slotType: 'default',
-      slotArea: 'column'
-    }
+    tableColumnProps: { field: 'name', title: '姓名', width: 120 }
   },
   {
     tableColumnProps: { field: 'age', title: '年龄', width: 80 }
+  },
+  {
+    tableColumnProps: { field: 'email', title: '邮箱', minWidth: 200 }
   }
 ]
 </script>
