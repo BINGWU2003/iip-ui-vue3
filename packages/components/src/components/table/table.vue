@@ -5,6 +5,7 @@
       <!-- 展开列 -->
       <vxe-column
         type="expand"
+        field="expand"
         v-if="expandColumnConfig?.show"
         v-bind="expandColumnConfig.tableColumnProps"
       >
@@ -13,7 +14,12 @@
         </template>
       </vxe-column>
       <!-- 序号 -->
-      <vxe-column type="seq" v-if="seqColumnConfig?.show" v-bind="seqColumnConfig.tableColumnProps">
+      <vxe-column
+        field="seq"
+        type="seq"
+        v-if="seqColumnConfig?.show"
+        v-bind="seqColumnConfig.tableColumnProps"
+      >
         <template #default="slotData" v-if="getSeqSlot('default')">
           <slot name="seq-slot-column-default" v-bind="slotData"></slot>
         </template>
@@ -21,6 +27,7 @@
       <!-- 复选框 -->
       <vxe-column
         type="checkbox"
+        field="checkbox"
         v-if="checkBoxColumnConfig?.show"
         v-bind="checkBoxColumnConfig.tableColumnProps"
       >
@@ -31,6 +38,7 @@
       <!-- 单选框 -->
       <vxe-column
         type="radio"
+        field="radio"
         v-if="radioColumnConfig?.show"
         v-bind="radioColumnConfig.tableColumnProps"
       >
