@@ -2,6 +2,14 @@
 
 基于 vxe-table 二次封装的表格组件，提供了丰富的功能和简洁的 API。
 
+## 特性
+
+- 🚀 **高性能**：智能插槽渲染，只渲染实际使用的插槽，避免不必要的性能开销
+- 🎨 **灵活定制**：支持多种插槽类型（内容、表头、编辑、筛选、页脚、校验）
+- 📦 **开箱即用**：基于 vxe-table 4.7+ 封装，提供简洁统一的 API
+- 🔧 **类型安全**：完整的 TypeScript 类型定义
+- 🎯 **插槽优化**：精确的插槽检测机制，提升组件渲染效率
+
 ## 基础用法
 
 最简单的表格用法。
@@ -293,6 +301,103 @@ const headerColumns = [
 </script>
 ```
 
+### 高级自定义列插槽
+
+支持更多类型的列插槽，包括编辑、筛选、页脚、校验等。
+
+```vue
+<template>
+  <iip-table
+    :data="tableData"
+    :columns="advancedColumns"
+    :edit-config="{ trigger: 'click', mode: 'cell' }"
+    border
+  >
+    <!-- 编辑插槽 -->
+    <template #status-slot-column-edit="{ row }">
+      <el-select v-model="row.status" placeholder="请选择状态">
+        <el-option label="正常" value="1"></el-option>
+        <el-option label="禁用" value="0"></el-option>
+      </el-select>
+    </template>
+
+    <!-- 筛选插槽 -->
+    <template #department-slot-column-filter="{ column }">
+      <el-input placeholder="筛选部门" size="mini"></el-input>
+    </template>
+
+    <!-- 页脚插槽 -->
+    <template #amount-slot-column-footer="{ column }">
+      <strong>总计: ¥{{ getTotalAmount() }}</strong>
+    </template>
+
+    <!-- 校验插槽 -->
+    <template #email-slot-column-valid="{ row, rule }">
+      <span class="error-tip">{{ rule.content }}</span>
+    </template>
+  </iip-table>
+</template>
+
+<script setup>
+const advancedColumns = [
+  {
+    tableColumnProps: {
+      field: 'name',
+      title: '姓名',
+      width: 120,
+      editRender: { name: 'input' }
+    }
+  },
+  {
+    tableColumnProps: {
+      field: 'department',
+      title: '部门',
+      width: 120,
+      filters: [{ data: '' }]
+    }
+  },
+  {
+    tableColumnProps: {
+      field: 'status',
+      title: '状态',
+      width: 100,
+      editRender: { name: 'select' }
+    }
+  },
+  {
+    tableColumnProps: {
+      field: 'amount',
+      title: '金额',
+      width: 120,
+      footerRender: { name: 'sum' }
+    }
+  },
+  {
+    tableColumnProps: {
+      field: 'email',
+      title: '邮箱',
+      minWidth: 200,
+      editRules: [
+        { required: true, message: '邮箱不能为空' },
+        { pattern: /\S+@\S+\.\S+/, message: '邮箱格式不正确' }
+      ]
+    }
+  }
+]
+
+const getTotalAmount = () => {
+  return tableData.value.reduce((sum, item) => sum + (item.amount || 0), 0)
+}
+</script>
+
+<style>
+.error-tip {
+  color: #f56c6c;
+  font-size: 12px;
+}
+</style>
+```
+
 ### 复选框列自定义
 
 支持自定义复选框列的内容。
@@ -447,14 +552,18 @@ const toggleLoading = () => {
 
 ### Table Slots
 
-| 插槽名                       | 说明             | 参数                        |
-| ---------------------------- | ---------------- | --------------------------- |
-| [field]-slot-column-default  | 自定义列内容     | `{ row, rowIndex, column }` |
-| [field]-slot-column-header   | 自定义列头       | `{ column }`                |
-| checkbox-slot-column-default | 自定义复选框列   | `{ row, rowIndex }`         |
-| seq-slot-column-default      | 自定义序号列     | `{ rowIndex }`              |
-| expand-slot-column-content   | 自定义展开列内容 | `{ row, rowIndex }`         |
-| radio-slot-column-default    | 自定义单选框列   | `{ row, rowIndex }`         |
+| 插槽名                       | 说明               | 参数                        |
+| ---------------------------- | ------------------ | --------------------------- |
+| [field]-slot-column-default  | 自定义列内容       | `{ row, rowIndex, column }` |
+| [field]-slot-column-header   | 自定义列头         | `{ column }`                |
+| [field]-slot-column-edit     | 自定义编辑内容     | `{ row, rowIndex, column }` |
+| [field]-slot-column-filter   | 自定义筛选内容     | `{ column }`                |
+| [field]-slot-column-footer   | 自定义页脚内容     | `{ column, items }`         |
+| [field]-slot-column-valid    | 自定义校验错误提示 | `{ row, column, rule }`     |
+| checkbox-slot-column-default | 自定义复选框列     | `{ row, rowIndex }`         |
+| seq-slot-column-default      | 自定义序号列       | `{ rowIndex }`              |
+| expand-slot-column-content   | 自定义展开列内容   | `{ row, rowIndex }`         |
+| radio-slot-column-default    | 自定义单选框列     | `{ row, rowIndex }`         |
 
 **插槽命名规则：**
 
@@ -465,16 +574,33 @@ const toggleLoading = () => {
   - 展开：`expand-slot-column-content`
   - 单选框：`radio-slot-column-default`
 - `{field}` 为列的 field 属性值
-- `{slotType}` 为插槽类型 (default、header 等)
+- `{slotType}` 为插槽类型：
+  - `default`：默认内容插槽
+  - `header`：列头插槽
+  - `edit`：编辑状态插槽
+  - `filter`：筛选插槽
+  - `footer`：页脚插槽
+  - `valid`：校验错误提示插槽
+
+**插槽优化说明：**
+
+从 v2.0.0 开始，表格组件进行了插槽渲染优化：
+
+- 只有当列确实定义了插槽时，才会渲染对应的 template
+- 未使用的插槽不会产生额外的 DOM 节点，提升渲染性能
+- 插槽检查基于 `hasColumnSlot` 函数，精确判断插槽是否存在
 
 ## 注意事项
 
 1. 使用 Table 组件需要安装 `vxe-table@^4.7.0` 和 `xe-utils` 依赖
 2. 自定义列内容需要按照插槽命名规则定义插槽
 3. 特殊列（复选框、序号、展开、单选框）通过对应的配置属性控制显示
-4. 插槽命名必须严格按照命名规则
+4. 插槽命名必须严格按照命名规则：`{field}-slot-column-{slotType}`
 5. 分页功能使用 `vxe-pager` 组件，需要手动处理数据分页逻辑
 6. 表格的高级功能（如虚拟滚动、树形数据等）可以通过 `getTableInstance` 方法获取原始实例来实现
 7. 分页器支持多种布局配置，可通过 `pagination` 配置项控制显示内容
 8. 当前版本基于 vxe-table 4.7.0，已适配最新 API（如 `column-config` 替代废弃的 `resizable` 属性）
 9. 列配置结构已更新，需要使用 `tableColumnProps` 包装原始的列属性
+10. **插槽性能优化**：组件会智能检测是否定义了插槽，只渲染实际使用的插槽模板，避免不必要的性能开销
+11. 支持多种插槽类型：`default`（内容）、`header`（表头）、`edit`（编辑）、`filter`（筛选）、`footer`（页脚）、`valid`（校验）
+12. 特殊列插槽只有在定义时才会渲染，如 `expand-slot-column-content` 需要配置 `expandColumnConfig.show: true` 且定义对应插槽
