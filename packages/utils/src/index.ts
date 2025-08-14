@@ -17,3 +17,6 @@ export * from './theme'
 
 // Vue 工具
 export * from './vue'
+
+// Eova 工具
+export * from './eova'
