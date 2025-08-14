@@ -40,7 +40,7 @@
 import { ref, computed, toRefs, useAttrs } from 'vue'
 import { VxeTable, VxeColumn, VxeTableInstance } from 'vxe-table'
 import { VxePager } from 'vxe-pc-ui'
-import type { IipTableProps } from './types'
+import type { IipTableProps, IipTableExpose } from './types'
 import 'vxe-pc-ui/es/style.css'
 defineOptions({
   name: 'IipTable'
@@ -54,7 +54,7 @@ const tableInstance = computed(() => tableRef.value)
 // 解构 props
 const { pagination, columns, checkBoxColumnConfig } = toRefs<IipTableProps>(props)
 
-defineExpose({
+defineExpose<IipTableExpose>({
   getTableInstance: () => tableInstance.value as VxeTableInstance
 })
 </script>
