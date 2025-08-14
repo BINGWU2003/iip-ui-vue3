@@ -51,9 +51,9 @@
             <template #expand-slot-column-content="{ row }"> 展开插槽 {{ row.name }} </template>
             <template #sum-slot-column-default="{ row }"> 合计插槽 {{ sumRowNum(row) }} </template>
             <template #action-slot-column-default="{ row }">
-              操作插槽
-              <el-button type="primary">编辑</el-button>
-              <el-button type="danger">删除</el-button>
+              操作插槽 - {{ row.name }}
+              <el-button type="primary" size="small">编辑</el-button>
+              <el-button type="danger" size="small">删除</el-button>
             </template>
             <template #empty>
               <span style="color: red">
