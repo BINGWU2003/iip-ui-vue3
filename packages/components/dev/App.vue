@@ -33,6 +33,8 @@
             :radio-column-config="{ show: true, tableColumnProps: { width: 60 } }"
             :edit-config="{ trigger: 'click', mode: 'cell' }"
             :column-config="{ resizable: true }"
+            :footer-data="footerData"
+            show-footer
           >
             <template #checkbox-slot-column-default="{ row }"> 复选框插槽 {{ row.name }} </template>
             <template #radio-slot-column-default="{ row }"> 单选框插槽 {{ row.name }} </template>
@@ -47,6 +49,12 @@
             </template>
             <!-- <template #age-slot-column-edit="{ row }"> 编辑插槽 {{ row.age }} </template> -->
             <template #expand-slot-column-content="{ row }"> 展开插槽 {{ row.name }} </template>
+            <template #sum-slot-column-default="{ row }"> 合计插槽 {{ sumRowNum(row) }} </template>
+            <template #action-slot-column-default="{ row }">
+              操作插槽
+              <el-button type="primary">编辑</el-button>
+              <el-button type="danger">删除</el-button>
+            </template>
             <template #empty>
               <span style="color: red">
                 <img
@@ -76,7 +84,13 @@ const showMessage = () => {
 const pageChangeEvent = (params: any) => {
   console.log(params)
 }
-
+const footerData = ref([
+  { seq: '合计', age: '18' },
+  { seq: '平均', age: '18' }
+])
+const sumRowNum = (row: any) => {
+  return row.age + 99
+}
 // Table 数据
 const tableData = ref([
   {
@@ -129,6 +143,12 @@ const basicColumns = [
   },
   {
     tableColumnProps: { field: 'createTime', title: '创建时间', width: 120 }
+  },
+  {
+    tableColumnProps: { field: 'action', title: '操作', width: 200, fixed: 'right' }
+  },
+  {
+    tableColumnProps: { field: 'sum', title: '合计', width: 100 }
   }
 ]
 
