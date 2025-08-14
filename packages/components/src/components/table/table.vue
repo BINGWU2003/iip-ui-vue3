@@ -8,21 +8,14 @@
         v-if="expandColumnConfig?.show"
         v-bind="expandColumnConfig.tableColumnProps"
       >
-        <template #content="slotData">
-          <template v-if="getExpandSlot('content')">
-            <slot name="expand-slot-column-content" v-bind="slotData"></slot>
-          </template>
+        <template #content="slotData" v-if="getExpandSlot('content')">
+          <slot name="expand-slot-column-content" v-bind="slotData"></slot>
         </template>
       </vxe-column>
       <!-- 序号 -->
       <vxe-column type="seq" v-if="seqColumnConfig?.show" v-bind="seqColumnConfig.tableColumnProps">
-        <template #default="slotData">
-          <template v-if="getSeqSlot('default')">
-            <slot name="seq-slot-column-default" v-bind="slotData"></slot>
-          </template>
-          <template v-else>
-            {{ slotData.rowIndex + 1 }}
-          </template>
+        <template #default="slotData" v-if="getSeqSlot('default')">
+          <slot name="seq-slot-column-default" v-bind="slotData"></slot>
         </template>
       </vxe-column>
       <!-- 复选框 -->
@@ -31,10 +24,8 @@
         v-if="checkBoxColumnConfig?.show"
         v-bind="checkBoxColumnConfig.tableColumnProps"
       >
-        <template #default="slotData">
-          <template v-if="getCheckBoxSlot('default')">
-            <slot name="checkbox-slot-column-default" v-bind="slotData"></slot>
-          </template>
+        <template #default="slotData" v-if="getCheckBoxSlot('default')">
+          <slot name="checkbox-slot-column-default" v-bind="slotData"></slot>
         </template>
       </vxe-column>
       <!-- 单选框 -->
@@ -55,16 +46,29 @@
         :key="columnIndex"
         v-bind="column.tableColumnProps"
       >
-        <template v-for="slotType in columnSlotTypeList" :key="slotType" #[slotType]="slotData">
-          <template v-if="getSlotKey(column, slotType) in getColumnSlot(slotType)">
-            <slot :name="getSlotKey(column, slotType)" v-bind="slotData"></slot>
-          </template>
-          <template v-else-if="slotType === 'header'">
-            {{ slotData.column.title }}
-          </template>
-          <template v-else-if="slotType === 'default'">
-            {{ slotData.row[column.tableColumnProps.field || ''] }}
-          </template>
+        <!-- header 插槽 -->
+        <template v-if="hasColumnSlot(column, 'header')" #header="slotData">
+          <slot :name="getSlotKey(column, 'header')" v-bind="slotData"></slot>
+        </template>
+        <!-- default 插槽 -->
+        <template v-if="hasColumnSlot(column, 'default')" #default="slotData">
+          <slot :name="getSlotKey(column, 'default')" v-bind="slotData"></slot>
+        </template>
+        <!-- edit 插槽 -->
+        <template v-if="hasColumnSlot(column, 'edit')" #edit="slotData">
+          <slot :name="getSlotKey(column, 'edit')" v-bind="slotData"></slot>
+        </template>
+        <!-- filter 插槽 -->
+        <template v-if="hasColumnSlot(column, 'filter')" #filter="slotData">
+          <slot :name="getSlotKey(column, 'filter')" v-bind="slotData"></slot>
+        </template>
+        <!-- footer 插槽 -->
+        <template v-if="hasColumnSlot(column, 'footer')" #footer="slotData">
+          <slot :name="getSlotKey(column, 'footer')" v-bind="slotData"></slot>
+        </template>
+        <!-- valid 插槽 -->
+        <template v-if="hasColumnSlot(column, 'valid')" #valid="slotData">
+          <slot :name="getSlotKey(column, 'valid')" v-bind="slotData"></slot>
         </template>
       </vxe-column>
       <!-- vxe表格插槽 -->
@@ -81,6 +85,8 @@
 </template>
 
 <script setup lang="ts">
+// 列文档参考：https://vxetable.cn/v4/#/column/
+// 表格文档参考：https://vxetable.cn/v4/#/table/
 import { ref, computed, toRefs, useAttrs, useSlots } from 'vue'
 import { VxeTable, VxeColumn, VxeTableInstance } from 'vxe-table'
 import { VxePager } from 'vxe-pc-ui'
@@ -102,24 +108,16 @@ const {
   radioColumnConfig
 } = toRefs<IipTableProps>(props)
 
-const columnSlotTypeList = ['header', 'default']
 // 表格实例
 const tableRef = ref()
 const tableInstance = computed(() => tableRef.value)
-const getColumnSlot = (slotType: string) => {
-  const columnSlot = columns?.value
-  if (columnSlot && columnSlot.length > 0) {
-    const columnSlotMap: Record<string, any> = {}
-    columnSlot.forEach(column => {
-      const slotKey = getSlotKey(column, slotType)
-      if (slots[slotKey]) {
-        columnSlotMap[slotKey] = slots[slotKey]
-      }
-    })
-    return columnSlotMap
-  }
-  return {}
+
+// 检查特定列是否有插槽
+const hasColumnSlot = (column: TableColumn, slotType: string) => {
+  const slotKey = getSlotKey(column, slotType)
+  return !!slots[slotKey]
 }
+
 const getSlotKey = (column: TableColumn, slotType: string) => {
   return `${column.tableColumnProps.field}-slot-column-${slotType}`
 }

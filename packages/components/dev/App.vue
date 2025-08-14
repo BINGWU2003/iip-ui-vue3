@@ -45,6 +45,7 @@
             <template #createTime-slot-column-default="{ row }">
               默认插槽 {{ row.createTime }}
             </template>
+            <!-- <template #age-slot-column-edit="{ row }"> 编辑插槽 {{ row.age }} </template> -->
             <template #expand-slot-column-content="{ row }"> 展开插槽 {{ row.name }} </template>
             <template #empty>
               <span style="color: red">
