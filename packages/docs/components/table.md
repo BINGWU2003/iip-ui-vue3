@@ -6,9 +6,98 @@
 
 - 🚀 **高性能**：智能插槽渲染，只渲染实际使用的插槽，避免不必要的性能开销
 - 🎨 **灵活定制**：支持多种插槽类型（内容、表头、编辑、筛选、页脚、校验）
-- 📦 **开箱即用**：基于 vxe-table 4.7+ 封装，提供简洁统一的 API
+- 📦 **开箱即用**：基于 vxe-table 4.15+ 封装，提供简洁统一的 API
 - 🔧 **类型安全**：完整的 TypeScript 类型定义
 - 🎯 **插槽优化**：精确的插槽检测机制，提升组件渲染效率
+- 🛠️ **功能丰富**：支持分页、排序、筛选、编辑、展开、复选框、单选框等功能
+
+## 安装
+
+### 安装组件库
+
+```bash
+# 使用 npm
+npm install @bingwu/iip-ui-components @bingwu/iip-ui-theme
+
+# 使用 pnpm
+pnpm add @bingwu/iip-ui-components @bingwu/iip-ui-theme
+
+# 使用 yarn
+yarn add @bingwu/iip-ui-components @bingwu/iip-ui-theme
+```
+
+### 安装依赖
+
+Table 组件基于 vxe-table 和 vxe-pc-ui，需要安装以下依赖：
+
+```bash
+# 必须依赖
+npm install vxe-table@^4.15.6 vxe-pc-ui@4.8.15 xe-utils@^3.7.8
+
+# 如果使用 Element Plus（推荐）
+npm install element-plus@^2.4.4 @element-plus/icons-vue@^2.1.0
+```
+
+## 全局引入
+
+在 `main.ts` 中引入并注册组件：
+
+```ts
+import './assets/main.css'
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
+
+// Element Plus（可选，但推荐）
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+
+// 必须：vxe-table 相关
+import VxeUITable from 'vxe-table'
+import 'vxe-table/lib/style.css'
+import VxePCUI from 'vxe-pc-ui'
+import 'vxe-pc-ui/lib/style.css'
+
+// IIP UI 组件库
+import IipUI from '@bingwu/iip-ui-components'
+import '@bingwu/iip-ui-theme/dist/index.css'
+
+import App from './App.vue'
+import router from './router'
+
+const app = createApp(App)
+
+// 注册插件（顺序很重要）
+app.use(createPinia())
+app.use(router)
+app.use(VxeUITable) // 必须在 IipUI 之前注册
+app.use(VxePCUI) // 必须在 IipUI 之前注册
+app.use(ElementPlus) // 可选
+app.use(IipUI) // 最后注册 IIP UI
+
+app.mount('#app')
+```
+
+## 按需引入
+
+如果只想使用 Table 组件：
+
+```ts
+import { IipTable } from '@bingwu/iip-ui-components'
+import '@bingwu/iip-ui-theme/dist/index.css'
+
+// 仍需要注册 vxe-table 相关插件
+import VxeUITable from 'vxe-table'
+import 'vxe-table/lib/style.css'
+import VxePCUI from 'vxe-pc-ui'
+import 'vxe-pc-ui/lib/style.css'
+
+const app = createApp(App)
+app.use(VxeUITable)
+app.use(VxePCUI)
+
+// 注册单个组件
+app.component('IipTable', IipTable)
+```
 
 ## 基础用法
 
@@ -16,23 +105,58 @@
 
 ```vue
 <template>
-  <iip-table :data="tableData" :columns="columns" border />
+  <iip-table :data="tableData" :columns="columns" border stripe />
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
+import type { IipTableExpose } from '@bingwu/iip-ui-components'
 
 const tableData = ref([
-  { id: 1, name: '张三', age: 25, email: 'zhangsan@example.com' },
-  { id: 2, name: '李四', age: 30, email: 'lisi@example.com' },
-  { id: 3, name: '王五', age: 28, email: 'wangwu@example.com' }
+  { id: 1, name: '张三', age: 25, email: 'zhangsan@example.com', department: '研发部' },
+  { id: 2, name: '李四', age: 30, email: 'lisi@example.com', department: '产品部' },
+  { id: 3, name: '王五', age: 28, email: 'wangwu@example.com', department: '设计部' }
 ])
 
+// 列配置 - 需要使用 tableColumnProps 包装
 const columns = [
   { tableColumnProps: { field: 'name', title: '姓名', width: 120 } },
-  { tableColumnProps: { field: 'age', title: '年龄', width: 80 } },
+  { tableColumnProps: { field: 'age', title: '年龄', width: 80, sortable: true } },
+  { tableColumnProps: { field: 'department', title: '部门', width: 120 } },
   { tableColumnProps: { field: 'email', title: '邮箱', minWidth: 200 } }
 ]
+</script>
+```
+
+### 获取表格实例
+
+通过 `ref` 可以获取表格实例，调用表格的方法：
+
+```vue
+<template>
+  <div>
+    <el-button @click="getSelectedRows">获取选中行</el-button>
+    <iip-table
+      ref="tableRef"
+      :data="tableData"
+      :columns="columns"
+      :check-box-column-config="{ show: true }"
+      border
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import type { IipTableExpose } from '@bingwu/iip-ui-components'
+
+const tableRef = ref<IipTableExpose | null>(null)
+
+const getSelectedRows = () => {
+  const instance = tableRef.value?.getTableInstance()
+  const selectedRows = instance?.getCheckboxRecords()
+  console.log('选中的行:', selectedRows)
+}
 </script>
 ```
 
@@ -161,47 +285,109 @@ const handleRadioChange = params => {
 
 ## 分页表格
 
-支持分页功能的表格。
+支持分页功能的表格，使用 vxe-pc-ui 的分页器。
 
 ```vue
 <template>
-  <iip-table
-    :data="paginatedData"
-    :columns="columns"
-    :pagination="paginationConfig"
-    border
-    @page-change="handlePageChange"
-    @page-size-change="handlePageSizeChange"
-  />
+  <div>
+    <iip-table
+      :data="paginatedData"
+      :columns="columns"
+      :pagination="paginationConfig"
+      border
+      stripe
+    />
+  </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from 'vue'
 
+// 模拟数据
+const allTableData = ref(
+  Array.from({ length: 100 }, (_, index) => ({
+    id: index + 1,
+    name: `用户${index + 1}`,
+    age: 20 + (index % 40),
+    email: `user${index + 1}@example.com`,
+    department: ['研发部', '产品部', '设计部', '运营部'][index % 4],
+    createTime: new Date(2023, 0, 1 + index).toISOString().split('T')[0]
+  }))
+)
+
+const columns = [
+  { tableColumnProps: { field: 'id', title: 'ID', width: 80 } },
+  { tableColumnProps: { field: 'name', title: '姓名', width: 120 } },
+  { tableColumnProps: { field: 'age', title: '年龄', width: 80, sortable: true } },
+  { tableColumnProps: { field: 'department', title: '部门', width: 120 } },
+  { tableColumnProps: { field: 'email', title: '邮箱', minWidth: 200 } },
+  { tableColumnProps: { field: 'createTime', title: '创建时间', width: 120 } }
+]
+
+// 分页配置
 const paginationConfig = ref({
   currentPage: 1,
   pageSize: 10,
-  total: 100,
-  showTotal: true,
-  showSizes: true,
-  showJumper: true,
-  pageSizes: [10, 20, 50, 100]
+  total: allTableData.value.length,
+  layouts: ['Total', 'Sizes', 'PrevPage', 'Number', 'NextPage', 'Jump'],
+  pageSizes: [10, 20, 50, 100],
+  onPageChange: handlePageChange,
+  onPageSizeChange: handlePageSizeChange
 })
 
+// 计算当前页数据
 const paginatedData = computed(() => {
   const start = (paginationConfig.value.currentPage - 1) * paginationConfig.value.pageSize
   const end = start + paginationConfig.value.pageSize
-  return tableData.value.slice(start, end)
+  return allTableData.value.slice(start, end)
 })
 
-const handlePageChange = params => {
+// 页码变化处理
+function handlePageChange(params: { currentPage: number }) {
   paginationConfig.value.currentPage = params.currentPage
+  console.log('页码变化:', params)
 }
 
-const handlePageSizeChange = params => {
+// 每页条数变化处理
+function handlePageSizeChange(params: { pageSize: number }) {
   paginationConfig.value.pageSize = params.pageSize
-  paginationConfig.value.currentPage = 1
+  paginationConfig.value.currentPage = 1 // 重置到第一页
+  console.log('每页条数变化:', params)
 }
+</script>
+```
+
+### 高级分页配置
+
+分页器支持多种布局和配置选项：
+
+```vue
+<script setup lang="ts">
+// 自定义分页器布局
+const customPaginationConfig = ref({
+  currentPage: 1,
+  pageSize: 10,
+  total: 200,
+  // 可配置的布局元素
+  layouts: [
+    'Total', // 显示总数
+    'Sizes', // 每页条数选择器
+    'PrevPage', // 上一页按钮
+    'Number', // 页码数字
+    'NextPage', // 下一页按钮
+    'Jump' // 跳转输入框
+  ],
+  pageSizes: [5, 10, 20, 50, 100],
+  // 事件处理
+  onPageChange: params => console.log('页面变化:', params),
+  onPageSizeChange: params => console.log('每页条数变化:', params),
+  // 其他配置
+  showTotal: true, // 是否显示总数
+  showSizes: true, // 是否显示每页条数选择器
+  showJumper: true, // 是否显示跳转输入框
+  showPrevNext: true, // 是否显示上下页按钮
+  showNumber: true // 是否显示页码数字
+})
 </script>
 ```
 
@@ -413,6 +599,156 @@ const getTotalAmount = () => {
 </template>
 ```
 
+## 可编辑表格
+
+表格支持单元格编辑功能，基于 vxe-table 的编辑能力。
+
+```vue
+<template>
+  <div>
+    <div style="margin-bottom: 16px;">
+      <el-button @click="addRow">新增行</el-button>
+      <el-button @click="removeSelectedRows">删除选中</el-button>
+      <el-button @click="saveData">保存数据</el-button>
+    </div>
+
+    <iip-table
+      ref="editTableRef"
+      :data="editTableData"
+      :columns="editColumns"
+      :check-box-column-config="{ show: true }"
+      :edit-config="{ trigger: 'click', mode: 'cell' }"
+      border
+      stripe
+    >
+      <!-- 自定义状态编辑器 -->
+      <template #status-slot-column-edit="{ row }">
+        <el-select v-model="row.status" placeholder="请选择状态">
+          <el-option label="正常" :value="1"></el-option>
+          <el-option label="禁用" :value="0"></el-option>
+        </el-select>
+      </template>
+
+      <!-- 操作列 -->
+      <template #action-slot-column-default="{ row, rowIndex }">
+        <el-button size="small" type="primary" @click="editRow(row, rowIndex)"> 编辑 </el-button>
+        <el-button size="small" type="danger" @click="deleteRow(rowIndex)"> 删除 </el-button>
+      </template>
+    </iip-table>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { ElMessage } from 'element-plus'
+import type { IipTableExpose } from '@bingwu/iip-ui-components'
+
+const editTableRef = ref<IipTableExpose | null>(null)
+
+const editTableData = ref([
+  { id: 1, name: '张三', age: 25, email: 'zhangsan@example.com', status: 1 },
+  { id: 2, name: '李四', age: 30, email: 'lisi@example.com', status: 0 },
+  { id: 3, name: '王五', age: 28, email: 'wangwu@example.com', status: 1 }
+])
+
+const editColumns = [
+  {
+    tableColumnProps: {
+      field: 'name',
+      title: '姓名',
+      width: 120,
+      editRender: { name: 'input' }
+    }
+  },
+  {
+    tableColumnProps: {
+      field: 'age',
+      title: '年龄',
+      width: 100,
+      editRender: {
+        name: 'input',
+        attrs: { type: 'number', min: 1, max: 100 }
+      }
+    }
+  },
+  {
+    tableColumnProps: {
+      field: 'email',
+      title: '邮箱',
+      width: 200,
+      editRender: { name: 'input' }
+    }
+  },
+  {
+    tableColumnProps: {
+      field: 'status',
+      title: '状态',
+      width: 120,
+      editRender: { name: 'select' } // 使用插槽自定义编辑器
+    }
+  },
+  {
+    tableColumnProps: {
+      field: 'action',
+      title: '操作',
+      width: 150,
+      fixed: 'right'
+    }
+  }
+]
+
+// 新增行
+const addRow = () => {
+  const newId = Math.max(...editTableData.value.map(item => item.id)) + 1
+  editTableData.value.push({
+    id: newId,
+    name: '',
+    age: 18,
+    email: '',
+    status: 1
+  })
+  ElMessage.success('新增行成功')
+}
+
+// 删除选中行
+const removeSelectedRows = () => {
+  const instance = editTableRef.value?.getTableInstance()
+  const selectedRows = instance?.getCheckboxRecords()
+
+  if (!selectedRows || selectedRows.length === 0) {
+    ElMessage.warning('请先选择要删除的行')
+    return
+  }
+
+  selectedRows.forEach(row => {
+    const index = editTableData.value.findIndex(item => item.id === row.id)
+    if (index > -1) {
+      editTableData.value.splice(index, 1)
+    }
+  })
+
+  ElMessage.success(`删除了 ${selectedRows.length} 行数据`)
+}
+
+// 编辑行
+const editRow = (row: any, rowIndex: number) => {
+  ElMessage.info(`编辑第 ${rowIndex + 1} 行数据`)
+}
+
+// 删除行
+const deleteRow = (rowIndex: number) => {
+  editTableData.value.splice(rowIndex, 1)
+  ElMessage.success('删除成功')
+}
+
+// 保存数据
+const saveData = () => {
+  console.log('保存的数据:', editTableData.value)
+  ElMessage.success('数据保存成功')
+}
+</script>
+```
+
 ## 加载状态
 
 表格支持加载状态显示。
@@ -427,7 +763,7 @@ const getTotalAmount = () => {
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 
 const loading = ref(false)
@@ -435,6 +771,17 @@ const loading = ref(false)
 const toggleLoading = () => {
   loading.value = !loading.value
 }
+
+const tableData = ref([
+  { id: 1, name: '张三', age: 25, email: 'zhangsan@example.com' },
+  { id: 2, name: '李四', age: 30, email: 'lisi@example.com' }
+])
+
+const columns = [
+  { tableColumnProps: { field: 'name', title: '姓名', width: 120 } },
+  { tableColumnProps: { field: 'age', title: '年龄', width: 80 } },
+  { tableColumnProps: { field: 'email', title: '邮箱', minWidth: 200 } }
+]
 </script>
 ```
 
@@ -442,26 +789,35 @@ const toggleLoading = () => {
 
 ### Table Props
 
-| 参数                 | 说明             | 类型                            | 默认值       |
-| -------------------- | ---------------- | ------------------------------- | ------------ |
-| data                 | 表格数据         | `any[]`                         | `[]`         |
-| columns              | 表格列配置       | `TableColumn[]`                 | `[]`         |
-| checkBoxColumnConfig | 复选框列配置     | `checkBoxColumnConfigProps`     | -            |
-| seqColumnConfig      | 序号列配置       | `seqColumnConfigProps`          | -            |
-| expandColumnConfig   | 展开列配置       | `expandColumnConfigProps`       | -            |
-| radioColumnConfig    | 单选框列配置     | `radioColumnConfigProps`        | -            |
-| height               | 表格高度         | `number \| string`              | -            |
-| maxHeight            | 表格最大高度     | `number \| string`              | -            |
-| border               | 是否显示边框     | `boolean`                       | `true`       |
-| stripe               | 是否显示斑马纹   | `boolean`                       | `false`      |
-| showHeader           | 是否显示表头     | `boolean`                       | `true`       |
-| resizable            | 是否可调整列宽   | `boolean`                       | `true`       |
-| loading              | 加载状态         | `boolean`                       | `false`      |
-| emptyText            | 空数据提示文本   | `string`                        | `'暂无数据'` |
-| rowKey               | 行键名           | `string`                        | `'id'`       |
-| size                 | 表格尺寸         | `'mini' \| 'small' \| 'medium'` | `'medium'`   |
-| autoResize           | 是否自适应父容器 | `boolean`                       | `true`       |
-| pagination           | 分页配置         | `PaginationConfig`              | -            |
+| 参数                 | 说明           | 类型                            | 默认值       | 版本  |
+| -------------------- | -------------- | ------------------------------- | ------------ | ----- |
+| data                 | 表格数据       | `any[]`                         | `[]`         | 1.0.0 |
+| columns              | 表格列配置     | `TableColumn[]`                 | `[]`         | 1.0.0 |
+| checkBoxColumnConfig | 复选框列配置   | `checkBoxColumnConfigProps`     | -            | 1.0.0 |
+| seqColumnConfig      | 序号列配置     | `seqColumnConfigProps`          | -            | 1.0.0 |
+| expandColumnConfig   | 展开列配置     | `expandColumnConfigProps`       | -            | 1.0.0 |
+| radioColumnConfig    | 单选框列配置   | `radioColumnConfigProps`        | -            | 1.0.0 |
+| pagination           | 分页配置       | `VxePagerProps`                 | -            | 1.0.0 |
+| height               | 表格高度       | `number \| string`              | -            | 1.0.0 |
+| maxHeight            | 表格最大高度   | `number \| string`              | -            | 1.0.0 |
+| border               | 是否显示边框   | `boolean`                       | `false`      | 1.0.0 |
+| stripe               | 是否显示斑马纹 | `boolean`                       | `false`      | 1.0.0 |
+| showHeader           | 是否显示表头   | `boolean`                       | `true`       | 1.0.0 |
+| loading              | 加载状态       | `boolean`                       | `false`      | 1.0.0 |
+| emptyText            | 空数据提示文本 | `string`                        | `'暂无数据'` | 1.0.0 |
+| size                 | 表格尺寸       | `'mini' \| 'small' \| 'medium'` | `'medium'`   | 1.0.0 |
+| editConfig           | 编辑配置       | `VxeTableEditConfig`            | -            | 1.1.0 |
+| columnConfig         | 列配置         | `VxeTableColumnConfig`          | -            | 1.1.0 |
+| checkboxConfig       | 复选框配置     | `VxeTableCheckboxConfig`        | -            | 1.1.0 |
+| footerData           | 页脚数据       | `any[][]`                       | -            | 1.1.0 |
+| showFooter           | 是否显示页脚   | `boolean`                       | `false`      | 1.1.0 |
+
+**说明：**
+
+- 所有 vxe-table 的原生属性都可以通过 `v-bind="attrs"` 传递
+- `editConfig` 支持单元格编辑配置，如 `{ trigger: 'click', mode: 'cell' }`
+- `columnConfig` 支持列配置，如 `{ resizable: true }`
+- `checkboxConfig` 支持复选框配置，如 `{ highlight: true }`
 
 ### TableColumn
 
@@ -471,17 +827,46 @@ const toggleLoading = () => {
 
 #### VxeColumnProps (表格列原生属性)
 
-| 参数       | 说明           | 类型                                | 默认值   |
-| ---------- | -------------- | ----------------------------------- | -------- |
-| field      | 列标识         | `string`                            | -        |
-| title      | 列标题         | `string`                            | -        |
-| width      | 列宽度         | `number \| string`                  | -        |
-| minWidth   | 最小宽度       | `number \| string`                  | -        |
-| sortable   | 是否可排序     | `boolean`                           | `false`  |
-| filterable | 是否可筛选     | `boolean`                           | `false`  |
-| align      | 列对齐方式     | `'left' \| 'center' \| 'right'`     | `'left'` |
-| fixed      | 是否固定列     | `'left' \| 'right'`                 | -        |
-| formatter  | 自定义渲染函数 | `(params: any) => string \| number` | -        |
+基于 vxe-table 的列配置，支持所有原生属性：
+
+| 参数         | 说明           | 类型                                | 默认值   | 版本  |
+| ------------ | -------------- | ----------------------------------- | -------- | ----- |
+| field        | 列标识         | `string`                            | -        | 1.0.0 |
+| title        | 列标题         | `string`                            | -        | 1.0.0 |
+| width        | 列宽度         | `number \| string`                  | -        | 1.0.0 |
+| minWidth     | 最小宽度       | `number \| string`                  | -        | 1.0.0 |
+| sortable     | 是否可排序     | `boolean`                           | `false`  | 1.0.0 |
+| filters      | 筛选配置       | `VxeColumnFilterConfig[]`           | -        | 1.1.0 |
+| align        | 列对齐方式     | `'left' \| 'center' \| 'right'`     | `'left'` | 1.0.0 |
+| fixed        | 是否固定列     | `'left' \| 'right'`                 | -        | 1.0.0 |
+| visible      | 是否显示       | `boolean`                           | `true`   | 1.0.0 |
+| resizable    | 是否可调整宽度 | `boolean`                           | `true`   | 1.1.0 |
+| editRender   | 编辑渲染配置   | `VxeColumnEditRender`               | -        | 1.1.0 |
+| editRules    | 编辑校验规则   | `VxeColumnEditRule[]`               | -        | 1.1.0 |
+| footerRender | 页脚渲染配置   | `VxeColumnFooterRender`             | -        | 1.1.0 |
+| formatter    | 格式化函数     | `(params: any) => string \| number` | -        | 1.0.0 |
+
+**编辑渲染配置示例：**
+
+```ts
+// 输入框编辑
+editRender: { name: 'input', attrs: { type: 'text' } }
+
+// 数字输入框
+editRender: { name: 'input', attrs: { type: 'number', min: 0, max: 100 } }
+
+// 下拉选择
+editRender: {
+  name: 'select',
+  options: [
+    { label: '选项1', value: 1 },
+    { label: '选项2', value: 2 }
+  ]
+}
+
+// 自定义编辑器（使用插槽）
+editRender: { name: 'select' } // 配合 #field-slot-column-edit 插槽使用
+```
 
 ### 特殊列配置
 
@@ -592,15 +977,44 @@ const toggleLoading = () => {
 
 ## 注意事项
 
-1. 使用 Table 组件需要安装 `vxe-table@^4.7.0` 和 `xe-utils` 依赖
-2. 自定义列内容需要按照插槽命名规则定义插槽
-3. 特殊列（复选框、序号、展开、单选框）通过对应的配置属性控制显示
-4. 插槽命名必须严格按照命名规则：`{field}-slot-column-{slotType}`
-5. 分页功能使用 `vxe-pager` 组件，需要手动处理数据分页逻辑
-6. 表格的高级功能（如虚拟滚动、树形数据等）可以通过 `getTableInstance` 方法获取原始实例来实现
-7. 分页器支持多种布局配置，可通过 `pagination` 配置项控制显示内容
-8. 当前版本基于 vxe-table 4.7.0，已适配最新 API（如 `column-config` 替代废弃的 `resizable` 属性）
-9. 列配置结构已更新，需要使用 `tableColumnProps` 包装原始的列属性
-10. **插槽性能优化**：组件会智能检测是否定义了插槽，只渲染实际使用的插槽模板，避免不必要的性能开销
-11. 支持多种插槽类型：`default`（内容）、`header`（表头）、`edit`（编辑）、`filter`（筛选）、`footer`（页脚）、`valid`（校验）
-12. 特殊列插槽只有在定义时才会渲染，如 `expand-slot-column-content` 需要配置 `expandColumnConfig.show: true` 且定义对应插槽
+### 🔧 环境要求
+
+1. **Node.js**: 建议使用 Node.js 16+ 版本
+2. **Vue**: 需要 Vue 3.3+ 版本
+3. **依赖要求**：
+   - `vxe-table@^4.15.6` - 核心表格组件
+   - `vxe-pc-ui@4.8.15` - PC端UI组件
+   - `xe-utils@^3.7.8` - 工具函数库
+   - `element-plus@^2.4.4` (可选) - Element Plus组件库
+
+### 📦 安装和引入
+
+4. **插件注册顺序很重要**：必须先注册 `VxeUITable` 和 `VxePCUI`，再注册 `IipUI`
+5. **样式引入**：需要同时引入 vxe-table、vxe-pc-ui 和 iip-ui-theme 的样式文件
+6. **按需引入**：如果只使用 Table 组件，仍需要注册 vxe-table 相关插件
+
+### 🎯 使用规范
+
+7. **列配置结构**：必须使用 `{ tableColumnProps: {...} }` 包装列属性
+8. **插槽命名规则**：严格按照 `{field}-slot-column-{slotType}` 格式
+9. **特殊列配置**：复选框、序号、展开、单选框需要通过对应配置属性启用
+10. **分页处理**：需要手动处理数据分页逻辑，组件不会自动分页
+
+### ⚡ 性能优化
+
+11. **智能插槽渲染**：v1.2.0+ 版本实现了插槽性能优化，只渲染实际使用的插槽
+12. **支持的插槽类型**：`default`、`header`、`edit`、`filter`、`footer`、`valid`
+13. **虚拟滚动**：大量数据时可通过 `getTableInstance()` 访问原生实例启用虚拟滚动
+
+### 🔄 版本兼容
+
+14. **当前版本**：基于 vxe-table 4.15.6，支持最新的 API 特性
+15. **API 变更**：v1.1.0+ 使用 `column-config` 替代已废弃的 `resizable` 属性
+16. **向后兼容**：保持与旧版本的 API 兼容性
+
+### 🐛 常见问题
+
+17. **样式问题**：确保正确引入所有必要的 CSS 文件
+18. **编辑功能**：使用编辑功能时需配置 `editConfig` 和 `editRender`
+19. **事件监听**：表格事件需要通过 vxe-table 的事件系统处理
+20. **类型支持**：完整的 TypeScript 类型定义，建议使用 TS 开发
