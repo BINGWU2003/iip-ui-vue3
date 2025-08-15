@@ -2,22 +2,31 @@ import { defineConfig } from 'vitepress'
 
 export default defineConfig({
   title: 'IIP UI Vue3',
-  description: '基于 Element Plus、Vue 3 和 TypeScript 的企业级组件库',
+  description: '基于 vxe-table、Element Plus、Vue 3 和 TypeScript 的企业级组件库',
 
   // 基础配置
   base: '/',
   lang: 'zh-CN',
+  cleanUrls: true,
 
   // 主题配置
   themeConfig: {
     // 导航栏
     nav: [
       { text: '指南', link: '/guide/introduction' },
-      { text: '组件', link: '/components/input' },
-      { text: '主题', link: '/guide/theme' },
+      { text: '组件', link: '/components/table' },
+      { text: '更新日志', link: '/guide/changelog' },
+      {
+        text: 'v1.2.0',
+        items: [
+          { text: '更新日志', link: '/guide/changelog' },
+          { text: '发布说明', link: '/guide/releases' }
+        ]
+      },
       {
         text: '相关链接',
         items: [
+          { text: 'vxe-table', link: 'https://vxetable.cn/' },
           { text: 'Element Plus', link: 'https://element-plus.org/' },
           { text: 'Vue 3', link: 'https://vuejs.org/' },
           { text: 'TypeScript', link: 'https://www.typescriptlang.org/' }
@@ -33,7 +42,7 @@ export default defineConfig({
           items: [
             { text: '介绍', link: '/guide/introduction' },
             { text: '快速开始', link: '/guide/quickstart' },
-            { text: '安装', link: '/guide/installation' }
+            { text: '安装指南', link: '/guide/installation' }
           ]
         },
         {
@@ -41,17 +50,30 @@ export default defineConfig({
           items: [
             { text: '主题定制', link: '/guide/theme' },
             { text: '国际化', link: '/guide/i18n' },
-            { text: '更新日志', link: '/guide/changelog' }
+            { text: 'Eova 工具', link: '/guide/eova' },
+            { text: '最佳实践', link: '/guide/best-practices' }
+          ]
+        },
+        {
+          text: '其他',
+          items: [
+            { text: '更新日志', link: '/guide/changelog' },
+            { text: '发布说明', link: '/guide/releases' },
+            { text: '贡献指南', link: '/guide/contributing' },
+            { text: '常见问题', link: '/guide/faq' }
           ]
         }
       ],
       '/components/': [
         {
-          text: '基础组件',
+          text: '数据展示',
+          items: [{ text: 'Table 表格 🔥', link: '/components/table' }]
+        },
+        {
+          text: '数据录入',
           items: [
             { text: 'Input 输入框', link: '/components/input' },
-            { text: 'Select 选择器', link: '/components/select' },
-            { text: 'Table 表格', link: '/components/table' }
+            { text: 'Select 选择器', link: '/components/select' }
           ]
         },
         {
@@ -60,6 +82,10 @@ export default defineConfig({
             { text: 'ThemeProvider 主题提供者', link: '/components/theme-provider' },
             { text: 'ThemeSwitcher 主题切换器', link: '/components/theme-switcher' }
           ]
+        },
+        {
+          text: '工具组件',
+          items: [{ text: 'Utils 工具函数', link: '/components/utils' }]
         }
       ]
     },

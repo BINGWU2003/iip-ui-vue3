@@ -4,7 +4,7 @@ layout: home
 hero:
   name: 'IIP UI Vue3'
   text: '企业级组件库'
-  tagline: '基于 Element Plus、Vue 3 和 TypeScript 构建'
+  tagline: '基于 vxe-table、Element Plus、Vue 3 和 TypeScript 构建的现代化组件库'
   image:
     src: /logo.svg
     alt: IIP UI Vue3
@@ -14,15 +14,18 @@ hero:
       link: /guide/quickstart
     - theme: alt
       text: 组件文档
-      link: /components/input
+      link: /components/table
     - theme: alt
       text: 在 GitHub 查看
       link: https://github.com/BINGWU2003/iip-ui-vue3
 
 features:
+  - icon: 🚀
+    title: 高性能表格
+    details: 基于 vxe-table 4.15+ 构建的企业级表格组件，支持虚拟滚动、编辑、筛选等功能
   - icon: ⚡️
-    title: 开箱即用
-    details: 基于 Element Plus 二次封装，提供更丰富的功能和更好的开发体验
+    title: 智能插槽渲染
+    details: v1.2.0+ 版本实现插槽性能优化，只渲染实际使用的插槽，避免不必要的性能开销
   - icon: 🛠️
     title: TypeScript 支持
     details: 完整的 TypeScript 类型定义，提供更好的开发体验和代码提示
@@ -35,9 +38,6 @@ features:
   - icon: 🔧
     title: 企业级
     details: 专为企业级中后台管理系统设计，提供统一的视觉与交互风格
-  - icon: 📚
-    title: 完善文档
-    details: 详细的组件文档和示例，帮助开发者快速上手和使用
 ---
 
 ## 特性
@@ -65,17 +65,53 @@ features:
 
 ## 快速开始
 
-```bash
-# 安装
-npm install @iip-ui/components
+::: code-group
 
-# 使用
+```bash [npm]
+# 安装组件库
+npm install @bingwu/iip-ui-components @bingwu/iip-ui-theme
+
+# 安装必要依赖（Table 组件需要）
+npm install vxe-table@^4.15.6 vxe-pc-ui@4.8.15 xe-utils@^3.7.8
+```
+
+```bash [pnpm]
+# 安装组件库
+pnpm add @bingwu/iip-ui-components @bingwu/iip-ui-theme
+
+# 安装必要依赖（Table 组件需要）
+pnpm add vxe-table@^4.15.6 vxe-pc-ui@4.8.15 xe-utils@^3.7.8
+```
+
+:::
+
+```ts
+// main.ts
 import { createApp } from 'vue'
-import IipUI from '@iip-ui/components'
-import '@iip-ui/theme/dist/index.css'
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+
+// 必须：vxe-table 相关
+import VxeUITable from 'vxe-table'
+import 'vxe-table/lib/style.css'
+import VxePCUI from 'vxe-pc-ui'
+import 'vxe-pc-ui/lib/style.css'
+
+// IIP UI 组件库
+import IipUI from '@bingwu/iip-ui-components'
+import '@bingwu/iip-ui-theme/dist/index.css'
+
+import App from './App.vue'
 
 const app = createApp(App)
-app.use(IipUI)
+
+// 注册插件（顺序很重要）
+app.use(VxeUITable) // 必须在 IipUI 之前注册
+app.use(VxePCUI) // 必须在 IipUI 之前注册
+app.use(ElementPlus) // 可选
+app.use(IipUI) // 最后注册 IIP UI
+
+app.mount('#app')
 ```
 
 ## 贡献
