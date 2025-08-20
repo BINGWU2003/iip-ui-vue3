@@ -68,6 +68,44 @@
         </div>
       </div>
 
+      <!-- DateRange 组件预览 -->
+      <div class="demo-section">
+        <h2>DateRange 日期范围组件</h2>
+
+        <!-- 基础日期范围选择器 -->
+        <div class="demo-item">
+          <h3>基础日期范围选择器</h3>
+          <iip-date-range v-model="dateRangeModel" @change="handleDateRangeChange" />
+          <div class="form-data-display">
+            <h4>选中的日期范围：</h4>
+            <pre>{{ JSON.stringify(dateRangeModel, null, 2) }}</pre>
+          </div>
+        </div>
+
+        <!-- 自定义配置的日期范围选择器 -->
+        <div class="demo-item">
+          <h3>自定义配置的日期范围选择器</h3>
+          <iip-date-range
+            v-model="dateRangeModel2"
+            :gap="20"
+            :select-future-time="true"
+            :start-props="{
+              placeholder: '选择开始日期'
+            }"
+            :startPickerCss="{ width: '280px' }"
+            :end-props="{
+              placeholder: '选择结束日期'
+            }"
+            :endPickerCss="{ width: '280px' }"
+            @change="handleDateRangeChange2"
+          />
+          <div class="form-data-display">
+            <h4>自定义配置日期范围：</h4>
+            <pre>{{ JSON.stringify(dateRangeModel2, null, 2) }}</pre>
+          </div>
+        </div>
+      </div>
+
       <!-- Table 组件预览 -->
       <div class="demo-section">
         <h2>Table 表格组件</h2>
@@ -133,6 +171,7 @@ import { ref, computed, onMounted, reactive } from 'vue'
 import { ElButton, ElMessage } from 'element-plus'
 import type { IipTableExpose } from '../src/components/table/types'
 import type { FormExpose, FormItemConfig } from '../src/components/form/types'
+import type { DateRangeProps } from '../src/components/date-range/types'
 import { eovaConverter } from '@bingwu/iip-ui-utils'
 const tableRef = ref<IipTableExpose | null>(null)
 const formRef = ref<FormExpose | null>(null)
@@ -314,6 +353,17 @@ const inlineFormModel = reactive({
   status1: ''
 })
 
+// DateRange 组件数据
+const dateRangeModel = reactive({
+  startTime: '',
+  endTime: ''
+})
+
+const dateRangeModel2 = reactive({
+  startTime: '',
+  endTime: ''
+})
+
 // 表单操作配置
 const actionsConfig = {
   show: true,
@@ -367,6 +417,17 @@ const handleInlineReset = () => {
     status: ''
   })
   ElMessage.info('搜索条件已重置')
+}
+
+// DateRange 组件方法
+const handleDateRangeChange = (value: { startTime: string; endTime: string }) => {
+  console.log('日期范围改变:', value)
+  ElMessage.success(`日期范围已选择: ${value.startTime} 至 ${value.endTime}`)
+}
+
+const handleDateRangeChange2 = (value: { startTime: string; endTime: string }) => {
+  console.log('日期范围2改变:', value)
+  ElMessage.info(`自定义日期范围: ${value.startTime} 至 ${value.endTime}`)
 }
 
 const pageChangeEvent = (params: any) => {

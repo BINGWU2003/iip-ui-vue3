@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      dayjs:
+        specifier: ^1.11.13
+        version: 1.11.13
     devDependencies:
       '@commitlint/cli':
         specifier: ^18.4.3
@@ -74,6 +78,9 @@ importers:
       '@bingwu/iip-ui-utils':
         specifier: ^1.2.1
         version: link:../utils
+      dayjs:
+        specifier: ^1.11.13
+        version: 1.11.13
       vue:
         specifier: ^3.3.8
         version: 3.5.18(typescript@5.9.2)
@@ -174,6 +181,10 @@ importers:
         version: 1.90.0
 
   packages/utils:
+    dependencies:
+      dayjs:
+        specifier: ^1.11.13
+        version: 1.11.13
     devDependencies:
       '@types/node':
         specifier: ^20.9.0

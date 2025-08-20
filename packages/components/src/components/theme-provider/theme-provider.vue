@@ -1,6 +1,6 @@
 <template>
   <div class="iip-theme-provider" :data-namespace="currentNamespace">
-    <slot />
+    <slot></slot>
   </div>
 </template>
 

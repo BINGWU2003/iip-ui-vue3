@@ -6,6 +6,7 @@ import {
   IipSelect,
   IipTable,
   IipForm,
+  IipDateRange,
   IipThemeProvider,
   IipThemeSwitcher
 } from './components'
@@ -19,6 +20,7 @@ const components: Component[] = [
   IipSelect,
   IipTable,
   IipForm,
+  IipDateRange,
   IipThemeProvider,
   IipThemeSwitcher
 ]
@@ -42,6 +44,7 @@ export {
   IipSelect,
   IipTable,
   IipForm,
+  IipDateRange,
   IipThemeProvider,
   IipThemeSwitcher,
 

@@ -21,6 +21,9 @@
     "test": "vitest",
     "clean": "rm -rf dist"
   },
+  "dependencies": {
+    "dayjs": "^1.11.13"
+  },
   "peerDependencies": {
     "vue": "^3.3.0"
   },
