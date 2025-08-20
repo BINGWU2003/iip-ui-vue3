@@ -17,7 +17,7 @@ export default defineConfig({
       { text: '组件', link: '/components/table' },
       { text: '更新日志', link: '/guide/changelog' },
       {
-        text: 'v1.2.0',
+        text: 'v1.2.1',
         items: [
           { text: '更新日志', link: '/guide/changelog' },
           { text: '发布说明', link: '/guide/releases' }
@@ -49,19 +49,12 @@ export default defineConfig({
           text: '进阶',
           items: [
             { text: '主题定制', link: '/guide/theme' },
-            { text: '国际化', link: '/guide/i18n' },
-            { text: 'Eova 工具', link: '/guide/eova' },
-            { text: '最佳实践', link: '/guide/best-practices' }
+            { text: 'Eova 工具', link: '/guide/eova' }
           ]
         },
         {
           text: '其他',
-          items: [
-            { text: '更新日志', link: '/guide/changelog' },
-            { text: '发布说明', link: '/guide/releases' },
-            { text: '贡献指南', link: '/guide/contributing' },
-            { text: '常见问题', link: '/guide/faq' }
-          ]
+          items: [{ text: '更新日志', link: '/guide/changelog' }]
         }
       ],
       '/components/': [

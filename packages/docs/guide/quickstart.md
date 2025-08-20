@@ -447,13 +447,11 @@ import '@bingwu/iip-ui-theme/dist/index.css'
 1. 📖 阅读详细的 [组件文档](/components/table)
 2. 🎨 了解 [主题定制](/guide/theme)
 3. 🛠️ 探索 [工具函数](/components/utils)
-4. 📋 查看 [最佳实践](/guide/best-practices)
 
 ## 获取帮助
 
 如果遇到问题，可以通过以下方式获取帮助：
 
-- 📝 查看 [常见问题](/guide/faq)
 - 🐛 提交 [GitHub Issue](https://github.com/BINGWU2003/iip-ui-vue3/issues)
 - 💬 参与 [GitHub Discussions](https://github.com/BINGWU2003/iip-ui-vue3/discussions)
 

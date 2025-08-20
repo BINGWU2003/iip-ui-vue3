@@ -355,5 +355,3 @@ const testColumns = ref([
 - Vue 3.3.0+
 - vxe-table 4.15.6+
 - Element Plus 2.4.4+
-
-如果遇到其他问题，请查看 [常见问题](/guide/faq) 或在 GitHub 上提交 Issue。
