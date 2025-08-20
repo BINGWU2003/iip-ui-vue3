@@ -10,6 +10,64 @@
         <p class="info">如果看到这个页面，说明开发环境配置成功！</p>
       </div>
 
+      <!-- Form 组件预览 -->
+      <div class="demo-section">
+        <h2>Form 表单组件</h2>
+
+        <!-- 基础表单 -->
+        <div class="demo-item">
+          <h3>基础表单 (网格布局)</h3>
+          <iip-form
+            ref="formRef"
+            :model="formModel"
+            :form-items="formItems"
+            :actions-config="actionsConfig"
+            :row-props="{ gutter: 20 }"
+            label-width="100px"
+            @submit="handleFormSubmit"
+            @reset="handleFormReset"
+          />
+        </div>
+
+        <!-- 内联表单 -->
+        <div class="demo-item">
+          <h3>内联表单 (搜索表单)</h3>
+          <iip-form
+            :model="inlineFormModel"
+            :form-items="inlineFormItems"
+            :actions-config="inlineActionsConfig"
+            inline
+            label-width="80px"
+            @submit="handleInlineSearch"
+            @reset="handleInlineReset"
+          >
+            <template #form-item-status1>
+              <el-select
+                v-model="inlineFormModel.status1"
+                placeholder="请选择状态1"
+                style="width: 300px"
+              >
+                <el-option label="全部" value="" />
+                <el-option label="激活" value="active" />
+                <el-option label="禁用" value="inactive" />
+              </el-select>
+            </template>
+          </iip-form>
+        </div>
+
+        <!-- 表单数据展示 -->
+        <div class="demo-item">
+          <h3>表单数据</h3>
+          <div class="form-data-display">
+            <h4>基础表单数据：</h4>
+            <pre>{{ JSON.stringify(formModel, null, 2) }}</pre>
+
+            <h4>内联表单数据：</h4>
+            <pre>{{ JSON.stringify(inlineFormModel, null, 2) }}</pre>
+          </div>
+        </div>
+      </div>
+
       <!-- Table 组件预览 -->
       <div class="demo-section">
         <h2>Table 表格组件</h2>
@@ -74,11 +132,241 @@
 import { ref, computed, onMounted, reactive } from 'vue'
 import { ElButton, ElMessage } from 'element-plus'
 import type { IipTableExpose } from '../src/components/table/types'
+import type { FormExpose, FormItemConfig } from '../src/components/form/types'
 import { eovaConverter } from '@bingwu/iip-ui-utils'
 const tableRef = ref<IipTableExpose | null>(null)
+const formRef = ref<FormExpose | null>(null)
+
 // 基础方法
 const showMessage = () => {
   ElMessage.success('开发环境配置成功！')
+}
+
+// 表单数据
+const formModel = reactive({
+  name: '',
+  age: 25,
+  email: '',
+  department: '',
+  joinDate: '',
+  workTime: '',
+  isActive: true
+})
+
+// 表单项配置
+const formItems: FormItemConfig[] = [
+  {
+    formItemProps: { label: '姓名', prop: 'name', required: true },
+    colProps: { span: 12 },
+    show: true,
+    componentProps: {
+      type: 'input',
+      formItemKey: 'name',
+      itemProps: {
+        placeholder: '请输入姓名',
+        clearable: true
+      }
+    }
+  },
+  {
+    formItemProps: { label: '年龄', prop: 'age' },
+    colProps: { span: 12 },
+    show: true,
+    componentProps: {
+      type: 'number',
+      formItemKey: 'age',
+      itemProps: {
+        min: 18,
+        max: 65,
+        placeholder: '请输入年龄'
+      }
+    }
+  },
+  {
+    formItemProps: { label: '邮箱', prop: 'email', required: true },
+    colProps: { span: 12 },
+    show: true,
+    componentProps: {
+      type: 'input',
+      formItemKey: 'email',
+      itemProps: {
+        placeholder: '请输入邮箱地址',
+        clearable: true
+      }
+    }
+  },
+  {
+    formItemProps: { label: '部门', prop: 'department' },
+    colProps: { span: 12 },
+    show: true,
+    componentProps: {
+      type: 'select',
+      formItemKey: 'department',
+      itemProps: {
+        placeholder: '请选择部门',
+        clearable: true,
+        options: [
+          { label: '研发部', value: '研发部' },
+          { label: '产品部', value: '产品部' },
+          { label: '设计部', value: '设计部' },
+          { label: '运营部', value: '运营部' }
+        ]
+      }
+    }
+  },
+  {
+    formItemProps: { label: '入职日期', prop: 'joinDate' },
+    colProps: { span: 12 },
+    show: true,
+    componentProps: {
+      type: 'datetime',
+      formItemKey: 'joinDate',
+      itemProps: {
+        placeholder: '请选择入职日期',
+        type: 'date',
+        format: 'YYYY-MM-DD',
+        valueFormat: 'YYYY-MM-DD'
+      }
+    }
+  },
+  {
+    formItemProps: { label: '工作时间', prop: 'workTime' },
+    colProps: { span: 12 },
+    show: true,
+    componentProps: {
+      type: 'time',
+      formItemKey: 'workTime',
+      itemProps: {
+        placeholder: '请选择工作时间',
+        format: 'HH:mm',
+        valueFormat: 'HH:mm'
+      }
+    }
+  },
+  {
+    formItemProps: { label: '状态', prop: 'isActive' },
+    colProps: { span: 24 },
+    show: true,
+    componentProps: {
+      type: 'switch',
+      formItemKey: 'isActive',
+      itemProps: {
+        activeText: '激活',
+        inactiveText: '禁用'
+      }
+    }
+  }
+]
+
+// 内联表单配置
+const inlineFormItems: FormItemConfig[] = [
+  {
+    formItemProps: { label: '关键词' },
+    show: true,
+    componentProps: {
+      type: 'input',
+      formItemKey: 'keyword',
+      itemProps: {
+        placeholder: '请输入关键词',
+        clearable: true
+      }
+    }
+  },
+  {
+    formItemProps: { label: '状态' },
+    show: true,
+    componentProps: {
+      type: 'select',
+      formItemKey: 'status',
+      itemProps: {
+        placeholder: '请选择状态',
+        clearable: true,
+        options: [
+          { label: '全部', value: '' },
+          { label: '激活', value: 'active' },
+          { label: '禁用', value: 'inactive' }
+        ]
+      }
+    }
+  },
+  {
+    formItemProps: { label: '状态1自定义插槽', labelWidth: '150px' },
+    show: true,
+    componentProps: {
+      type: 'select',
+      formItemKey: 'status1',
+      itemProps: {
+        placeholder: '请选择状态1',
+        clearable: true,
+        options: [
+          { label: '全部', value: '' },
+          { label: '激活', value: 'active' },
+          { label: '禁用', value: 'inactive' }
+        ]
+      }
+    }
+  }
+]
+
+const inlineFormModel = reactive({
+  keyword: '',
+  status: '',
+  status1: ''
+})
+
+// 表单操作配置
+const actionsConfig = {
+  show: true,
+  span: 24,
+  align: 'center' as const,
+  submitText: '提交表单',
+  resetText: '重置表单',
+  submitProps: { type: 'primary' as const },
+  resetProps: { type: 'default' as const },
+  showSubmit: true,
+  showReset: true
+}
+
+const inlineActionsConfig = {
+  show: true,
+  submitText: '搜索',
+  resetText: '重置',
+  submitProps: { type: 'primary' as const },
+  resetProps: { type: 'default' as const },
+  showSubmit: true,
+  showReset: true
+}
+
+// 表单方法
+const handleFormSubmit = () => {
+  console.log('表单提交:', formModel)
+  ElMessage.success('表单提交成功！')
+}
+
+const handleFormReset = () => {
+  Object.assign(formModel, {
+    name: '',
+    age: 25,
+    email: '',
+    department: '',
+    joinDate: '',
+    workTime: '',
+    isActive: true
+  })
+  ElMessage.info('表单已重置')
+}
+
+const handleInlineSearch = () => {
+  console.log('搜索条件:', inlineFormModel)
+  ElMessage.success('搜索执行成功！')
+}
+
+const handleInlineReset = () => {
+  Object.assign(inlineFormModel, {
+    keyword: '',
+    status: ''
+  })
+  ElMessage.info('搜索条件已重置')
 }
 
 const pageChangeEvent = (params: any) => {
@@ -173,6 +461,10 @@ onMounted(() => {
     const instance = tableRef.value?.getTableInstance()
     console.log(instance?.getTableData())
   }, 1000)
+  setTimeout(() => {
+    const instance = formRef.value?.getFormInstance()
+    console.log(instance)
+  }, 1000)
   console.log(eovaConverter)
 })
 </script>
@@ -226,5 +518,36 @@ onMounted(() => {
   margin-top: 0;
   margin-bottom: 16px;
   color: #303133;
+}
+
+.form-data-display {
+  margin-top: 20px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+}
+
+.form-data-display h4 {
+  margin: 0 0 10px 0;
+  color: #495057;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.form-data-display pre {
+  margin: 0 0 20px 0;
+  padding: 12px;
+  background: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #495057;
+  overflow-x: auto;
+}
+
+.form-data-display pre:last-child {
+  margin-bottom: 0;
 }
 </style>

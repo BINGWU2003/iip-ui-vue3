@@ -23,6 +23,9 @@ features:
   - icon: 🚀
     title: 高性能表格
     details: 基于 vxe-table 4.15+ 构建的企业级表格组件，支持虚拟滚动、编辑、筛选等功能
+  - icon: 📝
+    title: 配置化表单
+    details: 通过 JSON 配置快速生成表单，支持 20+ 种表单项类型，内置验证规则和动态显示
   - icon: ⚡️
     title: 智能插槽渲染
     details: v1.2.0+ 版本实现插槽性能优化，只渲染实际使用的插槽，避免不必要的性能开销

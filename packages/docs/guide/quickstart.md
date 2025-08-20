@@ -233,6 +233,12 @@ app.use(IipUI, {
         </template>
       </iip-table>
     </div>
+
+    <!-- 表单组件 -->
+    <div style="margin: 20px 0;">
+      <h3>配置化表单</h3>
+      <iip-form :config="formConfig" @submit="handleFormSubmit" />
+    </div>
   </div>
 </template>
 
@@ -275,6 +281,54 @@ const editRow = (row: any) => {
 const deleteRow = (row: any) => {
   ElMessage.warning(`删除用户: ${row.name}`)
 }
+
+// 表单配置
+const formConfig = {
+  model: {
+    name: '',
+    email: '',
+    type: ''
+  },
+  items: [
+    {
+      prop: 'name',
+      label: '姓名',
+      type: 'input',
+      required: true,
+      placeholder: '请输入姓名',
+      span: 12
+    },
+    {
+      prop: 'email',
+      label: '邮箱',
+      type: 'input',
+      required: true,
+      placeholder: '请输入邮箱',
+      span: 12
+    },
+    {
+      prop: 'type',
+      label: '类型',
+      type: 'select',
+      placeholder: '请选择类型',
+      span: 24,
+      options: [
+        { label: '管理员', value: 'admin' },
+        { label: '普通用户', value: 'user' }
+      ]
+    }
+  ],
+  actions: {
+    show: true,
+    align: 'center',
+    submitText: '提交表单'
+  }
+}
+
+const handleFormSubmit = (formData: any) => {
+  console.log('表单数据:', formData)
+  ElMessage.success('表单提交成功！')
+}
 </script>
 
 <style scoped>
@@ -303,6 +357,7 @@ h3 {
 - ✅ Element Plus 按钮可以点击并显示消息
 - ✅ 主题切换器可以切换亮色/暗色主题
 - ✅ 表格显示数据并支持操作按钮
+- ✅ 表单显示输入框、下拉选择和提交按钮
 - ✅ 主题切换时所有组件样式都会相应变化
 
 ## TypeScript 支持
@@ -323,10 +378,21 @@ h3 {
 
 ```typescript
 // 导入组件类型
-import type { TableColumn, TableColumnProps, ThemeType } from '@bingwu/iip-ui-components'
+import type {
+  TableColumn,
+  TableColumnProps,
+  FormConfig,
+  FormItemConfig,
+  ThemeType
+} from '@bingwu/iip-ui-components'
 
 // 使用类型
 const columns: TableColumn[] = [{ tableColumnProps: { field: 'name', title: '姓名' } }]
+
+const formConfig: FormConfig = {
+  model: { name: '' },
+  items: [{ prop: 'name', label: '姓名', type: 'input' }]
+}
 
 const theme: ThemeType = 'light'
 ```
