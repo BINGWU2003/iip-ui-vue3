@@ -11,6 +11,9 @@
     "clean": "rm -rf .vitepress/dist"
   },
   "dependencies": {
+    "@bingwu/iip-ui-components": "workspace:*",
+    "@bingwu/iip-ui-theme": "workspace:*",
+    "@bingwu/iip-ui-utils": "workspace:*",
     "element-plus": "^2.4.4",
     "vue": "^3.3.8",
     "vxe-pc-ui": "4.8.15",
