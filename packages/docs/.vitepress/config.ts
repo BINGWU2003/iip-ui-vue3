@@ -126,6 +126,11 @@ export default defineConfig({
 
   // 构建配置
   vite: {
-    // 可以在这里添加其他 Vite 配置
+    optimizeDeps: {
+      include: ['vue', 'element-plus', 'vxe-table', 'vxe-pc-ui', 'xe-utils']
+    },
+    ssr: {
+      noExternal: ['@bingwu/iip-ui-components', '@bingwu/iip-ui-theme', '@bingwu/iip-ui-utils']
+    }
   }
 })
