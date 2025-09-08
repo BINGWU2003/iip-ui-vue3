@@ -6,8 +6,7 @@ export default defineConfig({
   plugins: [
     dts({
       insertTypesEntry: true,
-      cleanVueFileName: true,
-      skipDiagnostics: false
+      cleanVueFileName: true
     })
   ],
   build: {
@@ -24,9 +23,5 @@ export default defineConfig({
     },
     sourcemap: true,
     emptyOutDir: true
-  },
-  test: {
-    environment: 'node',
-    globals: true
   }
 })

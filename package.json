@@ -8,14 +8,15 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "pnpm --filter @iip-ui/components dev",
-    "build": "pnpm --filter @iip-ui/components build",
-    "build:all": "pnpm -r --filter=!@iip-ui/docs build",
-    "docs:dev": "pnpm --filter @iip-ui/docs dev",
-    "docs:build": "pnpm --filter @iip-ui/docs build",
-    "test": "pnpm -r test",
-    "test:unit": "pnpm --filter @iip-ui/components test",
-    "lint": "eslint . --ext .vue,.js,.ts,.jsx,.tsx --fix",
+    "dev": "pnpm --filter @bingwu/iip-ui-components dev",
+    "build:components": "pnpm --filter @bingwu/iip-ui-components build",
+    "build:utils": "pnpm --filter @bingwu/iip-ui-utils build",
+    "docs:dev": "pnpm --filter @bingwu/iip-ui-docs dev",
+    "docs:build": "pnpm --filter @bingwu/iip-ui-docs build",
+    "build:all": "pnpm -r --filter=!@bingwu/iip-ui-docs build",
+    "test:components": "pnpm --filter @bingwu/iip-ui-components test",
+    "test:unit": "pnpm --filter @bingwu/iip-ui-components test",
+    "lint:components": "eslint . --ext .vue,.js,.ts,.jsx,.tsx --fix",
     "lint:style": "echo \"Stylelint temporarily disabled\"",
     "format": "prettier --write .",
     "prepare": "husky install",
@@ -31,7 +32,7 @@
     "version:minor": "npm version minor",
     "version:major": "npm version major",
     "test:all": "pnpm -r test",
-    "docs:preview": "pnpm --filter @iip-ui/docs preview",
+    "docs:preview": "pnpm --filter @bingwu/iip-ui-docs preview",
     "verify:release": "node scripts/verify-release.js"
   },
   "devDependencies": {

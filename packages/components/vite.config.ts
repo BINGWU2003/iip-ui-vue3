@@ -12,9 +12,7 @@ export default defineConfig({
     vue(),
     dts({
       insertTypesEntry: true,
-      cleanVueFileName: true,
-      skipDiagnostics: false,
-      tsConfigFilePath: './tsconfig.json'
+      cleanVueFileName: true
     }),
     AutoImport({
       resolvers: [ElementPlusResolver()],
@@ -55,10 +53,5 @@ export default defineConfig({
     sourcemap: true,
     // 清空输出目录
     emptyOutDir: true
-  },
-  test: {
-    environment: 'jsdom',
-    globals: true,
-    setupFiles: ['./test/setup.ts']
   }
 })
