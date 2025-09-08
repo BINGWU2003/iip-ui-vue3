@@ -33,11 +33,11 @@ export default defineConfig({
     }
   },
 
-  // CSS 预处理器 - 简化配置
+  // CSS 预处理器
   css: {
     preprocessorOptions: {
       scss: {
-        // 移除有问题的 additionalData，让组件自己处理样式导入
+        api: 'modern-compiler'
       }
     }
   },

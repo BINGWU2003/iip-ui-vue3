@@ -113,7 +113,7 @@ importers:
         specifier: ^23.0.1
         version: 23.2.0
       sass:
-        specifier: ^1.69.5
+        specifier: ^1.90.0
         version: 1.90.0
       unplugin-auto-import:
         specifier: ^0.17.2
@@ -165,7 +165,7 @@ importers:
         specifier: ^20.9.0
         version: 20.19.10
       sass:
-        specifier: ^1.69.5
+        specifier: ^1.90.0
         version: 1.90.0
       typescript:
         specifier: ^5.3.2
@@ -177,7 +177,7 @@ importers:
   packages/theme:
     devDependencies:
       sass:
-        specifier: ^1.69.5
+        specifier: ^1.90.0
         version: 1.90.0
 
   packages/utils:

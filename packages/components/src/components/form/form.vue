@@ -82,7 +82,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineOptions, defineExpose, toRefs, useAttrs, useSlots } from 'vue'
+import { ref, computed, toRefs, useAttrs, useSlots } from 'vue'
 import {
   ElForm,
   ElFormItem,

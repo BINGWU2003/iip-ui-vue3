@@ -14,7 +14,7 @@
     "clean": "rm -rf dist"
   },
   "devDependencies": {
-    "sass": "^1.69.5"
+    "sass": "^1.90.0"
   },
   "keywords": [
     "theme",
