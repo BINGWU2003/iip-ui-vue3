@@ -54,11 +54,8 @@ importers:
       stylelint:
         specifier: ^15.11.0
         version: 15.11.0(typescript@5.9.2)
-      stylelint-config-prettier:
-        specifier: ^9.0.5
-        version: 9.0.5(stylelint@15.11.0)
       stylelint-config-recess-order:
-        specifier: ^4.4.0
+        specifier: ^4.6.0
         version: 4.6.0(stylelint@15.11.0)
       stylelint-config-standard:
         specifier: ^34.0.0
@@ -66,9 +63,6 @@ importers:
       stylelint-config-standard-scss:
         specifier: ^11.1.0
         version: 11.1.0(postcss@8.5.6)(stylelint@15.11.0)
-      stylelint-config-standard-vue:
-        specifier: ^1.0.0
-        version: 1.0.0(postcss-html@1.8.0)(stylelint@15.11.0)
       typescript:
         specifier: ^5.3.2
         version: 5.9.2
@@ -5212,27 +5206,6 @@ packages:
     resolution: {integrity: sha512-Dj1Okke1C3uKKwQcetra4jSuk0DqbzbYtXipzFlFMZtowbF1x7BKJwB9AayVMyFARvU8EDrZdcax4At/452cAg==}
     dev: true
 
-  /stylelint-config-html@1.1.0(postcss-html@1.8.0)(stylelint@15.11.0):
-    resolution: {integrity: sha512-IZv4IVESjKLumUGi+HWeb7skgO6/g4VMuAYrJdlqQFndgbj6WJAXPhaysvBiXefX79upBdQVumgYcdd17gCpjQ==}
-    engines: {node: ^12 || >=14}
-    peerDependencies:
-      postcss-html: ^1.0.0
-      stylelint: '>=14.0.0'
-    dependencies:
-      postcss-html: 1.8.0
-      stylelint: 15.11.0(typescript@5.9.2)
-    dev: true
-
-  /stylelint-config-prettier@9.0.5(stylelint@15.11.0):
-    resolution: {integrity: sha512-U44lELgLZhbAD/xy/vncZ2Pq8sh2TnpiPvo38Ifg9+zeioR+LAkHu0i6YORIOxFafZoVg0xqQwex6e6F25S5XA==}
-    engines: {node: '>= 12'}
-    hasBin: true
-    peerDependencies:
-      stylelint: '>= 11.x < 15'
-    dependencies:
-      stylelint: 15.11.0(typescript@5.9.2)
-    dev: true
-
   /stylelint-config-recess-order@4.6.0(stylelint@15.11.0):
     resolution: {integrity: sha512-V76fhv3YtcNXh/hyAuAdSzi5FmcrG54Mp2AThJ3D/PTMTSYzUPd7GIhP6z9mTqnRhmkk6YTfcu/JWB8h+Yrcaw==}
     peerDependencies:
@@ -5258,34 +5231,11 @@ packages:
       stylelint-scss: 5.3.2(stylelint@15.11.0)
     dev: true
 
-  /stylelint-config-recommended-vue@1.6.1(postcss-html@1.8.0)(stylelint@15.11.0):
-    resolution: {integrity: sha512-lLW7hTIMBiTfjenGuDq2kyHA6fBWd/+Df7MO4/AWOxiFeXP9clbpKgg27kHfwA3H7UNMGC7aeP3mNlZB5LMmEQ==}
-    engines: {node: ^12 || >=14}
-    peerDependencies:
-      postcss-html: ^1.0.0
-      stylelint: '>=14.0.0'
-    dependencies:
-      postcss-html: 1.8.0
-      semver: 7.7.2
-      stylelint: 15.11.0(typescript@5.9.2)
-      stylelint-config-html: 1.1.0(postcss-html@1.8.0)(stylelint@15.11.0)
-      stylelint-config-recommended: 17.0.0(stylelint@15.11.0)
-    dev: true
-
   /stylelint-config-recommended@13.0.0(stylelint@15.11.0):
     resolution: {integrity: sha512-EH+yRj6h3GAe/fRiyaoO2F9l9Tgg50AOFhaszyfov9v6ayXJ1IkSHwTxd7lB48FmOeSGDPLjatjO11fJpmarkQ==}
     engines: {node: ^14.13.1 || >=16.0.0}
     peerDependencies:
       stylelint: ^15.10.0
-    dependencies:
-      stylelint: 15.11.0(typescript@5.9.2)
-    dev: true
-
-  /stylelint-config-recommended@17.0.0(stylelint@15.11.0):
-    resolution: {integrity: sha512-WaMSdEiPfZTSFVoYmJbxorJfA610O0tlYuU2aEwY33UQhSPgFbClrVJYWvy3jGJx+XW37O+LyNLiZOEXhKhJmA==}
-    engines: {node: '>=18.12.0'}
-    peerDependencies:
-      stylelint: ^16.23.0
     dependencies:
       stylelint: 15.11.0(typescript@5.9.2)
     dev: true
@@ -5302,20 +5252,6 @@ packages:
       postcss: 8.5.6
       stylelint: 15.11.0(typescript@5.9.2)
       stylelint-config-recommended-scss: 13.1.0(postcss@8.5.6)(stylelint@15.11.0)
-      stylelint-config-standard: 34.0.0(stylelint@15.11.0)
-    dev: true
-
-  /stylelint-config-standard-vue@1.0.0(postcss-html@1.8.0)(stylelint@15.11.0):
-    resolution: {integrity: sha512-wAzU7p6DSlo04pWfCbOcaMq09Nojt0FEsbdxhCBTdC7IguD9ZVl7FP/bvyA0HAHjZGC4JkW7m6WiQaoVMDSuFw==}
-    engines: {node: ^12 || >=14}
-    peerDependencies:
-      postcss-html: ^1.0.0
-      stylelint: '>=14.0.0'
-    dependencies:
-      postcss-html: 1.8.0
-      stylelint: 15.11.0(typescript@5.9.2)
-      stylelint-config-html: 1.1.0(postcss-html@1.8.0)(stylelint@15.11.0)
-      stylelint-config-recommended-vue: 1.6.1(postcss-html@1.8.0)(stylelint@15.11.0)
       stylelint-config-standard: 34.0.0(stylelint@15.11.0)
     dev: true
 
