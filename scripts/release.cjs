@@ -376,40 +376,6 @@ async function updatePackageDependencies(updatedPackages) {
   log('✅ 包依赖关系更新完成', 'green')
 }
 
-async function getUpdatedPackagesInfo() {
-  const packagesDir = path.join(process.cwd(), 'packages')
-  const packageDirs = fs.readdirSync(packagesDir).filter(dir => {
-    const packagePath = path.join(packagesDir, dir)
-    const packageJsonPath = path.join(packagePath, 'package.json')
-
-    if (!fs.statSync(packagePath).isDirectory() || !fs.existsSync(packageJsonPath)) {
-      return false
-    }
-
-    // 排除 private 包和文档包
-    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
-    if (packageJson.private) {
-      return false
-    }
-
-    return true
-  })
-
-  const packages = []
-  for (const packageDir of packageDirs) {
-    const packageJsonPath = path.join(packagesDir, packageDir, 'package.json')
-    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
-
-    packages.push({
-      name: packageJson.name,
-      version: packageJson.version,
-      path: packageDir
-    })
-  }
-
-  return packages
-}
-
 async function updateChangelog(version) {
   log('📝 请手动更新 CHANGELOG.md...', 'yellow')
 
@@ -618,14 +584,6 @@ async function main() {
 
     // 7. 更新 CHANGELOG
     await updateChangelog(mainVersion)
-
-    // 8. 提交并创建标签
-    // 获取更新的包信息（使用已选择的包）
-    const updatedPackages = selectedPackages.map(pkg => ({
-      name: pkg.name,
-      version: pkg.version, // 这里会在 updateVersion 中被更新
-      path: pkg.path
-    }))
 
     // 重新获取更新后的版本信息
     const packagesDir = path.join(process.cwd(), 'packages')
