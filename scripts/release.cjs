@@ -91,14 +91,120 @@ async function updateVersion(versionType) {
     process.exit(1)
   }
 
-  exec(`npm version ${versionType}`)
+  const packagesDir = path.join(process.cwd(), 'packages')
+  const packageDirs = fs.readdirSync(packagesDir).filter(dir => {
+    const packagePath = path.join(packagesDir, dir)
+    return (
+      fs.statSync(packagePath).isDirectory() &&
+      fs.existsSync(path.join(packagePath, 'package.json'))
+    )
+  })
 
-  // 获取新版本号
-  const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'))
-  const newVersion = packageJson.version
+  let newVersion = ''
+  const updatedPackages = []
 
-  log(`✅ 版本已更新到 v${newVersion}`, 'green')
+  for (const packageDir of packageDirs) {
+    const packagePath = path.join(packagesDir, packageDir)
+    const packageJsonPath = path.join(packagePath, 'package.json')
+
+    log(`更新包: ${packageDir}`, 'cyan')
+
+    // 在每个包目录中执行版本更新
+    process.chdir(packagePath)
+    exec(`npm version ${versionType}`)
+
+    // 读取更新后的版本号
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
+    const packageVersion = packageJson.version
+
+    updatedPackages.push({
+      name: packageJson.name,
+      version: packageVersion,
+      path: packageDir
+    })
+
+    // 使用第一个包的版本作为统一版本号
+    if (!newVersion) {
+      newVersion = packageVersion
+    }
+
+    log(`✅ ${packageJson.name} 版本已更新到 v${packageVersion}`, 'green')
+  }
+
+  // 回到根目录
+  process.chdir(
+    process
+      .cwd()
+      .replace(/packages\/[^/]+$/, '')
+      .replace(/packages$/, '')
+  )
+
+  // 显示更新摘要
+  log('\n📋 版本更新摘要:', 'blue')
+  updatedPackages.forEach(pkg => {
+    log(`  ${pkg.name}: v${pkg.version}`, 'cyan')
+  })
+
+  // 更新包之间的依赖关系
+  await updatePackageDependencies(updatedPackages)
+
   return newVersion
+}
+
+async function updatePackageDependencies(updatedPackages) {
+  log('🔗 更新包依赖关系...', 'blue')
+
+  const packagesDir = path.join(process.cwd(), 'packages')
+  const packageVersionMap = new Map()
+
+  // 构建版本映射
+  updatedPackages.forEach(pkg => {
+    packageVersionMap.set(pkg.name, pkg.version)
+  })
+
+  for (const pkg of updatedPackages) {
+    const packageJsonPath = path.join(packagesDir, pkg.path, 'package.json')
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
+    let hasUpdates = false
+
+    // 更新 dependencies
+    if (packageJson.dependencies) {
+      for (const [depName, depVersion] of Object.entries(packageJson.dependencies)) {
+        if (packageVersionMap.has(depName)) {
+          const newVersion = packageVersionMap.get(depName)
+          const newDepVersion = `^${newVersion}`
+          if (depVersion !== newDepVersion) {
+            packageJson.dependencies[depName] = newDepVersion
+            hasUpdates = true
+            log(`  更新 ${pkg.name} 中的依赖: ${depName} -> ^${newVersion}`, 'cyan')
+          }
+        }
+      }
+    }
+
+    // 更新 devDependencies
+    if (packageJson.devDependencies) {
+      for (const [depName, depVersion] of Object.entries(packageJson.devDependencies)) {
+        if (packageVersionMap.has(depName)) {
+          const newVersion = packageVersionMap.get(depName)
+          const newDepVersion = `^${newVersion}`
+          if (depVersion !== newDepVersion) {
+            packageJson.devDependencies[depName] = newDepVersion
+            hasUpdates = true
+            log(`  更新 ${pkg.name} 中的开发依赖: ${depName} -> ^${newVersion}`, 'cyan')
+          }
+        }
+      }
+    }
+
+    // 如果有更新，写入文件
+    if (hasUpdates) {
+      fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n')
+      log(`✅ 已更新 ${pkg.name} 的依赖关系`, 'green')
+    }
+  }
+
+  log('✅ 包依赖关系更新完成', 'green')
 }
 
 async function updateChangelog(version) {
@@ -120,7 +226,7 @@ async function commitAndTag(version) {
   log('📤 提交更改并创建标签...', 'blue')
 
   exec('git add .')
-  exec(`git commit -m "chore: release v${version}"`)
+  exec(`git commit -m "chore: 发布 v${version}"`)
   exec(`git tag v${version}`)
 
   log('✅ 更改已提交并创建标签', 'green')
@@ -128,7 +234,7 @@ async function commitAndTag(version) {
 
 async function pushToRemote() {
   log('🚀 推送到远程仓库...', 'blue')
-  exec('git push origin main --tags')
+  exec('git push origin master --tags')
   log('✅ 已推送到远程仓库', 'green')
 }
 
@@ -152,24 +258,53 @@ async function publishToNpm() {
 async function verifyPublish(version) {
   log('🔍 验证发布结果...', 'blue')
 
-  const packages = ['@bingwu/iip-ui-components', '@bingwu/iip-ui-utils', '@bingwu/iip-ui-theme']
+  const packagesDir = path.join(process.cwd(), 'packages')
+  const packageDirs = fs.readdirSync(packagesDir).filter(dir => {
+    const packagePath = path.join(packagesDir, dir)
+    return (
+      fs.statSync(packagePath).isDirectory() &&
+      fs.existsSync(path.join(packagePath, 'package.json'))
+    )
+  })
 
-  for (const pkg of packages) {
+  const publishedPackages = []
+
+  for (const packageDir of packageDirs) {
+    const packageJsonPath = path.join(packagesDir, packageDir, 'package.json')
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
+    const packageName = packageJson.name
+    const packageVersion = packageJson.version
+
     try {
-      const info = execSync(`npm view ${pkg}@${version} version`, {
+      const info = execSync(`npm view ${packageName}@${packageVersion} version`, {
         encoding: 'utf8',
         stdio: 'pipe'
       }).trim()
 
-      if (info === version) {
-        log(`✅ ${pkg}@${version} 发布成功`, 'green')
+      if (info === packageVersion) {
+        log(`✅ ${packageName}@${packageVersion} 发布成功`, 'green')
+        publishedPackages.push({ name: packageName, version: packageVersion, status: 'success' })
       } else {
-        log(`❌ ${pkg}@${version} 发布失败`, 'red')
+        log(`❌ ${packageName}@${packageVersion} 发布失败`, 'red')
+        publishedPackages.push({ name: packageName, version: packageVersion, status: 'failed' })
       }
     } catch (error) {
-      log(`❌ 无法验证 ${pkg} 的发布状态`, 'red')
+      log(`❌ 无法验证 ${packageName} 的发布状态`, 'red')
+      publishedPackages.push({ name: packageName, version: packageVersion, status: 'error' })
     }
   }
+
+  // 显示验证摘要
+  log('\n📋 发布验证摘要:', 'blue')
+  publishedPackages.forEach(pkg => {
+    const statusIcon = pkg.status === 'success' ? '✅' : '❌'
+    log(
+      `  ${statusIcon} ${pkg.name}@${pkg.version} - ${pkg.status}`,
+      pkg.status === 'success' ? 'green' : 'red'
+    )
+  })
+
+  return publishedPackages
 }
 
 async function main() {
@@ -197,6 +332,11 @@ async function main() {
     // 5. 更新版本
     const newVersion = await updateVersion(finalVersionType)
 
+    // 5.1 重新构建项目（因为依赖关系可能已更新）
+    log('🔄 重新构建项目（依赖更新后）...', 'blue')
+    exec('pnpm build:all')
+    log('✅ 重新构建完成', 'green')
+
     // 6. 更新 CHANGELOG
     await updateChangelog(newVersion)
 
@@ -210,7 +350,16 @@ async function main() {
     await publishToNpm()
 
     // 10. 验证发布
-    await verifyPublish(newVersion)
+    const publishResults = await verifyPublish(newVersion)
+
+    // 检查是否所有包都发布成功
+    const failedPackages = publishResults.filter(pkg => pkg.status !== 'success')
+    if (failedPackages.length > 0) {
+      log(`\n⚠️  注意: ${failedPackages.length} 个包发布失败或验证失败`, 'yellow')
+      failedPackages.forEach(pkg => {
+        log(`  - ${pkg.name}@${pkg.version}`, 'yellow')
+      })
+    }
 
     log('='.repeat(50), 'magenta')
     log(`🎉 发布完成！版本: v${newVersion}`, 'green')
