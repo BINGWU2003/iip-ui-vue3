@@ -33,7 +33,7 @@
     "version:major": "npm version major",
     "test:all": "pnpm -r test",
     "docs:preview": "pnpm --filter @bingwu/iip-ui-docs preview",
-    "verify:release": "node scripts/verify-release.js"
+    "verify:release": "node scripts/verify-release.cjs"
   },
   "devDependencies": {
     "@commitlint/cli": "^18.4.3",
