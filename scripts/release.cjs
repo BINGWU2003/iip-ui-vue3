@@ -94,11 +94,26 @@ async function updateVersion(versionType) {
   const packagesDir = path.join(process.cwd(), 'packages')
   const packageDirs = fs.readdirSync(packagesDir).filter(dir => {
     const packagePath = path.join(packagesDir, dir)
-    return (
-      fs.statSync(packagePath).isDirectory() &&
-      fs.existsSync(path.join(packagePath, 'package.json'))
-    )
+    const packageJsonPath = path.join(packagePath, 'package.json')
+
+    if (!fs.statSync(packagePath).isDirectory() || !fs.existsSync(packageJsonPath)) {
+      return false
+    }
+
+    // 排除 private 包和文档包
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
+    if (packageJson.private || packageJson.name === '@bingwu/iip-ui-docs') {
+      log(`跳过私有或文档包: ${packageJson.name}`, 'yellow')
+      return false
+    }
+
+    return true
   })
+
+  if (packageDirs.length === 0) {
+    log('❌ 没有找到需要发布的包', 'red')
+    process.exit(1)
+  }
 
   let newVersion = ''
   const updatedPackages = []
@@ -186,8 +201,17 @@ async function updatePackageDependencies(updatedPackages) {
     packageVersionMap.set(pkg.name, pkg.version)
   })
 
-  for (const pkg of updatedPackages) {
-    const packageJsonPath = path.join(packagesDir, pkg.path, 'package.json')
+  // 更新所有包的依赖（包括 docs 包）
+  const allPackageDirs = fs.readdirSync(packagesDir).filter(dir => {
+    const packagePath = path.join(packagesDir, dir)
+    return (
+      fs.statSync(packagePath).isDirectory() &&
+      fs.existsSync(path.join(packagePath, 'package.json'))
+    )
+  })
+
+  for (const packageDir of allPackageDirs) {
+    const packageJsonPath = path.join(packagesDir, packageDir, 'package.json')
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
     let hasUpdates = false
 
@@ -200,7 +224,7 @@ async function updatePackageDependencies(updatedPackages) {
           if (depVersion !== newDepVersion) {
             packageJson.dependencies[depName] = newDepVersion
             hasUpdates = true
-            log(`  更新 ${pkg.name} 中的依赖: ${depName} -> ^${newVersion}`, 'cyan')
+            log(`  更新 ${packageJson.name} 中的依赖: ${depName} -> ^${newVersion}`, 'cyan')
           }
         }
       }
@@ -215,7 +239,7 @@ async function updatePackageDependencies(updatedPackages) {
           if (depVersion !== newDepVersion) {
             packageJson.devDependencies[depName] = newDepVersion
             hasUpdates = true
-            log(`  更新 ${pkg.name} 中的开发依赖: ${depName} -> ^${newVersion}`, 'cyan')
+            log(`  更新 ${packageJson.name} 中的开发依赖: ${depName} -> ^${newVersion}`, 'cyan')
           }
         }
       }
@@ -224,7 +248,7 @@ async function updatePackageDependencies(updatedPackages) {
     // 如果有更新，写入文件
     if (hasUpdates) {
       fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n')
-      log(`✅ 已更新 ${pkg.name} 的依赖关系`, 'green')
+      log(`✅ 已更新 ${packageJson.name} 的依赖关系`, 'green')
     }
   }
 
@@ -235,10 +259,19 @@ async function getUpdatedPackagesInfo() {
   const packagesDir = path.join(process.cwd(), 'packages')
   const packageDirs = fs.readdirSync(packagesDir).filter(dir => {
     const packagePath = path.join(packagesDir, dir)
-    return (
-      fs.statSync(packagePath).isDirectory() &&
-      fs.existsSync(path.join(packagePath, 'package.json'))
-    )
+    const packageJsonPath = path.join(packagePath, 'package.json')
+
+    if (!fs.statSync(packagePath).isDirectory() || !fs.existsSync(packageJsonPath)) {
+      return false
+    }
+
+    // 排除 private 包和文档包
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
+    if (packageJson.private || packageJson.name === '@bingwu/iip-ui-docs') {
+      return false
+    }
+
+    return true
   })
 
   const packages = []
@@ -317,10 +350,19 @@ async function verifyPublish(version) {
   const packagesDir = path.join(process.cwd(), 'packages')
   const packageDirs = fs.readdirSync(packagesDir).filter(dir => {
     const packagePath = path.join(packagesDir, dir)
-    return (
-      fs.statSync(packagePath).isDirectory() &&
-      fs.existsSync(path.join(packagePath, 'package.json'))
-    )
+    const packageJsonPath = path.join(packagePath, 'package.json')
+
+    if (!fs.statSync(packagePath).isDirectory() || !fs.existsSync(packageJsonPath)) {
+      return false
+    }
+
+    // 排除 private 包和文档包
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
+    if (packageJson.private || packageJson.name === '@bingwu/iip-ui-docs') {
+      return false
+    }
+
+    return true
   })
 
   const publishedPackages = []
