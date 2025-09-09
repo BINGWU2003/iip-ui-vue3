@@ -1,6 +1,6 @@
 {
   "name": "@bingwu/iip-ui-theme",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "iip-ui-vue3 主题样式",
   "type": "module",
   "main": "./dist/index.css",
