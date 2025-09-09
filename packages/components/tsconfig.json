@@ -20,9 +20,7 @@
     /* Path mapping */
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      /* 本地依赖 */
-      "@bingwu/iip-ui-utils": ["../utils/src/index.ts"]
+      "@/*": ["src/*"]
     },
     /* Declaration */
     "declaration": true,
