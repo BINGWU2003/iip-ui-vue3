@@ -69,9 +69,6 @@ importers:
 
   packages/components:
     dependencies:
-      '@bingwu/iip-ui-utils':
-        specifier: workspace:^
-        version: link:../utils
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
