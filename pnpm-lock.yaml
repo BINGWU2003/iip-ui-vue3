@@ -69,6 +69,9 @@ importers:
 
   packages/components:
     dependencies:
+      '@bingwu/iip-ui-utils':
+        specifier: ^1.2.7
+        version: link:../utils
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
@@ -127,15 +130,6 @@ importers:
 
   packages/docs:
     dependencies:
-      '@bingwu/iip-ui-components':
-        specifier: ^1.2.7
-        version: link:../components
-      '@bingwu/iip-ui-theme':
-        specifier: ^1.2.5
-        version: link:../theme
-      '@bingwu/iip-ui-utils':
-        specifier: ^1.2.6
-        version: link:../utils
       element-plus:
         specifier: ^2.4.4
         version: 2.10.6(vue@3.5.18)
