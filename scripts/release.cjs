@@ -69,7 +69,7 @@ async function selectPackagesToUpdate() {
     }
 
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
-    if (packageJson.private || packageJson.name === '@bingwu/iip-ui-docs') {
+    if (packageJson.private) {
       return false
     }
 
@@ -191,7 +191,7 @@ async function updateVersion(versionType, selectedPackages = null) {
 
       // 排除 private 包和文档包
       const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
-      if (packageJson.private || packageJson.name === '@bingwu/iip-ui-docs') {
+      if (packageJson.private) {
         log(`跳过私有或文档包: ${packageJson.name}`, 'yellow')
         return false
       }
@@ -369,7 +369,7 @@ async function getUpdatedPackagesInfo() {
 
     // 排除 private 包和文档包
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
-    if (packageJson.private || packageJson.name === '@bingwu/iip-ui-docs') {
+    if (packageJson.private) {
       return false
     }
 
@@ -491,7 +491,7 @@ async function verifyPublish(version, updatedPackages = null) {
 
       // 排除 private 包和文档包
       const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
-      if (packageJson.private || packageJson.name === '@bingwu/iip-ui-docs') {
+      if (packageJson.private) {
         return false
       }
 
