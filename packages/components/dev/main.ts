@@ -6,8 +6,6 @@ import 'vxe-table/lib/style.css'
 
 // 导入组件库
 import IipUI from '../src/index'
-// 使用编译后的 CSS 文件
-import '../../theme/dist/index.css'
 
 // 导入开发应用
 import App from './App.vue'
