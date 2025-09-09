@@ -53,6 +53,87 @@ function question(prompt) {
   })
 }
 
+async function selectPackagesToUpdate() {
+  log('📎 选择要更新的包:', 'blue')
+
+  const packagesDir = path.join(process.cwd(), 'packages')
+  const availablePackages = []
+
+  // 获取所有可用的包
+  const packageDirs = fs.readdirSync(packagesDir).filter(dir => {
+    const packagePath = path.join(packagesDir, dir)
+    const packageJsonPath = path.join(packagePath, 'package.json')
+
+    if (!fs.statSync(packagePath).isDirectory() || !fs.existsSync(packageJsonPath)) {
+      return false
+    }
+
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
+    if (packageJson.private || packageJson.name === '@bingwu/iip-ui-docs') {
+      return false
+    }
+
+    availablePackages.push({
+      name: packageJson.name,
+      version: packageJson.version,
+      path: dir,
+      displayName: `${packageJson.name} (v${packageJson.version})`
+    })
+
+    return true
+  })
+
+  if (availablePackages.length === 0) {
+    log('❌ 没有可用的包', 'red')
+    process.exit(1)
+  }
+
+  // 显示可用的包
+  log('\n可用的包:', 'cyan')
+  availablePackages.forEach((pkg, index) => {
+    log(`  ${index + 1}. ${pkg.displayName}`, 'white')
+  })
+  log(`  ${availablePackages.length + 1}. 全部包`, 'white')
+
+  const choice = await question(
+    `\n请选择要更新的包 (1-${availablePackages.length + 1}, 或用逗号分隔多个选择, 如 1,3): `
+  )
+
+  if (choice.trim() === `${availablePackages.length + 1}`) {
+    log('✅ 已选择全部包', 'green')
+    return availablePackages
+  }
+
+  const selectedIndices = choice.split(',').map(s => parseInt(s.trim()) - 1)
+  const selectedPackages = []
+
+  for (const index of selectedIndices) {
+    if (index >= 0 && index < availablePackages.length) {
+      selectedPackages.push(availablePackages[index])
+    } else {
+      log(`⚠️  无效的选择: ${index + 1}`, 'yellow')
+    }
+  }
+
+  if (selectedPackages.length === 0) {
+    log('❌ 没有选择任何包', 'red')
+    process.exit(1)
+  }
+
+  log('\n✅ 已选择的包:', 'green')
+  selectedPackages.forEach(pkg => {
+    log(`  - ${pkg.displayName}`, 'cyan')
+  })
+
+  const confirm = await question('\n确认继续? (y/N): ')
+  if (confirm.toLowerCase() !== 'y') {
+    log('❌ 已取消', 'red')
+    process.exit(1)
+  }
+
+  return selectedPackages
+}
+
 async function checkWorkingDirectory() {
   log('🔍 检查工作目录状态...', 'blue')
 
@@ -83,7 +164,7 @@ async function buildProject() {
   log('✅ 构建完成', 'green')
 }
 
-async function updateVersion(versionType) {
+async function updateVersion(versionType, selectedPackages = null) {
   log(`📦 更新版本 (${versionType})...`, 'blue')
 
   if (!['patch', 'minor', 'major'].includes(versionType)) {
@@ -91,38 +172,59 @@ async function updateVersion(versionType) {
     process.exit(1)
   }
 
-  const packagesDir = path.join(process.cwd(), 'packages')
-  const packageDirs = fs.readdirSync(packagesDir).filter(dir => {
-    const packagePath = path.join(packagesDir, dir)
-    const packageJsonPath = path.join(packagePath, 'package.json')
+  let packagesToUpdate = []
 
-    if (!fs.statSync(packagePath).isDirectory() || !fs.existsSync(packageJsonPath)) {
-      return false
+  if (selectedPackages && selectedPackages.length > 0) {
+    // 使用用户选择的包
+    packagesToUpdate = selectedPackages
+    log(`将更新 ${packagesToUpdate.length} 个选中的包`, 'cyan')
+  } else {
+    // 获取所有可用的包
+    const packagesDir = path.join(process.cwd(), 'packages')
+    const packageDirs = fs.readdirSync(packagesDir).filter(dir => {
+      const packagePath = path.join(packagesDir, dir)
+      const packageJsonPath = path.join(packagePath, 'package.json')
+
+      if (!fs.statSync(packagePath).isDirectory() || !fs.existsSync(packageJsonPath)) {
+        return false
+      }
+
+      // 排除 private 包和文档包
+      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
+      if (packageJson.private || packageJson.name === '@bingwu/iip-ui-docs') {
+        log(`跳过私有或文档包: ${packageJson.name}`, 'yellow')
+        return false
+      }
+
+      return true
+    })
+
+    if (packageDirs.length === 0) {
+      log('❌ 没有找到需要发布的包', 'red')
+      process.exit(1)
     }
 
-    // 排除 private 包和文档包
-    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
-    if (packageJson.private || packageJson.name === '@bingwu/iip-ui-docs') {
-      log(`跳过私有或文档包: ${packageJson.name}`, 'yellow')
-      return false
+    const packagesDir2 = path.join(process.cwd(), 'packages')
+    for (const packageDir of packageDirs) {
+      const packageJsonPath = path.join(packagesDir2, packageDir, 'package.json')
+      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
+      packagesToUpdate.push({
+        name: packageJson.name,
+        version: packageJson.version,
+        path: packageDir
+      })
     }
-
-    return true
-  })
-
-  if (packageDirs.length === 0) {
-    log('❌ 没有找到需要发布的包', 'red')
-    process.exit(1)
   }
 
   let newVersion = ''
   const updatedPackages = []
 
-  for (const packageDir of packageDirs) {
-    const packagePath = path.join(packagesDir, packageDir)
+  for (const pkg of packagesToUpdate) {
+    const packagesDir = path.join(process.cwd(), 'packages')
+    const packagePath = path.join(packagesDir, pkg.path)
     const packageJsonPath = path.join(packagePath, 'package.json')
 
-    log(`更新包: ${packageDir}`, 'cyan')
+    log(`更新包: ${pkg.path}`, 'cyan')
 
     // 手动更新版本号（避免 npm version 对 workspace 依赖的问题）
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
@@ -136,7 +238,7 @@ async function updateVersion(versionType) {
     updatedPackages.push({
       name: packageJson.name,
       version: packageVersion,
-      path: packageDir
+      path: pkg.path
     })
 
     // 使用第一个包的版本作为统一版本号
@@ -327,7 +429,7 @@ async function pushToRemote() {
   log('✅ 已推送到远程仓库', 'green')
 }
 
-async function publishToNpm() {
+async function publishToNpm(updatedPackages = null) {
   log('📦 发布到 npm...', 'blue')
 
   // 检查 npm 登录状态
@@ -339,39 +441,79 @@ async function publishToNpm() {
     process.exit(1)
   }
 
-  // 发布所有包
-  exec('pnpm -r publish')
+  if (updatedPackages && updatedPackages.length > 0) {
+    // 发布指定的包
+    log(`发布 ${updatedPackages.length} 个选中的包...`, 'cyan')
+    const packagesDir = path.join(process.cwd(), 'packages')
+
+    for (const pkg of updatedPackages) {
+      const packagePath = path.join(packagesDir, pkg.path)
+      log(`发布 ${pkg.name}...`, 'cyan')
+
+      process.chdir(packagePath)
+      exec('npm publish')
+      process.chdir(
+        process
+          .cwd()
+          .replace(/packages\/[^/]+$/, '')
+          .replace(/packages$/, '')
+      )
+
+      log(`✅ ${pkg.name} 发布完成`, 'green')
+    }
+  } else {
+    // 发布所有包
+    exec('pnpm -r publish')
+  }
+
   log('✅ 发布完成', 'green')
 }
 
-async function verifyPublish(version) {
+async function verifyPublish(version, updatedPackages = null) {
   log('🔍 验证发布结果...', 'blue')
 
-  const packagesDir = path.join(process.cwd(), 'packages')
-  const packageDirs = fs.readdirSync(packagesDir).filter(dir => {
-    const packagePath = path.join(packagesDir, dir)
-    const packageJsonPath = path.join(packagePath, 'package.json')
+  let packagesToVerify = []
 
-    if (!fs.statSync(packagePath).isDirectory() || !fs.existsSync(packageJsonPath)) {
-      return false
+  if (updatedPackages && updatedPackages.length > 0) {
+    // 验证指定的包
+    packagesToVerify = updatedPackages
+    log(`验证 ${packagesToVerify.length} 个已更新的包...`, 'cyan')
+  } else {
+    // 验证所有包
+    const packagesDir = path.join(process.cwd(), 'packages')
+    const packageDirs = fs.readdirSync(packagesDir).filter(dir => {
+      const packagePath = path.join(packagesDir, dir)
+      const packageJsonPath = path.join(packagePath, 'package.json')
+
+      if (!fs.statSync(packagePath).isDirectory() || !fs.existsSync(packageJsonPath)) {
+        return false
+      }
+
+      // 排除 private 包和文档包
+      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
+      if (packageJson.private || packageJson.name === '@bingwu/iip-ui-docs') {
+        return false
+      }
+
+      return true
+    })
+
+    for (const packageDir of packageDirs) {
+      const packageJsonPath = path.join(packagesDir, packageDir, 'package.json')
+      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
+      packagesToVerify.push({
+        name: packageJson.name,
+        version: packageJson.version,
+        path: packageDir
+      })
     }
-
-    // 排除 private 包和文档包
-    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
-    if (packageJson.private || packageJson.name === '@bingwu/iip-ui-docs') {
-      return false
-    }
-
-    return true
-  })
+  }
 
   const publishedPackages = []
 
-  for (const packageDir of packageDirs) {
-    const packageJsonPath = path.join(packagesDir, packageDir, 'package.json')
-    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
-    const packageName = packageJson.name
-    const packageVersion = packageJson.version
+  for (const pkg of packagesToVerify) {
+    const packageName = pkg.name
+    const packageVersion = pkg.version
 
     try {
       const info = execSync(`npm view ${packageName}@${packageVersion} version`, {
@@ -415,20 +557,23 @@ async function main() {
     // 1. 检查工作目录
     await checkWorkingDirectory()
 
-    // 2. 确定版本类型
+    // 2. 选择要更新的包
+    const selectedPackages = await selectPackagesToUpdate()
+
+    // 3. 确定版本类型
     let finalVersionType = versionType
     if (!finalVersionType) {
       finalVersionType = await question('请选择版本类型 (patch/minor/major): ')
     }
 
-    // 3. 运行测试
+    // 4. 运行测试
     // await runTests()
     log('\n🧪 跳过测试步骤...', 'yellow')
-    // 4. 构建项目
+    // 5. 构建项目
     await buildProject()
 
-    // 5. 更新版本
-    const newVersion = await updateVersion(finalVersionType)
+    // 6. 更新版本
+    const newVersion = await updateVersion(finalVersionType, selectedPackages)
 
     // 5.1 重新构建项目（因为依赖关系可能已更新）
     log('🔄 重新构建项目（依赖更新后）...', 'blue')
@@ -438,19 +583,37 @@ async function main() {
     // 6. 更新 CHANGELOG
     await updateChangelog(newVersion)
 
-    // 7. 提交并创建标签
-    // 获取更新的包信息
-    const updatedPackages = await getUpdatedPackagesInfo()
-    await commitAndTag(newVersion, updatedPackages)
+    // 8. 提交并创建标签
+    // 获取更新的包信息（使用已选择的包）
+    const updatedPackages = selectedPackages.map(pkg => ({
+      name: pkg.name,
+      version: pkg.version, // 这里会在 updateVersion 中被更新
+      path: pkg.path
+    }))
+
+    // 重新获取更新后的版本信息
+    const packagesDir = path.join(process.cwd(), 'packages')
+    const finalUpdatedPackages = []
+    for (const pkg of selectedPackages) {
+      const packageJsonPath = path.join(packagesDir, pkg.path, 'package.json')
+      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
+      finalUpdatedPackages.push({
+        name: packageJson.name,
+        version: packageJson.version,
+        path: pkg.path
+      })
+    }
+
+    await commitAndTag(newVersion, finalUpdatedPackages)
 
     // 8. 推送到远程
     await pushToRemote()
 
-    // 9. 发布到 npm
-    await publishToNpm()
+    // 10. 发布到 npm
+    await publishToNpm(finalUpdatedPackages)
 
-    // 10. 验证发布
-    const publishResults = await verifyPublish(newVersion)
+    // 11. 验证发布
+    const publishResults = await verifyPublish(newVersion, finalUpdatedPackages)
 
     // 检查是否所有包都发布成功
     const failedPackages = publishResults.filter(pkg => pkg.status !== 'success')
