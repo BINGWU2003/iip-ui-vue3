@@ -11,7 +11,7 @@
     "clean": "rm -rf .vitepress/dist"
   },
   "dependencies": {
-    "@bingwu/iip-ui-components": "^1.2.5",
+    "@bingwu/iip-ui-components": "^1.2.6",
     "@bingwu/iip-ui-theme": "^1.2.3",
     "@bingwu/iip-ui-utils": "^1.2.5",
     "element-plus": "^2.4.4",
