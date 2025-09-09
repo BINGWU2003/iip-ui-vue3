@@ -26,7 +26,23 @@ const colors = {
 function log(message, color = 'reset') {
   console.log(`${colors[color]}${message}${colors.reset}`)
 }
+async function checkWorkingDirectory() {
+  log('🔍 检查工作目录状态...', 'blue')
 
+  try {
+    const status = execSync('git status --porcelain', { encoding: 'utf8' })
+    if (status.trim()) {
+      log('❌ 工作目录不干净，请先提交或暂存更改', 'red')
+      log('未提交的文件:', 'yellow')
+      console.log(status)
+      process.exit(1)
+    }
+    log('✅ 工作目录干净', 'green')
+  } catch (error) {
+    log('❌ 无法检查 Git 状态', 'red')
+    process.exit(1)
+  }
+}
 function execCommand(command, cwd = process.cwd()) {
   try {
     log(`执行命令: ${command}`, 'cyan')
@@ -115,7 +131,8 @@ function publishPackage(packageName) {
   }
 }
 
-function main() {
+async function main() {
+  await checkWorkingDirectory()
   log('🚀 开始批量发布 IIP UI Vue3 包...', 'bright')
 
   // 检查 npm 登录状态
