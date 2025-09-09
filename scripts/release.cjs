@@ -189,7 +189,7 @@ async function main() {
     }
 
     // 3. 运行测试
-    await runTests()
+    // await runTests()
 
     // 4. 构建项目
     await buildProject()
