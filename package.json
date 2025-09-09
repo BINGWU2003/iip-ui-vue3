@@ -22,7 +22,6 @@
     "prepare": "husky install",
     "clean": "pnpm -r clean && rm -rf node_modules",
     "preinstall": "npx only-allow pnpm",
-    "publish:npm": "pnpm -r publish --access public",
     "release": "node scripts/release.cjs",
     "release:patch": "node scripts/release.cjs patch",
     "release:minor": "node scripts/release.cjs minor",
