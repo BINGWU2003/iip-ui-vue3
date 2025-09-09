@@ -38,6 +38,9 @@
 # 安装依赖
 pnpm install
 
+# 打包构建(必须先打包构建)
+pnpm build:all
+
 # 启动组件库开发服务器
 pnpm dev
 
