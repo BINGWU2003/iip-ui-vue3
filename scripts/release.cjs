@@ -109,13 +109,14 @@ async function updateVersion(versionType) {
 
     log(`更新包: ${packageDir}`, 'cyan')
 
-    // 在每个包目录中执行版本更新
-    process.chdir(packagePath)
-    exec(`npm version ${versionType}`)
-
-    // 读取更新后的版本号
+    // 手动更新版本号（避免 npm version 对 workspace 依赖的问题）
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
-    const packageVersion = packageJson.version
+    const currentVersion = packageJson.version
+    const packageVersion = updateVersionNumber(currentVersion, versionType)
+
+    // 更新 package.json 中的版本号
+    packageJson.version = packageVersion
+    fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2) + '\n')
 
     updatedPackages.push({
       name: packageJson.name,
@@ -149,6 +150,29 @@ async function updateVersion(versionType) {
   await updatePackageDependencies(updatedPackages)
 
   return newVersion
+}
+
+function updateVersionNumber(currentVersion, versionType) {
+  const parts = currentVersion.split('.').map(Number)
+
+  switch (versionType) {
+    case 'patch':
+      parts[2]++
+      break
+    case 'minor':
+      parts[1]++
+      parts[2] = 0
+      break
+    case 'major':
+      parts[0]++
+      parts[1] = 0
+      parts[2] = 0
+      break
+    default:
+      throw new Error(`无效的版本类型: ${versionType}`)
+  }
+
+  return parts.join('.')
 }
 
 async function updatePackageDependencies(updatedPackages) {
@@ -207,6 +231,31 @@ async function updatePackageDependencies(updatedPackages) {
   log('✅ 包依赖关系更新完成', 'green')
 }
 
+async function getUpdatedPackagesInfo() {
+  const packagesDir = path.join(process.cwd(), 'packages')
+  const packageDirs = fs.readdirSync(packagesDir).filter(dir => {
+    const packagePath = path.join(packagesDir, dir)
+    return (
+      fs.statSync(packagePath).isDirectory() &&
+      fs.existsSync(path.join(packagePath, 'package.json'))
+    )
+  })
+
+  const packages = []
+  for (const packageDir of packageDirs) {
+    const packageJsonPath = path.join(packagesDir, packageDir, 'package.json')
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
+
+    packages.push({
+      name: packageJson.name,
+      version: packageJson.version,
+      path: packageDir
+    })
+  }
+
+  return packages
+}
+
 async function updateChangelog(version) {
   log('📝 请手动更新 CHANGELOG.md...', 'yellow')
 
@@ -222,14 +271,21 @@ async function updateChangelog(version) {
   }
 }
 
-async function commitAndTag(version) {
+async function commitAndTag(version, updatedPackages) {
   log('📤 提交更改并创建标签...', 'blue')
 
   exec('git add .')
-  exec(`git commit -m "chore: 发布 v${version}"`)
+
+  // 创建更详细的提交信息
+  const packageList = updatedPackages.map(pkg => `${pkg.name}@${pkg.version}`).join(', ')
+  const commitMessage = `chore: 发布 v${version}\n\n更新的包:\n${updatedPackages.map(pkg => `- ${pkg.name}: v${pkg.version}`).join('\n')}`
+
+  exec(`git commit -m "${commitMessage}"`)
   exec(`git tag v${version}`)
 
   log('✅ 更改已提交并创建标签', 'green')
+  log(`标签: v${version}`, 'cyan')
+  log(`包含包: ${packageList}`, 'cyan')
 }
 
 async function pushToRemote() {
@@ -341,7 +397,9 @@ async function main() {
     await updateChangelog(newVersion)
 
     // 7. 提交并创建标签
-    await commitAndTag(newVersion)
+    // 获取更新的包信息
+    const updatedPackages = await getUpdatedPackagesInfo()
+    await commitAndTag(newVersion, updatedPackages)
 
     // 8. 推送到远程
     await pushToRemote()
