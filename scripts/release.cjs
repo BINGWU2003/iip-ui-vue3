@@ -190,7 +190,7 @@ async function main() {
 
     // 3. 运行测试
     // await runTests()
-
+    log('\n🧪 跳过测试步骤...', 'yellow')
     // 4. 构建项目
     await buildProject()
 

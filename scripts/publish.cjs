@@ -125,7 +125,7 @@ function main() {
   log('\n🔨 构建所有包...', 'bright')
   execCommand('pnpm build:all')
 
-  // 跳过测试（避免 watch 模式卡住）
+  // 跳过测试
   log('\n🧪 跳过测试步骤...', 'yellow')
 
   // 按顺序发布包
