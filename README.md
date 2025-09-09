@@ -35,6 +35,9 @@
 ### 开发环境启动
 
 ```bash
+# 安装依赖
+pnpm install
+
 # 启动组件库开发服务器
 pnpm dev
 
