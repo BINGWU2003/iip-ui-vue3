@@ -27,7 +27,7 @@
     "clean": "rm -rf dist dev-dist"
   },
   "dependencies": {
-    "@bingwu/iip-ui-utils": "^1.2.5",
+    "@bingwu/iip-ui-utils": "workspace:*",
     "dayjs": "^1.11.13",
     "vue": "^3.3.8",
     "vxe-pc-ui": "4.8.15",
