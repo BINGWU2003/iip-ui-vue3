@@ -266,7 +266,10 @@ async function updateVersion(versionType, selectedPackages = null) {
   // 更新包之间的依赖关系
   await updatePackageDependencies(updatedPackages)
 
-  return newVersion
+  // 更新主包（根目录）的版本号
+  const mainPackageVersion = await updateMainPackageVersion()
+
+  return mainPackageVersion
 }
 
 function updateVersionNumber(currentVersion, versionType) {
@@ -290,6 +293,22 @@ function updateVersionNumber(currentVersion, versionType) {
   }
 
   return parts.join('.')
+}
+
+async function updateMainPackageVersion() {
+  log('📦 更新主包版本号...', 'blue')
+
+  const mainPackageJsonPath = path.join(process.cwd(), 'package.json')
+  const mainPackageJson = JSON.parse(fs.readFileSync(mainPackageJsonPath, 'utf8'))
+
+  const currentVersion = mainPackageJson.version
+  const newVersion = updateVersionNumber(currentVersion, 'patch')
+
+  mainPackageJson.version = newVersion
+  fs.writeFileSync(mainPackageJsonPath, JSON.stringify(mainPackageJson, null, 2) + '\n')
+
+  log(`✅ 主包版本已更新: ${currentVersion} -> ${newVersion}`, 'green')
+  return newVersion
 }
 
 async function updatePackageDependencies(updatedPackages) {
@@ -406,21 +425,38 @@ async function updateChangelog(version) {
   }
 }
 
-async function commitAndTag(version, updatedPackages) {
+async function commitAndTag(mainVersion, updatedPackages) {
   log('📤 提交更改并创建标签...', 'blue')
 
   exec('git add .')
 
   // 创建更详细的提交信息
   const packageList = updatedPackages.map(pkg => `${pkg.name}@${pkg.version}`).join(', ')
-  const commitMessage = `chore: 发布 v${version}\n\n更新的包:\n${updatedPackages.map(pkg => `- ${pkg.name}: v${pkg.version}`).join('\n')}`
 
-  exec(`git commit -m "${commitMessage}"`)
-  exec(`git tag v${version}`)
+  // 使用临时文件来处理多行提交信息
+  const commitMessageFile = path.join(process.cwd(), '.commit-message.tmp')
+  const commitMessage = `chore: 发布 v${mainVersion}
 
-  log('✅ 更改已提交并创建标签', 'green')
-  log(`标签: v${version}`, 'cyan')
-  log(`包含包: ${packageList}`, 'cyan')
+更新的包:
+${updatedPackages.map(pkg => `- ${pkg.name}: v${pkg.version}`).join('\n')}
+
+包含: ${packageList}`
+
+  fs.writeFileSync(commitMessageFile, commitMessage, 'utf8')
+
+  try {
+    exec(`git commit -F "${commitMessageFile}"`)
+    exec(`git tag v${mainVersion}`)
+
+    log('✅ 更改已提交并创建标签', 'green')
+    log(`标签: v${mainVersion} (使用主包版本)`, 'cyan')
+    log(`包含包: ${packageList}`, 'cyan')
+  } finally {
+    // 清理临时文件
+    if (fs.existsSync(commitMessageFile)) {
+      fs.unlinkSync(commitMessageFile)
+    }
+  }
 }
 
 async function pushToRemote() {
@@ -573,15 +609,15 @@ async function main() {
     await buildProject()
 
     // 6. 更新版本
-    const newVersion = await updateVersion(finalVersionType, selectedPackages)
+    const mainVersion = await updateVersion(finalVersionType, selectedPackages)
 
-    // 5.1 重新构建项目（因为依赖关系可能已更新）
+    // 6.1 重新构建项目（因为依赖关系可能已更新）
     log('🔄 重新构建项目（依赖更新后）...', 'blue')
     exec('pnpm build:all')
     log('✅ 重新构建完成', 'green')
 
-    // 6. 更新 CHANGELOG
-    await updateChangelog(newVersion)
+    // 7. 更新 CHANGELOG
+    await updateChangelog(mainVersion)
 
     // 8. 提交并创建标签
     // 获取更新的包信息（使用已选择的包）
@@ -604,7 +640,7 @@ async function main() {
       })
     }
 
-    await commitAndTag(newVersion, finalUpdatedPackages)
+    await commitAndTag(mainVersion, finalUpdatedPackages)
 
     // 8. 推送到远程
     await pushToRemote()
@@ -613,7 +649,7 @@ async function main() {
     await publishToNpm(finalUpdatedPackages)
 
     // 11. 验证发布
-    const publishResults = await verifyPublish(newVersion, finalUpdatedPackages)
+    const publishResults = await verifyPublish(mainVersion, finalUpdatedPackages)
 
     // 检查是否所有包都发布成功
     const failedPackages = publishResults.filter(pkg => pkg.status !== 'success')
@@ -625,7 +661,7 @@ async function main() {
     }
 
     log('='.repeat(50), 'magenta')
-    log(`🎉 发布完成！版本: v${newVersion}`, 'green')
+    log(`🎉 发布完成！主版本: v${mainVersion}`, 'green')
     log('='.repeat(50), 'magenta')
   } catch (error) {
     log('❌ 发布过程中出现错误:', 'red')
