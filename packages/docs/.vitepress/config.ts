@@ -16,6 +16,7 @@ export default defineConfig({
       { text: '指南', link: '/guide/introduction' },
       { text: '组件', link: '/components/table' },
       { text: '工具函数', link: '/utils/utils' },
+      { text: '主题', link: '/theme/theme' },
       { text: '更新日志', link: '/guide/changelog' },
       {
         text: 'v1.2.1',
@@ -63,10 +64,6 @@ export default defineConfig({
             { text: 'Select 选择器', link: '/components/select' },
             { text: 'DateRange 日期范围', link: '/components/date-range' }
           ]
-        },
-        {
-          text: '工具组件',
-          items: [{ text: 'Utils 工具函数', link: '/components/utils' }]
         }
       ]
     },
