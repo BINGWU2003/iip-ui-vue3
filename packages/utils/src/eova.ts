@@ -163,3 +163,5 @@ export const eovaConverter = new EovaToAvueConverter()
 
 // 默认导出实例（向后兼容）
 export default new EovaToAvueConverter()
+
+export type { EovaField, TableColumnProps }

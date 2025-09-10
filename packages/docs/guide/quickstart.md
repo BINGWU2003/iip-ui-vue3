@@ -10,46 +10,67 @@
 - **Vue**: 3.3.0+
 - **TypeScript**: 4.7.0+ (可选但推荐)
 
+## 包结构说明
+
+IIP UI Vue3 采用 Monorepo 架构，包含以下核心包：
+
+- **@bingwu/iip-ui-components**: 核心组件库 (Input, Select, Table, Form, DateRange)
+- **@bingwu/iip-ui-theme**: 主题样式包 (CSS 变量、全局样式)
+- **@bingwu/iip-ui-utils**: 工具函数库 (类型检查、验证、Vue 工具等)
+
 ## 安装
 
-### 1. 安装核心依赖
+### 基础安装
 
 ::: code-group
 
 ```bash [pnpm (推荐)]
-# 安装组件库
-pnpm add @bingwu/iip-ui-components @bingwu/iip-ui-theme
+# 安装组件库和主题
+pnpm add @bingwu/iip-ui-components @bingwu/iip-ui-theme @bingwu/iip-ui-utils
 
-# 安装必要依赖 (Table 组件需要)
-pnpm add vxe-table@^4.15.6 vxe-pc-ui@4.8.15 xe-utils@^3.7.8
+# 安装必要的第三方依赖
+pnpm add vxe-table@^4.15.6 vxe-pc-ui@^4.8.15 xe-utils@^3.7.8
 
-# 安装 Element Plus (推荐)
-pnpm add element-plus@^2.4.4
+# 安装 Element Plus (提供基础 UI 组件)
+pnpm add element-plus@^2.4.4 @element-plus/icons-vue@^2.1.0
 ```
 
 ```bash [npm]
-# 安装组件库
-npm install @bingwu/iip-ui-components @bingwu/iip-ui-theme
+# 安装组件库和主题
+npm install @bingwu/iip-ui-components @bingwu/iip-ui-theme @bingwu/iip-ui-utils
 
-# 安装必要依赖 (Table 组件需要)
-npm install vxe-table@^4.15.6 vxe-pc-ui@4.8.15 xe-utils@^3.7.8
+# 安装必要的第三方依赖
+npm install vxe-table@^4.15.6 vxe-pc-ui@^4.8.15 xe-utils@^3.7.8
 
-# 安装 Element Plus (推荐)
-npm install element-plus@^2.4.4
+# 安装 Element Plus (提供基础 UI 组件)
+npm install element-plus@^2.11.2 @element-plus/icons-vue@^2.1.0
 ```
 
 ```bash [yarn]
-# 安装组件库
-yarn add @bingwu/iip-ui-components @bingwu/iip-ui-theme
+# 安装组件库和主题
+yarn add @bingwu/iip-ui-components @bingwu/iip-ui-theme @bingwu/iip-ui-utils
 
-# 安装必要依赖 (Table 组件需要)
-yarn add vxe-table@^4.15.6 vxe-pc-ui@4.8.15 xe-utils@^3.7.8
+# 安装必要的第三方依赖
+yarn add vxe-table@^4.15.6 vxe-pc-ui@^4.8.15 xe-utils@^3.7.8
 
-# 安装 Element Plus (推荐)
-yarn add element-plus@^2.4.4
+# 安装 Element Plus (提供基础 UI 组件)
+yarn add element-plus@^2.11.2 @element-plus/icons-vue@^2.1.0
 ```
 
 :::
+
+### 依赖说明
+
+| 包名                        | 必需性   | 说明              |
+| --------------------------- | -------- | ----------------- |
+| `@bingwu/iip-ui-components` | **必需** | 核心组件库        |
+| `@bingwu/iip-ui-theme`      | **必需** | 主题样式          |
+| `@bingwu/iip-ui-utils`      | **必须** | 工具函数库        |
+| `vxe-table`                 | **必需** | Table 组件依赖    |
+| `vxe-pc-ui`                 | **必需** | Table 组件依赖    |
+| `xe-utils`                  | **必需** | Table 组件依赖    |
+| `element-plus`              | **必须** | 基础 UI 组件      |
+| `@element-plus/icons-vue`   | 推荐     | Element Plus 图标 |
 
 ## 完整引入 (推荐)
 
@@ -58,10 +79,13 @@ yarn add element-plus@^2.4.4
 ```typescript
 // main.ts
 import { createApp } from 'vue'
+
+// Element Plus (基础 UI 组件)
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
-// 必须：vxe-table 相关插件
+// vxe-table 相关插件 (Table 组件依赖)
 import VxeUITable from 'vxe-table'
 import 'vxe-table/lib/style.css'
 import VxePCUI from 'vxe-pc-ui'
@@ -75,34 +99,34 @@ import App from './App.vue'
 
 const app = createApp(App)
 
-// 注册插件（顺序很重要！）
-app.use(VxeUITable) // 必须在 IipUI 之前注册
-app.use(VxePCUI) // 必须在 IipUI 之前注册
-app.use(ElementPlus) // 可选，但推荐
-app.use(IipUI) // 最后注册 IIP UI
+// 注册 Element Plus 图标
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+  app.component(key, component)
+}
+
+// 注册插件
+app.use(VxeUITable)
+app.use(VxePCUI)
+app.use(ElementPlus)
+app.use(IipUI)
 
 app.mount('#app')
 ```
 
-::: warning 注意
-插件注册顺序很重要！请确保 `VxeUITable` 和 `VxePCUI` 在 `IipUI` 之前注册，否则 Table 组件将无法正常工作。
-:::
+## 按需引入（暂不支持）
 
-## 按需引入
+如果您使用 Vite 并希望减小打包体积，推荐使用按需引入的方式。
 
-如果您使用 Vite，我们推荐您使用按需引入的方式。
-
-### 安装插件
-
-首先安装 `unplugin-vue-components` 和 `unplugin-auto-import` 这两款插件。
+### 1. 安装自动导入插件
 
 ```bash
-npm install -D unplugin-vue-components unplugin-auto-import
+# 安装自动导入插件
+pnpm add -D unplugin-vue-components unplugin-auto-import
 ```
 
-### 配置插件
+### 2. 配置 Vite
 
-然后把下列代码插入到你的 `Vite` 配置文件中。
+在你的 `vite.config.ts` 中配置自动导入：
 
 ```typescript
 // vite.config.ts
@@ -116,12 +140,44 @@ export default defineConfig({
   plugins: [
     vue(),
     AutoImport({
-      resolvers: [ElementPlusResolver()]
+      resolvers: [ElementPlusResolver()],
+      imports: [
+        'vue',
+        // 自动导入 IIP UI 工具函数
+        {
+          '@bingwu/iip-ui-utils': [
+            'isString',
+            'isNumber',
+            'isBoolean',
+            'isFunction',
+            'isObject',
+            'isArray',
+            'isNull',
+            'isUndefined',
+            'isNullOrUndefined',
+            'debounce',
+            'throttle',
+            'deepClone',
+            'generateId',
+            'isEmail',
+            'isPhone',
+            'isIdCard',
+            'isUrl',
+            'isIP',
+            'getPasswordStrength',
+            'withInstall',
+            'withInstallFunction',
+            'createNamespace',
+            'eovaConverter',
+            'EovaToAvueConverter'
+          ]
+        }
+      ]
     }),
     Components({
       resolvers: [
         ElementPlusResolver(),
-        // IIP UI 组件解析器
+        // IIP UI 组件自动导入解析器
         componentName => {
           if (componentName.startsWith('Iip')) {
             return {
@@ -136,70 +192,114 @@ export default defineConfig({
 })
 ```
 
-### 使用组件
+### 3. 初始化依赖
 
-现在你可以在模板中直接使用组件了，插件会自动为你按需引入。
+在你的 `main.ts` 中只需要注册必要的插件：
+
+```typescript
+// main.ts
+import { createApp } from 'vue'
+
+// 必须：vxe-table 相关插件
+import VxeUITable from 'vxe-table'
+import 'vxe-table/lib/style.css'
+import VxePCUI from 'vxe-pc-ui'
+import 'vxe-pc-ui/lib/style.css'
+
+// 样式文件
+import 'element-plus/dist/index.css'
+import '@bingwu/iip-ui-theme/dist/index.css'
+
+import App from './App.vue'
+
+const app = createApp(App)
+
+// 注册必要插件
+app.use(VxeUITable)
+app.use(VxePCUI)
+
+app.mount('#app')
+```
+
+### 4. 使用组件
+
+现在你可以在模板中直接使用组件和工具函数，插件会自动按需引入：
 
 ```vue
 <template>
   <div>
+    <!-- 组件会自动导入 -->
     <iip-input v-model="value" placeholder="请输入内容" />
     <iip-select v-model="selected" :options="options" />
+    <iip-date-range v-model="dateRange" :gap="16" />
+
+    <!-- Element Plus 组件也会自动导入 -->
+    <el-button type="primary" @click="handleSubmit">提交</el-button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+// Vue API 会自动导入
+// import { ref } from 'vue' // 不需要手动导入
+
+// 工具函数会自动导入
+// import { debounce, isEmail } from '@bingwu/iip-ui-utils' // 不需要手动导入
 
 const value = ref('')
 const selected = ref('')
+const dateRange = ref({ startTime: '', endTime: '' })
+
 const options = [
   { value: '1', label: '选项一' },
   { value: '2', label: '选项二' }
 ]
+
+// 使用防抖函数 (自动导入)
+const handleSubmit = debounce(() => {
+  if (isEmail(value.value)) {
+    console.log('邮箱格式正确')
+  }
+}, 300)
 </script>
 ```
 
 ## 手动引入
 
-如果您不想使用自动导入，也可以手动引入组件。
+如果您不想使用自动导入，也可以手动引入组件和工具函数：
 
 ```vue
 <template>
   <div>
     <iip-input v-model="value" placeholder="请输入内容" />
     <iip-select v-model="selected" :options="options" />
+    <iip-date-range v-model="dateRange" :gap="16" />
+    <el-button type="primary" @click="handleSubmit">提交</el-button>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { IipInput, IipSelect } from '@bingwu/iip-ui-components'
+import { ElButton } from 'element-plus'
+import { IipInput, IipSelect, IipDateRange } from '@bingwu/iip-ui-components'
+import { debounce, isEmail } from '@bingwu/iip-ui-utils'
 
 const value = ref('')
 const selected = ref('')
+const dateRange = ref({ startTime: '', endTime: '' })
+
 const options = [
   { value: '1', label: '选项一' },
   { value: '2', label: '选项二' }
 ]
+
+// 使用工具函数
+const handleSubmit = debounce(() => {
+  if (isEmail(value.value)) {
+    console.log('邮箱格式正确')
+  }
+  console.log('日期范围:', dateRange.value)
+}, 300)
 </script>
-```
-
-## 全局配置
-
-在引入 IIP UI Vue3 时，可以传入一个包含 `size` 和 `zIndex` 属性的全局配置对象。
-
-```typescript
-import { createApp } from 'vue'
-import IipUI from '@bingwu/iip-ui-components'
-
-const app = createApp(App)
-app.use(IipUI, {
-  // 全局组件大小
-  size: 'default',
-  // 全局 z-index
-  zIndex: 3000
-})
 ```
 
 ## 第一个示例
@@ -211,33 +311,54 @@ app.use(IipUI, {
   <div id="app">
     <h1>我的第一个 IIP UI Vue3 应用</h1>
 
-    <!-- Element Plus 按钮 -->
-    <div style="margin: 20px 0;">
-      <el-button type="primary" @click="showMessage"> Element Plus 按钮 </el-button>
+    <!-- 基础输入组件 -->
+    <div class="demo-section">
+      <h3>基础输入组件</h3>
+      <div class="input-group">
+        <iip-input
+          v-model="inputValue"
+          placeholder="请输入内容"
+          clearable
+          style="width: 300px; margin-right: 16px;"
+        />
+        <iip-select
+          v-model="selectValue"
+          :options="selectOptions"
+          placeholder="请选择"
+          style="width: 200px; margin-right: 16px;"
+        />
+        <el-button type="primary" @click="handleSubmit">提交</el-button>
+      </div>
     </div>
 
-    <!-- 主题切换器 -->
-    <div style="margin: 20px 0;">
-      <h3>主题切换</h3>
-      <theme-switcher v-model="currentTheme" :show-label="true" />
-    </div>
-
-    <!-- 表格组件 -->
-    <div style="margin: 20px 0;">
+    <!-- 高性能表格 -->
+    <div class="demo-section">
       <h3>高性能表格</h3>
       <iip-table :data="tableData" :columns="tableColumns" border stripe height="300px">
-        <!-- 自定义插槽示例 -->
+        <!-- 操作列插槽 -->
         <template #action-slot-column-default="{ row }">
-          <el-button type="text" size="small" @click="editRow(row)"> 编辑 </el-button>
-          <el-button type="text" size="small" @click="deleteRow(row)"> 删除 </el-button>
+          <el-button type="primary" size="small" @click="editRow(row)"> 编辑 </el-button>
+          <el-button type="danger" size="small" @click="deleteRow(row)"> 删除 </el-button>
         </template>
       </iip-table>
     </div>
 
-    <!-- 表单组件 -->
-    <div style="margin: 20px 0;">
+    <!-- 配置化表单 -->
+    <div class="demo-section">
       <h3>配置化表单</h3>
-      <iip-form :config="formConfig" @submit="handleFormSubmit" />
+      <iip-form :config="formConfig" @submit="handleFormSubmit" style="max-width: 600px;" />
+    </div>
+
+    <!-- 日期范围选择器 -->
+    <div class="demo-section">
+      <h3>日期范围选择器</h3>
+      <iip-date-range v-model="dateRange" :gap="16" />
+      <p
+        v-if="dateRange && (dateRange.startTime || dateRange.endTime)"
+        style="margin-top: 8px; color: var(--iip-color-info);"
+      >
+        选择的日期范围：{{ formatDateRange(dateRange) }}
+      </p>
     </div>
   </div>
 </template>
@@ -245,23 +366,55 @@ app.use(IipUI, {
 <script setup lang="ts">
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
+import { debounce, isEmail } from '@bingwu/iip-ui-utils'
 
-// 主题状态
-const currentTheme = ref<'light' | 'dark'>('light')
+// 基础输入数据
+const inputValue = ref('')
+const selectValue = ref('')
+const selectOptions = [
+  { label: '选项一', value: '1' },
+  { label: '选项二', value: '2' },
+  { label: '选项三', value: '3' }
+]
+
+// 日期范围
+const dateRange = ref({ startTime: '', endTime: '' })
 
 // 表格数据
 const tableData = ref([
-  { id: 1, name: '张三', age: 25, department: '技术部', status: '在职' },
-  { id: 2, name: '李四', age: 30, department: '产品部', status: '在职' },
-  { id: 3, name: '王五', age: 28, department: '设计部', status: '离职' },
-  { id: 4, name: '赵六', age: 32, department: '运营部', status: '在职' }
+  {
+    id: 1,
+    name: '张三',
+    age: 25,
+    department: '技术部',
+    status: '在职',
+    email: 'zhangsan@example.com'
+  },
+  { id: 2, name: '李四', age: 30, department: '产品部', status: '在职', email: 'lisi@example.com' },
+  {
+    id: 3,
+    name: '王五',
+    age: 28,
+    department: '设计部',
+    status: '离职',
+    email: 'wangwu@example.com'
+  },
+  {
+    id: 4,
+    name: '赵六',
+    age: 32,
+    department: '运营部',
+    status: '在职',
+    email: 'zhaoliu@example.com'
+  }
 ])
 
 // 表格列配置
 const tableColumns = ref([
-  { tableColumnProps: { field: 'name', title: '姓名', width: 120 } },
+  { tableColumnProps: { field: 'name', title: '姓名', width: 100 } },
   { tableColumnProps: { field: 'age', title: '年龄', width: 80 } },
   { tableColumnProps: { field: 'department', title: '部门', width: 120 } },
+  { tableColumnProps: { field: 'email', title: '邮箱', width: 180 } },
   { tableColumnProps: { field: 'status', title: '状态', width: 100 } },
   {
     slotKey: 'action-slot-column',
@@ -269,24 +422,12 @@ const tableColumns = ref([
   }
 ])
 
-// 事件处理
-const showMessage = () => {
-  ElMessage.success('Hello IIP UI Vue3!')
-}
-
-const editRow = (row: any) => {
-  ElMessage.info(`编辑用户: ${row.name}`)
-}
-
-const deleteRow = (row: any) => {
-  ElMessage.warning(`删除用户: ${row.name}`)
-}
-
 // 表单配置
-const formConfig = {
+const formConfig = ref({
   model: {
     name: '',
     email: '',
+    phone: '',
     type: ''
   },
   items: [
@@ -303,31 +444,83 @@ const formConfig = {
       label: '邮箱',
       type: 'input',
       required: true,
-      placeholder: '请输入邮箱',
+      placeholder: '请输入邮箱地址',
+      span: 12
+    },
+    {
+      prop: 'phone',
+      label: '手机号',
+      type: 'input',
+      placeholder: '请输入手机号码',
       span: 12
     },
     {
       prop: 'type',
-      label: '类型',
+      label: '用户类型',
       type: 'select',
-      placeholder: '请选择类型',
-      span: 24,
+      placeholder: '请选择用户类型',
+      span: 12,
       options: [
         { label: '管理员', value: 'admin' },
-        { label: '普通用户', value: 'user' }
+        { label: '普通用户', value: 'user' },
+        { label: '访客', value: 'guest' }
       ]
     }
   ],
   actions: {
     show: true,
     align: 'center',
-    submitText: '提交表单'
+    submitText: '提交表单',
+    resetText: '重置'
   }
+})
+
+// 使用防抖处理提交
+const handleSubmit = debounce(() => {
+  if (!inputValue.value) {
+    ElMessage.warning('请输入内容')
+    return
+  }
+
+  if (isEmail(inputValue.value)) {
+    ElMessage.success(`邮箱格式正确: ${inputValue.value}`)
+  } else {
+    ElMessage.info(`输入内容: ${inputValue.value}, 选择值: ${selectValue.value}`)
+  }
+}, 300)
+
+// 表格操作
+const editRow = (row: any) => {
+  ElMessage.info(`编辑用户: ${row.name}`)
+  console.log('编辑行数据:', row)
 }
 
+const deleteRow = (row: any) => {
+  ElMessage.warning(`删除用户: ${row.name}`)
+  console.log('删除行数据:', row)
+}
+
+// 表单提交处理
 const handleFormSubmit = (formData: any) => {
   console.log('表单数据:', formData)
+
+  // 使用工具函数验证
+  if (formData.email && !isEmail(formData.email)) {
+    ElMessage.error('邮箱格式不正确')
+    return
+  }
+
   ElMessage.success('表单提交成功！')
+}
+
+// 格式化日期范围
+const formatDateRange = (range: { startTime: string; endTime: string }) => {
+  if (!range || (!range.startTime && !range.endTime)) return ''
+
+  const start = range.startTime || '未选择'
+  const end = range.endTime || '未选择'
+
+  return `${start} 至 ${end}`
 }
 </script>
 
@@ -339,13 +532,42 @@ const handleFormSubmit = (formData: any) => {
 }
 
 h1 {
-  color: var(--iip-text-color-primary);
+  color: var(--iip-color-primary);
   margin-bottom: 30px;
+  text-align: center;
 }
 
 h3 {
-  color: var(--iip-text-color-regular);
+  color: var(--iip-color-info);
   margin-bottom: 16px;
+  border-bottom: 2px solid var(--iip-color-primary);
+  padding-bottom: 8px;
+}
+
+.demo-section {
+  margin-bottom: 40px;
+  padding: 20px;
+  border: 1px solid #e4e7ed;
+  border-radius: var(--iip-border-radius-base);
+  background-color: #fafafa;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .input-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .input-group > * {
+    width: 100% !important;
+  }
 }
 </style>
 ```
@@ -354,105 +576,264 @@ h3 {
 
 如果以上示例能正常运行且没有控制台错误，说明安装成功！你应该能看到：
 
-- ✅ Element Plus 按钮可以点击并显示消息
-- ✅ 主题切换器可以切换亮色/暗色主题
-- ✅ 表格显示数据并支持操作按钮
-- ✅ 表单显示输入框、下拉选择和提交按钮
-- ✅ 主题切换时所有组件样式都会相应变化
+- ✅ 基础输入组件正常显示和交互
+- ✅ 下拉选择器可以正常选择选项
+- ✅ 高性能表格显示数据并支持操作按钮
+- ✅ 配置化表单显示各种输入控件
+- ✅ 日期范围选择器可以选择日期范围
+- ✅ 工具函数（防抖、邮箱验证）正常工作
+- ✅ 主题 CSS 变量生效，组件样式正确
 
 ## TypeScript 支持
 
-### 1. 全局组件类型
+IIP UI Vue3 提供完整的 TypeScript 类型支持，包括组件类型、工具函数类型等。
 
-如果使用 Volar，请在 `tsconfig.json` 中添加类型声明：
-
-```json
-{
-  "compilerOptions": {
-    "types": ["@bingwu/iip-ui-components/global", "element-plus/global"]
-  }
-}
-```
-
-### 2. 组件类型导入
+### 1. 组件类型导入
 
 ```typescript
-// 导入组件类型
+// 导入组件相关类型
 import type {
+  // 表格相关类型
   TableColumn,
   TableColumnProps,
+
+  // 表单相关类型
   FormConfig,
   FormItemConfig,
-  ThemeType
+  FormItemType,
+
+  // 输入组件类型
+  InputProps,
+  SelectProps,
+  SelectOption,
+
+  // 日期组件类型
+  DateRangeProps,
+  DateRangeEmits
 } from '@bingwu/iip-ui-components'
 
-// 使用类型
-const columns: TableColumn[] = [{ tableColumnProps: { field: 'name', title: '姓名' } }]
+// 导入工具函数类型
+import type {
+  // 通用类型
+  Nullable,
+  DeepPartial,
+
+  // 防抖函数类型
+  DebouncedFunction,
+
+  // Eova 相关类型
+  EovaField,
+  EovaToAvueConverter
+} from '@bingwu/iip-ui-utils'
+
+// 使用类型示例
+const tableColumns: TableColumn[] = [
+  {
+    tableColumnProps: {
+      field: 'name',
+      title: '姓名',
+      width: 120
+    }
+  }
+]
 
 const formConfig: FormConfig = {
-  model: { name: '' },
-  items: [{ prop: 'name', label: '姓名', type: 'input' }]
+  model: {
+    name: '',
+    email: '',
+    type: ''
+  },
+  items: [
+    {
+      prop: 'name',
+      label: '姓名',
+      type: 'input' as FormItemType,
+      required: true
+    }
+  ]
 }
 
-const theme: ThemeType = 'light'
+const selectOptions: SelectOption[] = [
+  { label: '选项一', value: '1' },
+  { label: '选项二', value: '2' }
+]
+```
+
+### 2. 工具函数类型使用
+
+```typescript
+import { debounce, type DebouncedFunction } from '@bingwu/iip-ui-utils'
+
+// 创建带类型的防抖函数
+const debouncedSave: DebouncedFunction<(data: any) => void> = debounce((data: any) => {
+  console.log('保存数据:', data)
+}, 500)
+
+// 使用 Eova 转换器类型
+import { eovaConverter, type EovaField } from '@bingwu/iip-ui-utils'
+
+const fields: EovaField[] = [
+  {
+    cn: '姓名',
+    en: 'name',
+    type: '文本框',
+    width: 120,
+    is_show: true,
+    is_order: true
+  }
+]
+
+const columns = eovaConverter.convertColumns(fields)
+```
+
+### 3. 组合式 API 类型支持
+
+```typescript
+import { ref, computed, type Ref, type ComputedRef } from 'vue'
+import { type FormConfig } from '@bingwu/iip-ui-components'
+
+// 带类型的响应式数据
+const formData: Ref<Record<string, any>> = ref({})
+const loading: Ref<boolean> = ref(false)
+
+// 带类型的计算属性
+const formConfig: ComputedRef<FormConfig> = computed(() => ({
+  model: formData.value,
+  items: [
+    // 表单项配置
+  ]
+}))
 ```
 
 ## 常见问题
 
-### Q: 为什么 Table 组件不显示？
+### Q: 为什么 Table 组件不显示或报错？
 
-**A:** 确保正确安装并注册了 vxe-table 相关插件：
-
-```typescript
-// ❌ 错误：缺少 vxe-table 插件
-app.use(IipUI)
-
-// ✅ 正确：先注册 vxe-table
-app.use(VxeUITable)
-app.use(VxePCUI)
-app.use(IipUI)
-```
-
-### Q: 样式显示异常怎么办？
-
-**A:** 检查是否正确引入了所有样式文件：
+**A:** Table 组件依赖 vxe-table，请确保正确安装和注册：
 
 ```typescript
-// 确保引入了这些样式
-import 'element-plus/dist/index.css'
-import 'vxe-table/lib/style.css'
-import 'vxe-pc-ui/lib/style.css'
-import '@bingwu/iip-ui-theme/dist/index.css'
+// ❌ 错误：缺少 vxe-table 插件或注册顺序错误
+app.use(IipUI)
+app.use(VxeUITable) // 顺序错误
+
+// ✅ 正确：先注册 vxe-table 相关插件
+app.use(VxeUITable) // 必须在 IipUI 之前
+app.use(VxePCUI) // 必须在 IipUI 之前
+app.use(IipUI) // 最后注册
 ```
 
-### Q: 如何自定义主题？
+### Q: 样式显示异常或组件样式不正确？
 
-**A:** 使用 CSS 变量覆盖默认主题：
+**A:** 检查样式文件引入顺序和完整性：
+
+```typescript
+// 确保按正确顺序引入所有必要的样式文件
+import 'vxe-table/lib/style.css' // vxe-table 样式
+import 'vxe-pc-ui/lib/style.css' // vxe-pc-ui 样式
+import 'element-plus/dist/index.css' // Element Plus 样式
+import '@bingwu/iip-ui-theme/dist/index.css' // IIP UI 主题样式（最后引入）
+```
+
+### Q: 如何自定义主题颜色？
+
+**A:** IIP UI 使用 CSS 变量，可以轻松自定义主题：
 
 ```css
+/* 在你的全局样式文件中覆盖 CSS 变量 */
 :root {
+  /* 主题色 */
   --iip-color-primary: #1890ff;
   --iip-color-success: #52c41a;
+  --iip-color-warning: #faad14;
+  --iip-color-danger: #ff4d4f;
+  --iip-color-info: #909399;
+
+  /* 字体 */
+  --iip-font-size-base: 14px;
+  --iip-font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+
+  /* 间距 */
+  --iip-spacing-md: 16px;
+  --iip-spacing-lg: 24px;
+
+  /* 圆角 */
+  --iip-border-radius-base: 6px;
+}
+
+/* 暗色主题支持 */
+[data-theme='dark'] {
+  --iip-color-primary: #409eff;
+  /* 其他暗色主题变量 */
 }
 ```
 
-### Q: 可以只使用部分组件吗？
+### Q: 工具函数如何使用？
 
-**A:** 当然可以！参考 [按需引入](#按需引入) 章节。
+**A:** 可以手动导入或配置自动导入：
 
-## 下一步
+```typescript
+// 手动导入
+import { debounce, isEmail, deepClone } from '@bingwu/iip-ui-utils'
 
-现在你已经成功安装并运行了 IIP UI Vue3，接下来可以：
+// 或者配置自动导入（推荐）
+// 在 vite.config.ts 中配置后直接使用
+const debouncedFn = debounce(() => {}, 300)
+const isValid = isEmail('test@example.com')
+```
 
-1. 📖 阅读详细的 [组件文档](/components/table)
-2. 🎨 了解 [主题定制](/guide/theme)
-3. 🛠️ 探索 [工具函数](/components/utils)
+### Q: 按需引入时组件未自动导入？
 
-## 获取帮助
+**A:** 检查 Vite 配置中的组件解析器：
 
-如果遇到问题，可以通过以下方式获取帮助：
+```typescript
+// vite.config.ts
+Components({
+  resolvers: [
+    ElementPlusResolver(),
+    // 确保 IIP UI 组件解析器配置正确
+    componentName => {
+      if (componentName.startsWith('Iip')) {
+        return {
+          name: componentName,
+          from: '@bingwu/iip-ui-components'
+        }
+      }
+    }
+  ]
+})
+```
 
-- 🐛 提交 [GitHub Issue](https://github.com/BINGWU2003/iip-ui-vue3/issues)
-- 💬 参与 [GitHub Discussions](https://github.com/BINGWU2003/iip-ui-vue3/discussions)
+### Q: 打包后样式丢失？
 
-欢迎使用 IIP UI Vue3！🎉
+**A:** 确保构建工具正确处理了 CSS 文件：
+
+```typescript
+// vite.config.ts
+export default defineConfig({
+  css: {
+    // 确保 CSS 文件被正确处理
+    preprocessorOptions: {
+      scss: {
+        // SCSS 配置
+      }
+    }
+  },
+  build: {
+    // 确保 CSS 被提取
+    cssCodeSplit: true
+  }
+})
+```
+
+-
+
+## 更新日志
+
+关注我们的更新：
+
+- 📋 **[CHANGELOG](/guide/changelog)** - 查看版本更新记录
+- 🔔 **Watch Repository** - 在 GitHub 上关注项目获取最新动态
+
+---
+
+**感谢使用 IIP UI Vue3！** 🎉

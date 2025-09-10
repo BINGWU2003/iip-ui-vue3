@@ -37,13 +37,6 @@ IIP UI Vue3 是一个基于 Element Plus、Vue 3 和 TypeScript 技术栈构建�
 - 完整的 TypeScript 支持
 - 使用最新的构建工具 Vite
 
-### 🎨 主题系统
-
-- 支持亮色和暗色主题
-- 动态主题切换
-- 自定义主题变量
-- CSS 变量支持
-
 ### 📦 组件丰富
 
 - 基于 Element Plus 二次封装
@@ -87,30 +80,12 @@ IIP UI Vue3 是一个基于 Element Plus、Vue 3 和 TypeScript 技术栈构建�
 - **动态显示**: 支持条件显示/隐藏表单项
 - **响应式布局**: 支持栅格布局，适配不同屏幕
 
-### 🎨 主题系统
-
-- **ThemeProvider**: 全局主题管理和上下文提供
-- **ThemeSwitcher**: 便捷的主题切换组件
-- **CSS 变量**: 基于 CSS 自定义属性的主题系统
-- **暗色模式**: 内置亮色和暗色主题
-
 ### 🛠️ 工具函数
 
 - **Eova 转换器**: 将 Eova 字段定义转换为表格列配置
 - **通用工具**: 类型检查、对象操作、数组处理等
-- **Vue 组合式函数**: useDebounce、useThrottle、useLocalStorage 等
-
-## 版本信息
-
-- **当前版本**: v1.2.1
-- **发布日期**: 2024-12-17
-- **维护状态**: 🟢 积极维护中
 
 查看 [更新日志](/guide/changelog) 了解版本变更详情。
-
-## 贡献
-
-我们欢迎所有的贡献。请阅读我们的 [贡献指南](https://github.com/BINGWU2003/iip-ui-vue3/blob/main/CONTRIBUTING.md) 了解如何参与贡献。
 
 ## 许可证
 

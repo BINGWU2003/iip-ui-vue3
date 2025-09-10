@@ -42,15 +42,7 @@ export default defineConfig({
           text: '开始',
           items: [
             { text: '介绍', link: '/guide/introduction' },
-            { text: '快速开始', link: '/guide/quickstart' },
-            { text: '安装指南', link: '/guide/installation' }
-          ]
-        },
-        {
-          text: '进阶',
-          items: [
-            { text: '主题定制', link: '/guide/theme' },
-            { text: 'Eova 工具', link: '/guide/eova' }
+            { text: '快速开始', link: '/guide/quickstart' }
           ]
         },
         {
@@ -91,12 +83,6 @@ export default defineConfig({
     // 搜索
     search: {
       provider: 'local'
-    },
-
-    // 编辑链接
-    editLink: {
-      pattern: 'https://github.com/BINGWU2003/iip-ui-vue3/edit/main/packages/docs/:path',
-      text: '在 GitHub 上编辑此页'
     },
 
     // 最后更新时间

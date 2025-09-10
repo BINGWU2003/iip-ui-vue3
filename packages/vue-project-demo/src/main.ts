@@ -20,9 +20,10 @@ import router from './router'
 const app = createApp(App)
 
 app.use(createPinia())
+app.use(IipUI)
 app.use(VxeUITable)
 app.use(VxePCUI)
 app.use(router)
 app.use(ElementPlus)
-app.use(IipUI)
+
 app.mount('#app')
