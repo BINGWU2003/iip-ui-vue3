@@ -13,7 +13,7 @@
     "build:utils": "pnpm --filter @bingwu/iip-ui-utils build",
     "docs:dev": "pnpm --filter @bingwu/iip-ui-docs dev",
     "docs:build": "pnpm --filter @bingwu/iip-ui-docs build",
-    "build:all": "pnpm -r --filter=!@bingwu/iip-ui-docs build",
+    "build:all": "pnpm -r --filter=!@bingwu/iip-ui-docs --filter=!@bingwu/vue-project-demo build",
     "test:components": "pnpm --filter @bingwu/iip-ui-components test",
     "test:unit": "pnpm --filter @bingwu/iip-ui-components test",
     "lint:components": "eslint . --ext .vue,.js,.ts,.jsx,.tsx --fix",
