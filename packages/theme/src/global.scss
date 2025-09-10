@@ -28,42 +28,9 @@
   --iip-border-radius-base: 4px;
   --iip-border-radius-small: 2px;
   --iip-border-radius-large: 6px;
-
-  // 阴影
-  --iip-box-shadow-base: 0 2px 4px rgb(0 0 0 / 12%), 0 0 6px rgb(0 0 0 / 4%);
-  --iip-box-shadow-light: 0 2px 12px 0 rgb(0 0 0 / 10%);
-}
-
-// 暗色主题
-[data-theme='dark'] {
-  --iip-color-primary: #409eff;
-  --iip-color-success: #67c23a;
-  --iip-color-warning: #e6a23c;
-  --iip-color-danger: #f56c6c;
-  --iip-color-info: #909399;
 }
 
 // 重置样式
 * {
   box-sizing: border-box;
-}
-
-// 滚动条样式
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
 }

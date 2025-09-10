@@ -1,13 +1,6 @@
 // iip-ui-vue3 主题样式入口文件
 
-// 导入主题变量
-@use './themes/light.scss';
-@use './themes/dark.scss';
-
 // 全局样式
 @use './global.scss';
+@use './test.scss';
 
-// 自定义组件样式
-// @use './components/index.scss'; // 暂时注释掉，避免构建问题
-// Element Plus 样式由使用方自行引入
-// @import url('element-plus/dist/index.css');
