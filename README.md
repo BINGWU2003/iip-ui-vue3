@@ -24,6 +24,7 @@
 - **@bingwu/iip-ui-utils** - 工具函数库
 - **@bingwu/iip-ui-theme** - 主题样式库
 - **@bingwu/iip-ui-docs** - 文档站点
+- **@bingwu/vue-project-demo** - vue-demo（用于测试开发环境的包使用能正常使用）
 
 ## 📋 环境要求
 
@@ -38,7 +39,7 @@
 # 安装依赖
 pnpm install
 
-# 打包构建(必须先打包构建)
+# 打包构建（必须先打包构建再运行项目）
 pnpm build:all
 
 # 启动组件库开发服务器
@@ -70,13 +71,13 @@ pnpm docs:build
 ### 测试命令
 
 ```bash
-# 运行所有测试
+# 运行所有测试（待完善）
 pnpm test:all
 
-# 运行组件库测试
+# 运行组件库测试（待完善）
 pnpm test:components
 
-# 运行单元测试
+# 运行单元测试（待完善）
 pnpm test:unit
 ```
 
@@ -161,8 +162,6 @@ npm publish
 ## 📖 文档
 
 - [组件文档](./packages/docs) - 组件使用文档
-- [构建与发布指南](./docs/BUILD_AND_PUBLISH.md) - 详细的构建和发布流程
-- [发布前检查清单](./docs/RELEASE_CHECKLIST.md) - 发布前必须完成的检查项
 - [更新日志](./CHANGELOG.md) - 版本更新记录
 
 ## 🤝 贡献指南

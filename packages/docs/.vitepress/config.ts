@@ -15,6 +15,7 @@ export default defineConfig({
     nav: [
       { text: '指南', link: '/guide/introduction' },
       { text: '组件', link: '/components/table' },
+      { text: '工具函数', link: '/utils/utils' },
       { text: '更新日志', link: '/guide/changelog' },
       {
         text: 'v1.2.1',
@@ -69,13 +70,6 @@ export default defineConfig({
             { text: 'Input 输入框', link: '/components/input' },
             { text: 'Select 选择器', link: '/components/select' },
             { text: 'DateRange 日期范围', link: '/components/date-range' }
-          ]
-        },
-        {
-          text: '主题组件',
-          items: [
-            { text: 'ThemeProvider 主题提供者', link: '/components/theme-provider' },
-            { text: 'ThemeSwitcher 主题切换器', link: '/components/theme-switcher' }
           ]
         },
         {
