@@ -36,7 +36,7 @@
   },
   "peerDependencies": {
     "@element-plus/icons-vue": "^2.1.0",
-    "element-plus": "^2.4.4",
+    "element-plus": "^2.11.2",
     "vue": "^3.3.0"
   },
   "devDependencies": {
@@ -44,7 +44,7 @@
     "@types/node": "^20.9.0",
     "@vitejs/plugin-vue": "^4.5.0",
     "@vue/test-utils": "^2.4.2",
-    "element-plus": "^2.4.4",
+    "element-plus": "^2.11.2",
     "jsdom": "^23.0.1",
     "sass": "^1.90.0",
     "unplugin-auto-import": "^0.17.2",

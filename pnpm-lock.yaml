@@ -101,8 +101,8 @@ importers:
         specifier: ^2.4.2
         version: 2.4.6
       element-plus:
-        specifier: ^2.4.4
-        version: 2.10.6(vue@3.5.18)
+        specifier: ^2.11.2
+        version: 2.11.2(vue@3.5.18)
       jsdom:
         specifier: ^23.0.1
         version: 23.2.0
@@ -3951,9 +3951,10 @@ packages:
       lodash-unified: 1.0.3(@types/lodash-es@4.17.12)(lodash-es@4.17.21)(lodash@4.17.21)
       memoize-one: 6.0.0
       normalize-wheel-es: 1.2.0
-      vue: 3.5.18(typescript@5.8.3)
+      vue: 3.5.18(typescript@5.9.2)
     transitivePeerDependencies:
       - '@vue/composition-api'
+    dev: false
 
   /element-plus@2.11.2(vue@3.5.18):
     resolution: {integrity: sha512-sTMDXtgeqy17TUsBSH/DL3h1/5sqIOVUUgXFoVbdD8lWWYssKrDX50CEYy4k29tYJhPHKZyFSwcLJsIajr+dDA==}
@@ -3978,7 +3979,6 @@ packages:
       vue: 3.5.18(typescript@5.8.3)
     transitivePeerDependencies:
       - '@vue/composition-api'
-    dev: false
 
   /emoji-regex-xs@1.0.0:
     resolution: {integrity: sha512-LRlerrMYoIDrT6jgpeZ2YYl/L8EulRTt5hQcYjy5AInh7HWXKimpqx68aknBFpGL2+/IcogTcaydJEgaTmOpDg==}
