@@ -1,7 +1,8 @@
-import { withInstall } from '@bingwu/iip-ui-utils'
 import Select from './select.vue'
 
-export const IipSelect = withInstall(Select)
-export default IipSelect
+export { Select }
+export { Select as IipSelect }
+export default Select
 
-export * from './types'
+// 导出类型
+export type * from './types'

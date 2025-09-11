@@ -1,7 +1,8 @@
-import { withInstall } from '@bingwu/iip-ui-utils'
 import Input from './input.vue'
 
-export const IipInput = withInstall(Input)
-export default IipInput
+export { Input }
+export { Input as IipInput }
+export default Input
 
-export * from './types'
+// 导出类型
+export type * from './types'

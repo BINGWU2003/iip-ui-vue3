@@ -1,7 +1,8 @@
-import { withInstall } from '@bingwu/iip-ui-utils'
 import Table from './table.vue'
 
-export const IipTable = withInstall(Table)
-export default IipTable
+export { Table }
+export { Table as IipTable }
+export default Table
 
-export * from './types'
+// 导出类型
+export type * from './types'

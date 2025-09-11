@@ -1,7 +1,8 @@
-import { withInstall } from '@bingwu/iip-ui-utils'
 import DateRange from './date-range.vue'
 
-export const IipDateRange = withInstall(DateRange)
-export default IipDateRange
+export { DateRange }
+export { DateRange as IipDateRange }
+export default DateRange
 
-export * from './types'
+// 导出类型
+export type * from './types'
