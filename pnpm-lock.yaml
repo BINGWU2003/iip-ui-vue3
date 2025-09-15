@@ -70,7 +70,7 @@ importers:
   packages/components:
     dependencies:
       '@bingwu/iip-ui-utils':
-        specifier: ^1.2.7
+        specifier: ^1.2.9
         version: link:../utils
       dayjs:
         specifier: ^1.11.13
@@ -193,13 +193,13 @@ importers:
   packages/vue-project-demo:
     dependencies:
       '@bingwu/iip-ui-components':
-        specifier: workspace:^
+        specifier: ^1.2.10
         version: link:../components
       '@bingwu/iip-ui-theme':
-        specifier: workspace:^
+        specifier: ^1.2.8
         version: link:../theme
       '@bingwu/iip-ui-utils':
-        specifier: workspace:^
+        specifier: ^1.2.9
         version: link:../utils
       element-plus:
         specifier: 2.11.2
