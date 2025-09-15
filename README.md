@@ -277,7 +277,7 @@ npmzjk@163.com
 npm账号：
 
 ```
-yunzhinpm
+bingwu
 npmzjkNPMZJK123
 npmzjk@163.com
 ```
