@@ -14,7 +14,7 @@ pnpm add @bingwu/iip-ui-utils
 import * as IipUtils from '@bingwu/iip-ui-utils'
 
 // 按需引入
-import { isNullOrUndefined, debounce, deepClone } from '@bingwu/iip-ui-utils'
+import { isNullOrUndefined, debounce, deepClone, createRequestManager } from '@bingwu/iip-ui-utils'
 
 // 分类引入
 import {
@@ -29,6 +29,7 @@ import {
   isIdCard, // 验证工具
   withInstall,
   createNamespace, // Vue 工具
+  createRequestManager, // 请求管理
   eovaConverter // Eova 转换
 } from '@bingwu/iip-ui-utils'
 ```
@@ -392,6 +393,504 @@ export default {
 }
 </style>
 ```
+
+## 请求管理工具 (Request)
+
+IIP UI Vue3 提供了强大的请求管理工具，专门用于解决前端开发中常见的请求竞态问题。当用户快速触发多个异步请求时，这个工具确保只处理最新请求的响应，避免数据混乱。
+
+### 核心功能
+
+- **请求竞态控制**：自动识别和处理过期请求
+- **简单易用的API**：支持Promise和async/await两种使用方式
+- **TypeScript支持**：完整的类型定义和智能提示
+- **灵活的回调机制**：支持成功和过期请求的不同处理方式
+
+### 基础使用
+
+```typescript
+import { createRequestManager } from '@bingwu/iip-ui-utils'
+
+// 创建请求管理器实例
+const requestManager = createRequestManager()
+
+// 使用 managedRequest 方法
+const searchUsers = async (keyword: string) => {
+  return requestManager.managedRequest(
+    // 异步请求函数
+    async requestId => {
+      console.log(`执行搜索请求 ${requestId}:`, keyword)
+      const response = await fetch(`/api/users?keyword=${keyword}`)
+      return response.json()
+    },
+    // 成功回调（仅最新请求）
+    data => {
+      console.log('搜索结果:', data)
+      // 更新UI
+      userList.value = data.users
+      return data
+    },
+    // 过期请求回调（可选）
+    (data, requestId) => {
+      console.log(`请求 ${requestId} 已过期，忽略结果`)
+    }
+  )
+}
+
+// 使用 managedFetch 方法（更简洁）
+const fetchUserProfile = async (userId: string) => {
+  const result = await requestManager.managedFetch(async requestId => {
+    console.log(`获取用户资料 ${requestId}:`, userId)
+    const response = await fetch(`/api/users/${userId}`)
+    return response.json()
+  })
+
+  // 检查是否是最新请求的结果
+  if (result.isLatest) {
+    console.log('用户资料:', result.data)
+    userProfile.value = result.data
+  } else {
+    console.log('忽略过期请求结果')
+  }
+
+  return result
+}
+```
+
+### 在Vue组件中的应用
+
+#### 搜索组件示例
+
+```vue
+<template>
+  <div class="search-component">
+    <el-input v-model="searchKeyword" @input="handleSearch" placeholder="搜索用户..." clearable />
+
+    <div v-loading="loading" class="search-results">
+      <div v-for="user in users" :key="user.id" class="user-item">
+        <span>{{ user.name }}</span>
+        <span>{{ user.email }}</span>
+      </div>
+
+      <div v-if="users.length === 0 && !loading" class="no-data">暂无搜索结果</div>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, watch } from 'vue'
+import { createRequestManager, debounce } from '@bingwu/iip-ui-utils'
+
+// 响应式数据
+const searchKeyword = ref('')
+const users = ref([])
+const loading = ref(false)
+
+// 创建请求管理器
+const requestManager = createRequestManager()
+
+// 搜索用户函数
+const searchUsers = async (keyword: string) => {
+  if (!keyword.trim()) {
+    users.value = []
+    return
+  }
+
+  loading.value = true
+
+  try {
+    const result = await requestManager.managedRequest(
+      async requestId => {
+        // 模拟API请求
+        console.log(`执行搜索请求 ${requestId}:`, keyword)
+        const response = await fetch(`/api/users/search?q=${encodeURIComponent(keyword)}`)
+        if (!response.ok) throw new Error('搜索失败')
+        return response.json()
+      },
+      // 成功回调 - 只有最新请求会执行
+      data => {
+        users.value = data.users || []
+        loading.value = false
+        console.log(`搜索完成，找到 ${users.value.length} 个用户`)
+        return data
+      },
+      // 过期请求回调
+      (data, requestId) => {
+        console.log(`搜索请求 ${requestId} 已过期，忽略结果`)
+        loading.value = false
+      }
+    )
+  } catch (error) {
+    console.error('搜索出错:', error)
+    users.value = []
+    loading.value = false
+  }
+}
+
+// 防抖搜索
+const debouncedSearch = debounce(searchUsers, 300)
+
+// 监听搜索关键词变化
+watch(searchKeyword, newKeyword => {
+  debouncedSearch(newKeyword)
+})
+</script>
+```
+
+#### 数据详情组件示例
+
+```vue
+<template>
+  <div class="user-detail">
+    <el-tabs v-model="activeTab" @tab-change="handleTabChange">
+      <el-tab-pane label="基本信息" name="basic">
+        <div v-loading="loading.basic">
+          <div v-if="userInfo">
+            <p>姓名: {{ userInfo.name }}</p>
+            <p>邮箱: {{ userInfo.email }}</p>
+            <p>电话: {{ userInfo.phone }}</p>
+          </div>
+        </div>
+      </el-tab-pane>
+
+      <el-tab-pane label="订单历史" name="orders">
+        <div v-loading="loading.orders">
+          <div v-for="order in orders" :key="order.id" class="order-item">
+            <span>订单号: {{ order.orderNo }}</span>
+            <span>金额: ¥{{ order.amount }}</span>
+          </div>
+        </div>
+      </el-tab-pane>
+
+      <el-tab-pane label="操作日志" name="logs">
+        <div v-loading="loading.logs">
+          <div v-for="log in logs" :key="log.id" class="log-item">
+            <span>{{ log.action }}</span>
+            <span>{{ log.createTime }}</span>
+          </div>
+        </div>
+      </el-tab-pane>
+    </el-tabs>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, reactive, onMounted } from 'vue'
+import { createRequestManager } from '@bingwu/iip-ui-utils'
+
+interface Props {
+  userId: string
+}
+
+const props = defineProps<Props>()
+
+// 响应式数据
+const activeTab = ref('basic')
+const userInfo = ref(null)
+const orders = ref([])
+const logs = ref([])
+
+const loading = reactive({
+  basic: false,
+  orders: false,
+  logs: false
+})
+
+// 为每个数据类型创建独立的请求管理器
+const basicInfoManager = createRequestManager()
+const ordersManager = createRequestManager()
+const logsManager = createRequestManager()
+
+// 获取用户基本信息
+const fetchUserInfo = async () => {
+  loading.basic = true
+
+  try {
+    const result = await basicInfoManager.managedFetch(async requestId => {
+      console.log(`获取用户基本信息 ${requestId}`)
+      const response = await fetch(`/api/users/${props.userId}`)
+      return response.json()
+    })
+
+    if (result.isLatest) {
+      userInfo.value = result.data
+    }
+  } catch (error) {
+    console.error('获取用户信息失败:', error)
+  } finally {
+    loading.basic = false
+  }
+}
+
+// 获取用户订单
+const fetchUserOrders = async () => {
+  loading.orders = true
+
+  try {
+    await ordersManager.managedRequest(
+      async requestId => {
+        console.log(`获取用户订单 ${requestId}`)
+        const response = await fetch(`/api/users/${props.userId}/orders`)
+        return response.json()
+      },
+      data => {
+        orders.value = data.orders || []
+        loading.orders = false
+      },
+      () => {
+        loading.orders = false
+      }
+    )
+  } catch (error) {
+    console.error('获取订单失败:', error)
+    loading.orders = false
+  }
+}
+
+// 获取操作日志
+const fetchUserLogs = async () => {
+  loading.logs = true
+
+  try {
+    await logsManager.managedRequest(
+      async requestId => {
+        console.log(`获取操作日志 ${requestId}`)
+        const response = await fetch(`/api/users/${props.userId}/logs`)
+        return response.json()
+      },
+      data => {
+        logs.value = data.logs || []
+        loading.logs = false
+      },
+      () => {
+        loading.logs = false
+      }
+    )
+  } catch (error) {
+    console.error('获取日志失败:', error)
+    loading.logs = false
+  }
+}
+
+// Tab切换处理
+const handleTabChange = (tabName: string) => {
+  switch (tabName) {
+    case 'basic':
+      if (!userInfo.value) fetchUserInfo()
+      break
+    case 'orders':
+      if (orders.value.length === 0) fetchUserOrders()
+      break
+    case 'logs':
+      if (logs.value.length === 0) fetchUserLogs()
+      break
+  }
+}
+
+// 组件挂载时获取基本信息
+onMounted(() => {
+  fetchUserInfo()
+})
+</script>
+```
+
+### 高级用法
+
+#### 自定义请求标识
+
+```typescript
+import { createRequestManager } from '@bingwu/iip-ui-utils'
+
+const requestManager = createRequestManager()
+
+// 手动创建请求标识
+const { requestId, isLatestRequest } = requestManager.createRequest()
+
+// 在复杂的异步流程中使用
+const complexAsyncProcess = async () => {
+  const { requestId, isLatestRequest } = requestManager.createRequest()
+
+  try {
+    // 第一步：获取用户信息
+    const userResponse = await fetch(`/api/users/${userId}`)
+    const userData = await userResponse.json()
+
+    // 检查请求是否仍然有效
+    if (!isLatestRequest()) {
+      console.log(`请求 ${requestId} 已过期，终止流程`)
+      return
+    }
+
+    // 第二步：根据用户信息获取相关数据
+    const detailResponse = await fetch(`/api/users/${userData.id}/details`)
+    const detailData = await detailResponse.json()
+
+    // 再次检查请求有效性
+    if (!isLatestRequest()) {
+      console.log(`请求 ${requestId} 已过期，终止流程`)
+      return
+    }
+
+    // 更新UI
+    updateUserDetails(userData, detailData)
+  } catch (error) {
+    if (isLatestRequest()) {
+      console.error('请求失败:', error)
+      handleError(error)
+    }
+  }
+}
+```
+
+#### 获取当前请求ID
+
+```typescript
+const requestManager = createRequestManager()
+
+// 获取当前最新的请求ID
+const currentId = requestManager.getCurrentId()
+console.log('当前请求ID:', currentId)
+
+// 在调试时很有用
+const debugSearch = async (keyword: string) => {
+  console.log('开始搜索，当前ID:', requestManager.getCurrentId())
+
+  const result = await requestManager.managedFetch(async requestId => {
+    console.log(`执行请求 ${requestId}，期望ID: ${requestManager.getCurrentId()}`)
+    // ... 执行请求
+  })
+
+  console.log('搜索完成，最终ID:', requestManager.getCurrentId())
+  return result
+}
+```
+
+### 实际应用场景
+
+#### 1. 快速搜索场景
+
+```typescript
+// 用户快速输入搜索关键词时，只处理最新的搜索结果
+const handleQuickSearch = debounce(async (keyword: string) => {
+  await requestManager.managedRequest(
+    async requestId => {
+      return searchAPI(keyword)
+    },
+    results => {
+      // 只有最新搜索的结果会更新UI
+      searchResults.value = results
+    }
+  )
+}, 200)
+```
+
+#### 2. 标签页切换场景
+
+```typescript
+// 用户快速切换标签页时，只显示当前标签页的数据
+const switchTab = async (tabId: string) => {
+  currentTab.value = tabId
+
+  await requestManager.managedRequest(
+    async requestId => {
+      return fetchTabData(tabId)
+    },
+    data => {
+      // 只有当前标签页的数据会被显示
+      if (currentTab.value === tabId) {
+        tabData.value = data
+      }
+    }
+  )
+}
+```
+
+#### 3. 分页数据加载场景
+
+```typescript
+// 用户快速点击分页按钮时，只显示最新页的数据
+const loadPage = async (page: number) => {
+  currentPage.value = page
+
+  await requestManager.managedRequest(
+    async requestId => {
+      return fetchPageData(page)
+    },
+    data => {
+      // 只有最新页的数据会被显示
+      tableData.value = data.items
+      total.value = data.total
+    }
+  )
+}
+```
+
+### 错误处理
+
+```typescript
+const requestManager = createRequestManager()
+
+const fetchDataWithErrorHandling = async () => {
+  try {
+    const result = await requestManager.managedFetch(async requestId => {
+      const response = await fetch('/api/data')
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
+      }
+      return response.json()
+    })
+
+    if (result.isLatest) {
+      // 处理成功结果
+      console.log('数据获取成功:', result.data)
+    }
+  } catch (error) {
+    // 只有最新请求的错误才会被抛出
+    console.error('请求失败:', error)
+    ElMessage.error('数据加载失败，请重试')
+  }
+}
+```
+
+### 性能优化建议
+
+1. **合理使用请求管理器实例**
+
+   ```typescript
+   // ✅ 推荐：为不同的数据类型创建独立的管理器
+   const userManager = createRequestManager()
+   const orderManager = createRequestManager()
+
+   // ❌ 不推荐：所有请求共用一个管理器
+   const globalManager = createRequestManager()
+   ```
+
+2. **结合防抖使用**
+
+   ```typescript
+   // ✅ 推荐：结合防抖减少请求频率
+   const debouncedSearch = debounce(async keyword => {
+     await requestManager.managedRequest(/* ... */)
+   }, 300)
+
+   // ❌ 不推荐：每次输入都发送请求
+   const immediateSearch = async keyword => {
+     await requestManager.managedRequest(/* ... */)
+   }
+   ```
+
+3. **适当的错误处理**
+   ```typescript
+   // ✅ 推荐：区分处理不同类型的错误
+   try {
+     await requestManager.managedRequest(/* ... */)
+   } catch (error) {
+     if (error.name === 'NetworkError') {
+       ElMessage.error('网络连接失败')
+     } else {
+       ElMessage.error('请求处理失败')
+     }
+   }
+   ```
 
 ## Eova 转换工具
 
@@ -934,6 +1433,23 @@ onMounted(() => {
 | `withInstall(component)`        | `Component`        | `SFCWithInstall<T>` | 为组件添加 install 方法 |
 | `withInstallFunction(fn, name)` | `Function, string` | `Function`          | 为函数添加 install 方法 |
 | `createNamespace(name)`         | `string`           | `Object`            | 创建命名空间工具        |
+
+### 请求管理工具
+
+| 函数名/接口                           | 参数/属性                          | 返回值                      | 描述                        |
+| ------------------------------------- | ---------------------------------- | --------------------------- | --------------------------- |
+| `createRequestManager()`              | 无                                 | `RequestManager`            | 创建请求管理器实例          |
+| `RequestManager.createRequest()`      | 无                                 | `RequestIdentifier`         | 创建新的请求标识            |
+| `RequestManager.managedRequest()`     | `asyncFn, onSuccess?, onOutdated?` | `Promise<RequestResult<T>>` | 执行受控异步请求            |
+| `RequestManager.managedFetch()`       | `fetchFn`                          | `Promise<RequestResult<T>>` | 使用async/await处理请求竞态 |
+| `RequestManager.getCurrentId()`       | 无                                 | `number`                    | 获取当前最新请求ID          |
+| `RequestIdentifier.requestId`         | 属性                               | `number`                    | 唯一请求ID                  |
+| `RequestIdentifier.isLatestRequest()` | 无                                 | `boolean`                   | 检查是否是最新请求          |
+| `RequestResult.data`                  | 属性                               | `T`                         | 请求返回的数据              |
+| `RequestResult.requestId`             | 属性                               | `number`                    | 请求ID                      |
+| `RequestResult.isLatest`              | 属性                               | `boolean`                   | 是否是最新请求的结果        |
+| `RequestResult.result`                | 属性                               | `any`                       | onSuccess回调返回值         |
+| `RequestResult.error`                 | 属性                               | `Error`                     | 请求错误信息                |
 
 ### Eova 转换工具
 

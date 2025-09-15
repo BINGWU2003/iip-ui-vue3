@@ -14,3 +14,6 @@ export * from './vue'
 
 // Eova 工具
 export * from './eova'
+
+// 请求工具
+export * from './request'
