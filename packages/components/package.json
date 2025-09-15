@@ -1,6 +1,6 @@
 {
   "name": "@bingwu/iip-ui-components",
-  "version": "1.2.8",
+  "version": "1.2.9",
   "description": "iip-ui-vue3 核心组件库",
   "type": "module",
   "main": "./dist/index.umd.js",
@@ -27,7 +27,7 @@
     "clean": "rm -rf dist dev-dist"
   },
   "dependencies": {
-    "@bingwu/iip-ui-utils": "^1.2.7",
+    "@bingwu/iip-ui-utils": "^1.2.8",
     "dayjs": "^1.11.13",
     "vue": "^3.3.8",
     "vxe-pc-ui": "4.8.15",

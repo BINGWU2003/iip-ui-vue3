@@ -1,6 +1,6 @@
 {
   "name": "iip-ui-vue3",
-  "version": "1.2.10",
+  "version": "1.2.11",
   "description": "基于Element Plus、Vue 3和TypeScript的企业级组件库",
   "type": "module",
   "private": true,
