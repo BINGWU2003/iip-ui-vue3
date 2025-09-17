@@ -18,7 +18,8 @@ const colors = {
   blue: '\x1b[34m',
   magenta: '\x1b[35m',
   cyan: '\x1b[36m',
-  reset: '\x1b[0m'
+  reset: '\x1b[0m',
+  white: '\x1b[37m'
 }
 
 function log(message, color = 'reset') {
