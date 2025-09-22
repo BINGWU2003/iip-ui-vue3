@@ -28,7 +28,7 @@
 
 <script setup lang="ts">
 import type { DateRangeProps, DateRangeEmits } from './types'
-import { reactive, computed, watch, toRefs } from 'vue'
+import { reactive, computed, watch, toRefs, withDefaults } from 'vue'
 import dayjs from 'dayjs'
 interface dateKey {
   yesterday: string
@@ -40,7 +40,15 @@ interface dateKey {
 defineOptions({
   name: 'IipDateRange'
 })
-const props = defineProps<DateRangeProps>()
+const props = withDefaults(defineProps<DateRangeProps>(), {
+  modelValue: () => ({ startTime: '', endTime: '' }),
+  gap: 10,
+  startProps: () => ({}),
+  endProps: () => ({}),
+  selectFutureTime: false,
+  startPickerCss: () => ({}),
+  endPickerCss: () => ({})
+})
 const { modelValue, gap, startProps, endProps, selectFutureTime, startPickerCss, endPickerCss } =
   toRefs(props)
 const emits = defineEmits<DateRangeEmits>()

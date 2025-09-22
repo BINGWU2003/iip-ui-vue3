@@ -12,7 +12,12 @@ export default defineConfig({
     vue(),
     dts({
       insertTypesEntry: true,
-      cleanVueFileName: true
+      outDir: 'dist',
+      rollupTypes: true,
+      copyDtsFiles: true,
+      staticImport: true,
+      clearPureImport: true,
+      include: ['src/**/*', 'index.ts']
     }),
     AutoImport({
       resolvers: [ElementPlusResolver()],
