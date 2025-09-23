@@ -11,7 +11,11 @@
       :style="getStartPickerCss"
       @change="handleStartTimeChange"
       :disabled-date="(date: Date) => isDisabledDate(date, 'start')"
-    />
+    >
+      <template v-for="slot in getSlots($slots, 'start')" :key="`start-${slot}`" #[slot]="slotData">
+        <slot :name="`start-${slot}`" v-bind="slotData"></slot>
+      </template>
+    </el-date-picker>
     <el-date-picker
       placeholder="结束日期"
       format="YYYY-MM-DD"
@@ -22,12 +26,17 @@
       type="date"
       :style="getEndPickerCss"
       :disabled-date="(date: Date) => isDisabledDate(date, 'end')"
-    />
+    >
+      <template v-for="slot in getSlots($slots, 'end')" :key="`end-${slot}`" #[slot]="slotData">
+        <slot :name="`end-${slot}`" v-bind="slotData"></slot>
+      </template>
+    </el-date-picker>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { DateRangeProps, DateRangeEmits } from './types'
+import type { DateRangeProps, DateRangeEmits, DateRangeSlots, DateRangeSlotsKeys } from './types'
+import { splitSlots } from '../../utils/tools'
 import { reactive, computed, watch, toRefs, withDefaults } from 'vue'
 import dayjs from 'dayjs'
 interface dateKey {
@@ -40,6 +49,7 @@ interface dateKey {
 defineOptions({
   name: 'IipDateRange'
 })
+defineSlots<DateRangeSlots>()
 const props = withDefaults(defineProps<DateRangeProps>(), {
   modelValue: () => ({ startTime: '', endTime: '' }),
   gap: 10,
@@ -133,7 +143,9 @@ const isDisabledDate = (date: Date, action: 'start' | 'end') => {
   }
   return false
 }
-
+const getSlots = (slots: DateRangeSlots, prefix: DateRangeSlotsKeys) => {
+  return splitSlots(slots, prefix)
+}
 watch(
   () => modelValue,
   newValue => {

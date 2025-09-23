@@ -9,6 +9,7 @@
 - 🎨 **样式定制**: 支持自定义开始和结束日期选择器的样式
 - ⚡ **智能联动**: 选择开始日期时自动设置合理的结束日期
 - 🔧 **灵活配置**: 支持透传 Element Plus DatePicker 的所有属性
+- 🎯 **插槽支持**: 支持透传 Element Plus DatePicker 的所有插槽，可分别自定义开始和结束日期选择器
 
 ## 基础用法
 
@@ -175,6 +176,112 @@ const handleReset = () => {
 </script>
 ```
 
+## 插槽自定义
+
+组件支持透传 Element Plus DatePicker 的所有插槽，可以分别为开始和结束日期选择器自定义内容。插槽名称需要添加 `start-` 或 `end-` 前缀：
+
+```vue
+<template>
+  <div>
+    <h3>自定义插槽示例</h3>
+    <iip-date-range v-model="dateRange" @change="handleDateChange">
+      <!-- 为开始日期选择器自定义前缀图标 -->
+      <template #start-prefix>
+        <el-icon><Calendar /></el-icon>
+      </template>
+
+      <!-- 为结束日期选择器自定义后缀图标 -->
+      <template #end-suffix>
+        <el-icon><Clock /></el-icon>
+      </template>
+
+      <!-- 自定义开始日期选择器的默认插槽 -->
+      <template #start-default="{ value }">
+        <span style="color: #409eff;">{{ value || '选择开始日期' }}</span>
+      </template>
+    </iip-date-range>
+
+    <p style="margin-top: 10px;">
+      选择的日期范围：{{ dateRange.startTime }} ~ {{ dateRange.endTime }}
+    </p>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { reactive } from 'vue'
+import { Calendar, Clock } from '@element-plus/icons-vue'
+
+const dateRange = reactive({
+  startTime: '',
+  endTime: ''
+})
+
+const handleDateChange = (value: { startTime: string; endTime: string }) => {
+  console.log('日期范围变化:', value)
+}
+</script>
+```
+
+### 自定义范围选择器
+
+可以使用插槽来创建更复杂的自定义界面：
+
+```vue
+<template>
+  <div>
+    <h3>自定义范围选择器</h3>
+    <iip-date-range v-model="dateRange" @change="handleDateChange">
+      <!-- 自定义开始日期的输入框样式 -->
+      <template #start-default="{ value }">
+        <div class="custom-date-input">
+          <el-icon class="date-icon"><Calendar /></el-icon>
+          <span class="date-text">{{ value || '开始日期' }}</span>
+        </div>
+      </template>
+
+      <!-- 自定义结束日期的输入框样式 -->
+      <template #end-default="{ value }">
+        <div class="custom-date-input">
+          <span class="date-text">{{ value || '结束日期' }}</span>
+          <el-icon class="date-icon"><Calendar /></el-icon>
+        </div>
+      </template>
+    </iip-date-range>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { reactive } from 'vue'
+import { Calendar } from '@element-plus/icons-vue'
+
+const dateRange = reactive({
+  startTime: '',
+  endTime: ''
+})
+
+const handleDateChange = (value: { startTime: string; endTime: string }) => {
+  console.log('自定义日期范围变化:', value)
+}
+</script>
+
+<style scoped>
+.custom-date-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  background: linear-gradient(90deg, #409eff, #67c23a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: bold;
+}
+
+.date-icon {
+  color: #409eff;
+}
+</style>
+```
+
 ## 快速选择功能
 
 组件内置了多个快速选择选项：
@@ -267,6 +374,42 @@ const handleDateChange = (value: { startTime: string; endTime: string }) => {
 | ----------------- | -------------- | ------------------------------------------------- |
 | update:modelValue | 值变化时触发   | `(value: { startTime: string; endTime: string })` |
 | change            | 日期变化时触发 | `(value: { startTime: string; endTime: string })` |
+
+### Slots
+
+组件支持透传 Element Plus DatePicker 的所有插槽，通过添加 `start-` 或 `end-` 前缀来分别自定义开始和结束日期选择器：
+
+| 插槽名                | 说明                                     | 参数                |
+| --------------------- | ---------------------------------------- | ------------------- |
+| start-default         | 开始日期选择器的默认内容                 | `{ value: string }` |
+| end-default           | 结束日期选择器的默认内容                 | `{ value: string }` |
+| start-prefix          | 开始日期选择器输入框前置内容             | -                   |
+| end-prefix            | 结束日期选择器输入框前置内容             | -                   |
+| start-suffix          | 开始日期选择器输入框后置内容             | -                   |
+| end-suffix            | 结束日期选择器输入框后置内容             | -                   |
+| start-range-separator | 开始日期选择器的范围分隔符（范围选择时） | -                   |
+| end-range-separator   | 结束日期选择器的范围分隔符（范围选择时） | -                   |
+
+**插槽使用示例：**
+
+```vue
+<iip-date-range v-model="dateRange">
+  <!-- 自定义开始日期选择器的前缀图标 -->
+  <template #start-prefix>
+    <el-icon><Calendar /></el-icon>
+  </template>
+  
+  <!-- 自定义结束日期选择器的后缀内容 -->
+  <template #end-suffix>
+    <el-button size="small" type="text">清空</el-button>
+  </template>
+  
+  <!-- 自定义开始日期选择器的显示内容 -->
+  <template #start-default="{ value }">
+    <span style="color: #409eff;">{{ value || '请选择开始日期' }}</span>
+  </template>
+</iip-date-range>
+```
 
 ### 数据格式
 
@@ -466,5 +609,127 @@ const handleSubmit = async () => {
 }
 </script>
 ```
+
+### 4. 插槽自定义最佳实践
+
+利用插槽功能可以创建更丰富的用户界面：
+
+```vue
+<template>
+  <div class="advanced-date-range">
+    <h3>高级日期范围选择器</h3>
+    <iip-date-range
+      v-model="advancedForm.dateRange"
+      :select-future-time="false"
+      @change="handleAdvancedChange"
+    >
+      <!-- 开始日期自定义前缀 -->
+      <template #start-prefix>
+        <div class="date-prefix">
+          <el-icon class="prefix-icon"><Calendar /></el-icon>
+          <span class="prefix-text">从</span>
+        </div>
+      </template>
+
+      <!-- 结束日期自定义前缀 -->
+      <template #end-prefix>
+        <div class="date-prefix">
+          <el-icon class="prefix-icon"><Calendar /></el-icon>
+          <span class="prefix-text">到</span>
+        </div>
+      </template>
+
+      <!-- 自定义结束日期后缀，添加快速操作 -->
+      <template #end-suffix>
+        <el-button-group size="small">
+          <el-button @click="setLastWeek" type="text">近7天</el-button>
+          <el-button @click="setLastMonth" type="text">近30天</el-button>
+          <el-button @click="clearDates" type="text">清空</el-button>
+        </el-button-group>
+      </template>
+    </iip-date-range>
+
+    <!-- 显示选择的天数 -->
+    <div class="date-info" v-if="daysDiff > 0">
+      <el-tag type="info">已选择 {{ daysDiff }} 天</el-tag>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { reactive, computed } from 'vue'
+import { Calendar } from '@element-plus/icons-vue'
+import dayjs from 'dayjs'
+
+const advancedForm = reactive({
+  dateRange: {
+    startTime: '',
+    endTime: ''
+  }
+})
+
+// 计算选择的天数
+const daysDiff = computed(() => {
+  if (!advancedForm.dateRange.startTime || !advancedForm.dateRange.endTime) {
+    return 0
+  }
+  const start = dayjs(advancedForm.dateRange.startTime)
+  const end = dayjs(advancedForm.dateRange.endTime)
+  return end.diff(start, 'day') + 1
+})
+
+const handleAdvancedChange = (value: { startTime: string; endTime: string }) => {
+  console.log('高级日期选择变化:', value)
+}
+
+const setLastWeek = () => {
+  advancedForm.dateRange.startTime = dayjs().subtract(6, 'day').format('YYYY-MM-DD')
+  advancedForm.dateRange.endTime = dayjs().format('YYYY-MM-DD')
+}
+
+const setLastMonth = () => {
+  advancedForm.dateRange.startTime = dayjs().subtract(29, 'day').format('YYYY-MM-DD')
+  advancedForm.dateRange.endTime = dayjs().format('YYYY-MM-DD')
+}
+
+const clearDates = () => {
+  advancedForm.dateRange.startTime = ''
+  advancedForm.dateRange.endTime = ''
+}
+</script>
+
+<style scoped>
+.advanced-date-range {
+  padding: 20px;
+  border: 1px solid #e4e7ed;
+  border-radius: 8px;
+}
+
+.date-prefix {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #606266;
+  font-size: 12px;
+}
+
+.prefix-icon {
+  color: #409eff;
+}
+
+.date-info {
+  margin-top: 10px;
+  text-align: center;
+}
+</style>
+```
+
+**插槽使用建议：**
+
+1. **保持一致性**: 为开始和结束日期选择器使用相似的插槽样式，确保视觉一致性
+2. **功能增强**: 利用 `suffix` 插槽添加快速操作按钮，提升用户体验
+3. **视觉引导**: 使用 `prefix` 插槽添加图标或文字标识，帮助用户理解功能
+4. **响应式设计**: 在移动端考虑隐藏或简化插槽内容
+5. **性能优化**: 避免在插槽中使用复杂的计算或网络请求
 
 通过这些示例和最佳实践，你可以更好地在项目中使用 DateRange 组件。
