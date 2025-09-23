@@ -68,3 +68,51 @@ export function deepClone<T>(obj: T): T {
 export function generateId(prefix = 'id'): string {
   return `${prefix}-${Math.random().toString(36).substring(2, 11)}`
 }
+
+/**
+ * 降级复制方法（兼容旧浏览器）
+ */
+export async function fallbackCopyTextToClipboard(text: string) {
+  const textArea = document.createElement('textarea')
+  textArea.value = text
+
+  // 避免在页面上显示
+  textArea.style.position = 'fixed'
+  textArea.style.left = '-999999px'
+  textArea.style.top = '-999999px'
+  textArea.style.opacity = '0'
+
+  document.body.appendChild(textArea)
+  textArea.focus()
+  textArea.select()
+  // https://developer.mozilla.org/zh-CN/docs/Web/API/Document/execCommand
+  const successful = document.execCommand('copy')
+  document.body.removeChild(textArea)
+  return new Promise((resolve, reject) => {
+    if (!successful) {
+      reject(new Error('复制失败，请手动复制'))
+    } else {
+      resolve('复制成功')
+    }
+  })
+}
+
+/**
+ * 复制方法（兼容旧浏览器）
+ */
+export async function copyText(text: string) {
+  if (!text) {
+    throw new Error('text is required')
+  }
+  if (typeof text !== 'string') {
+    throw new Error('text must be a string')
+  }
+  // 优先使用现代的 Clipboard API
+  // https://developer.mozilla.org/zh-CN/docs/Web/API/Window/isSecureContext
+  if (navigator.clipboard && window.isSecureContext) {
+    await navigator.clipboard.writeText(text)
+  } else {
+    // 降级到传统的复制方法（兼容旧浏览器）
+    await fallbackCopyTextToClipboard(text)
+  }
+}
