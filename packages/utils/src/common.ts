@@ -3,12 +3,11 @@
 /**
  * 防抖函数
  */
-// eslint-disable-next-line no-unused-vars
+
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
   wait: number,
   immediate = false
-  // eslint-disable-next-line no-unused-vars
 ): (...args: Parameters<T>) => void {
   let timeout: ReturnType<typeof setTimeout> | null = null
 
@@ -30,11 +29,10 @@ export function debounce<T extends (...args: any[]) => any>(
 /**
  * 节流函数
  */
-// eslint-disable-next-line no-unused-vars
+
 export function throttle<T extends (...args: any[]) => any>(
   func: T,
   limit: number
-  // eslint-disable-next-line no-unused-vars
 ): (...args: Parameters<T>) => void {
   let inThrottle: boolean
 
