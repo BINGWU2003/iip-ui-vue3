@@ -22,6 +22,16 @@ export default defineConfig({
       }
     },
     sourcemap: true,
-    emptyOutDir: true
+    emptyOutDir: true,
+    // 打包压缩
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        // 删除console
+        drop_console: true,
+        // 删除debugger
+        drop_debugger: true
+      }
+    }
   }
 })

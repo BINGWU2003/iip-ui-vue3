@@ -9,9 +9,6 @@ export * from './common'
 // 验证工具
 export * from './validate'
 
-// Vue 工具
-export * from './vue'
-
 // Eova 工具
 export * from './eova'
 
