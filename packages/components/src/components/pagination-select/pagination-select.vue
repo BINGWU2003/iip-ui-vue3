@@ -17,13 +17,17 @@
     @visible-change="handleVisibleChange"
     ref="selectRef"
   >
-    <el-option
-      v-for="item in displayOptions"
-      :key="item[valueKey]"
-      :label="item[labelKey]"
-      :value="item[valueKey]"
-      :disabled="item.disabled"
-    />
+    <template v-for="(_, slot) in $slots" #[slot]="slotData">
+      <slot :name="slot" v-bind="slotData"></slot>
+    </template>
+    <template v-for="item in displayOptions" :key="item[valueKey]">
+      <el-option
+        v-show="!item._isVirtual"
+        :label="item[labelKey]"
+        :value="item[valueKey]"
+        :disabled="item.disabled"
+      />
+    </template>
 
     <!-- 分页器 -->
     <template v-if="showPagination && total > 0" #footer>
@@ -44,15 +48,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, readonly } from 'vue'
+import { ref, computed, watch, readonly } from 'vue'
 import type { ElSelect } from 'element-plus'
-import type { PaginationSelectProps, PaginationSelectEmits, OptionItem } from './types'
+import type {
+  PaginationSelectProps,
+  PaginationSelectEmits,
+  OptionItem,
+  PaginationSelectSlots
+} from './types'
 
 defineOptions({
-  name: 'iip-pagination-select',
-  inheritAttrs: false
+  name: 'iip-pagination-select'
 })
-
+defineSlots<PaginationSelectSlots>()
 const props = withDefaults(defineProps<PaginationSelectProps>(), {
   modelValue: undefined,
   placeholder: '请选择',
@@ -63,11 +71,9 @@ const props = withDefaults(defineProps<PaginationSelectProps>(), {
   showPagination: true,
   popperClass: '',
   debounceTime: 300,
-  immediate: false,
   displayLabel: '',
   viewMode: false,
-  style: () => ({}),
-  clearOptionsOnClose: false
+  style: () => ({})
 })
 
 const emit = defineEmits<PaginationSelectEmits>()
@@ -85,22 +91,26 @@ let debounceTimer = null
 // 计算属性
 const showPagination = computed(() => props.showPagination && total.value > props.pageSize)
 
-// 在查看模式下，如果有 displayLabel，则创建一个虚拟选项来显示
+// 处理数据回显：确保选中项能正确显示
 const displayOptions = computed(() => {
-  if (props.viewMode && props.displayLabel && props.modelValue) {
-    // 检查当前选中的值是否在 options 中
-    const existingOption = options.value.find(item => item[props.valueKey] === props.modelValue)
+  const baseOptions = [...options.value]
+
+  // 如果有选中值但在当前选项中找不到对应项，则创建虚拟选项
+  if (props.modelValue !== undefined && props.modelValue !== null && props.modelValue !== '') {
+    const existingOption = baseOptions.find(item => item[props.valueKey] === props.modelValue)
     if (!existingOption) {
-      // 如果不存在，创建一个虚拟选项
+      // 创建虚拟选项用于回显
       const virtualOption = {
         [props.valueKey]: props.modelValue,
-        [props.labelKey]: props.displayLabel,
+        [props.labelKey]: props.displayLabel || String(props.modelValue), // 编辑模式可能没有displayLabel，使用value作为fallback
         _isVirtual: true
       }
-      return [virtualOption, ...options.value]
+
+      return [virtualOption, ...baseOptions]
     }
   }
-  return options.value
+
+  return baseOptions
 })
 
 // 监听 modelValue 变化
@@ -176,8 +186,9 @@ const handlePageChange = (page: number) => {
 }
 
 // 处理选择变化
-const handleChange = (value: any) => {
-  const selectedOption = options.value.find(item => item[props.valueKey] === value)
+const handleChange = (value: unknown) => {
+  // 从displayOptions中查找，这样可以包含虚拟选项
+  const selectedOption = displayOptions.value.find(item => item[props.valueKey] === value)
   emit('change', value, selectedOption)
 }
 
@@ -188,10 +199,6 @@ const handleClear = () => {
 
 // 处理下拉框显示/隐藏
 const handleVisibleChange = (visible: boolean) => {
-  if (!visible && !props.viewMode && props.clearOptionsOnClose) {
-    // 只在非查看模式下清空选项
-    options.value = []
-  }
   emit('visible-change', visible)
 }
 
@@ -218,13 +225,6 @@ defineExpose({
   total: readonly(total),
   currentPage: readonly(currentPage),
   getSelectInstance
-})
-
-// 组件挂载时初始化
-onMounted(() => {
-  if (props.immediate) {
-    fetchData()
-  }
 })
 </script>
 

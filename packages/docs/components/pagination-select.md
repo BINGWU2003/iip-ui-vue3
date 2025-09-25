@@ -11,6 +11,8 @@
 - 🎯 TypeScript 支持
 - 🛠️ 灵活的数据获取接口
 - 🚀 性能优化，避免重复请求
+- 🔄 编辑模式数据回显优化
+- 📋 虚拟选项机制，支持预设值显示
 
 ## 基础用法
 
@@ -73,7 +75,7 @@ const fetchUserData = async (params: FetchDataParams): Promise<FetchDataResult> 
       v-else
       v-model="selectedValue"
       :view-mode="true"
-      :display-label="selectedUserLabel"
+      display-label="用户 25"
       :fetch-data="fetchUserData"
       value-key="id"
       label-key="name"
@@ -87,7 +89,6 @@ import { IipPaginationSelect } from '@bingwu/iip-ui-components'
 
 const isViewMode = ref(true)
 const selectedValue = ref('user-25') // 后端返回的值
-const selectedUserLabel = ref('用户 25') // 后端返回的标签
 
 // 模拟后端返回的表单数据
 const formData = {
@@ -97,13 +98,130 @@ const formData = {
 
 // 设置查看模式的数据
 selectedValue.value = formData.userId
-selectedUserLabel.value = formData.userName
 
 const fetchUserData = async params => {
   // 查看模式下不会调用此函数
   // 只在编辑模式下才会调用
+  const response = await fetch(
+    `/api/users?page=${params.page}&size=${params.pageSize}&search=${params.keyword}`
+  )
+  return await response.json()
 }
 </script>
+```
+
+## 编辑模式数据回显
+
+组件支持在编辑模式下进行数据回显，即使当前选项列表中没有对应的数据项，组件也能正确显示已选中的值。
+
+### 基础回显（使用 displayLabel）
+
+当你已经有选中项的标签文本时，可以直接使用 `displayLabel` 属性：
+
+```vue
+<template>
+  <div>
+    <IipPaginationSelect
+      v-model="selectedUserId"
+      :fetch-data="fetchUsers"
+      display-label="张三"
+      placeholder="请选择用户"
+      value-key="id"
+      label-key="name"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { IipPaginationSelect } from '@bingwu/iip-ui-components'
+
+// 从后端获取的表单数据
+const selectedUserId = ref('user-123') // 已选中的用户ID
+
+const fetchUsers = async params => {
+  const response = await fetch(
+    `/api/users?page=${params.page}&size=${params.pageSize}&search=${params.keyword}`
+  )
+  return await response.json()
+}
+</script>
+```
+
+### 动态回显（表单编辑场景）
+
+在表单编辑场景中，通常需要根据后端返回的数据动态设置回显：
+
+```vue
+<template>
+  <div>
+    <IipPaginationSelect
+      v-model="form.userId"
+      :fetch-data="fetchUsers"
+      :display-label="form.userName"
+      placeholder="请选择用户"
+      value-key="id"
+      label-key="name"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { IipPaginationSelect } from '@bingwu/iip-ui-components'
+
+const form = ref({
+  userId: '',
+  userName: ''
+})
+
+// 模拟获取表单数据
+onMounted(async () => {
+  // 从后端获取表单数据
+  const response = await fetch('/api/form/123')
+  const formData = await response.json()
+
+  form.value = {
+    userId: formData.userId, // 'user-123'
+    userName: formData.userName // '张三'
+  }
+})
+
+const fetchUsers = async params => {
+  const response = await fetch(
+    `/api/users?page=${params.page}&size=${params.pageSize}&search=${params.keyword}`
+  )
+  return await response.json()
+}
+</script>
+```
+
+### 虚拟选项机制
+
+组件内部使用虚拟选项机制来实现数据回显：
+
+1. **检测回显需求**：当 `modelValue` 有值但在当前选项列表中找不到对应项时
+2. **创建虚拟选项**：自动创建一个虚拟选项用于显示
+3. **优先级处理**：虚拟选项会被添加到选项列表的最前面
+4. **事件支持**：虚拟选项同样支持 `change` 事件
+
+```javascript
+// 组件内部逻辑示例
+const displayOptions = computed(() => {
+  const baseOptions = [...options.value]
+
+  // 如果有选中值但找不到对应选项，创建虚拟选项
+  if (props.modelValue && !baseOptions.find(item => item[props.valueKey] === props.modelValue)) {
+    const virtualOption = {
+      [props.valueKey]: props.modelValue,
+      [props.labelKey]: props.displayLabel || String(props.modelValue),
+      _isVirtual: true // 标记为虚拟选项
+    }
+    return [virtualOption, ...baseOptions]
+  }
+
+  return baseOptions
+})
 ```
 
 ## 高级用法
@@ -120,8 +238,6 @@ const fetchUserData = async params => {
       label-key="title"
       :page-size="15"
       :debounce-time="500"
-      :immediate="true"
-      :clear-options-on-close="true"
       clearable
       @change="handleChange"
       @data-loaded="handleDataLoaded"
@@ -182,23 +298,21 @@ const search = () => {
 
 ### Props
 
-| 属性名              | 类型            | 默认值     | 说明                                   |
-| ------------------- | --------------- | ---------- | -------------------------------------- |
-| modelValue          | `any`           | -          | 绑定值                                 |
-| placeholder         | `string`        | `'请选择'` | 占位符                                 |
-| valueKey            | `string`        | `'value'`  | 选项值的键名                           |
-| labelKey            | `string`        | `'label'`  | 选项标签的键名                         |
-| pageSize            | `number`        | `10`       | 每页显示条数                           |
-| clearable           | `boolean`       | `true`     | 是否可清空                             |
-| showPagination      | `boolean`       | `true`     | 是否显示分页器                         |
-| popperClass         | `string`        | `''`       | 下拉框类名                             |
-| debounceTime        | `number`        | `300`      | 搜索防抖时间(ms)                       |
-| immediate           | `boolean`       | `false`    | 是否立即加载数据                       |
-| fetchData           | `Function`      | -          | **必需**，获取数据的方法               |
-| viewMode            | `boolean`       | `false`    | 是否为查看模式（禁用交互，不发起请求） |
-| displayLabel        | `string`        | `''`       | 查看模式下直接显示的标签文本           |
-| style               | `CSSProperties` | `{}`       | 组件样式对象                           |
-| clearOptionsOnClose | `boolean`       | `false`    | 关闭下拉框时是否清空选项列表           |
+| 属性名         | 类型            | 默认值     | 说明                                             |
+| -------------- | --------------- | ---------- | ------------------------------------------------ |
+| modelValue     | `any`           | -          | 绑定值                                           |
+| placeholder    | `string`        | `'请选择'` | 占位符                                           |
+| valueKey       | `string`        | `'value'`  | 选项值的键名                                     |
+| labelKey       | `string`        | `'label'`  | 选项标签的键名                                   |
+| pageSize       | `number`        | `10`       | 每页显示条数                                     |
+| clearable      | `boolean`       | `true`     | 是否可清空                                       |
+| showPagination | `boolean`       | `true`     | 是否显示分页器                                   |
+| popperClass    | `string`        | `''`       | 下拉框类名                                       |
+| debounceTime   | `number`        | `300`      | 搜索防抖时间(ms)                                 |
+| fetchData      | `Function`      | -          | 获取数据的方法（编辑模式下必需，查看模式下可选） |
+| viewMode       | `boolean`       | `false`    | 是否为查看模式（禁用交互，不发起请求）           |
+| displayLabel   | `string`        | `''`       | 查看模式或编辑模式回显时直接显示的标签文本       |
+| style          | `CSSProperties` | `{}`       | 组件样式对象                                     |
 
 ### Events
 
@@ -354,36 +468,48 @@ interface PaginationSelectInstance {
 />
 ```
 
-### 4. 性能优化 - 关闭时清空选项
+### 4. 编辑模式数据回显
 
-当数据量较大时，可以启用 `clearOptionsOnClose` 来优化内存使用：
+当编辑已有数据时，组件会自动处理数据回显：
 
 ```vue
 <template>
   <div>
     <IipPaginationSelect
-      v-model="selectedValue"
-      :fetch-data="fetchLargeDataSet"
-      :clear-options-on-close="true"
-      placeholder="搜索大数据集"
+      v-model="form.categoryId"
+      :fetch-data="fetchCategories"
+      :display-label="form.categoryName"
+      placeholder="请选择分类"
       value-key="id"
       label-key="name"
-      :page-size="50"
+      :page-size="20"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { IipPaginationSelect } from '@bingwu/iip-ui-components'
 
-const selectedValue = ref()
+const form = ref({
+  categoryId: '',
+  categoryName: ''
+})
 
-// 模拟大数据集获取
-const fetchLargeDataSet = async params => {
-  // 获取大量数据的API调用
+// 加载表单数据
+onMounted(async () => {
+  const response = await fetch('/api/product/123')
+  const data = await response.json()
+
+  form.value = {
+    categoryId: data.categoryId, // 'cat-456'
+    categoryName: data.categoryName // '电子产品'
+  }
+})
+
+const fetchCategories = async params => {
   const response = await fetch(
-    `/api/large-dataset?page=${params.page}&size=${params.pageSize}&search=${params.keyword}`
+    `/api/categories?page=${params.page}&size=${params.pageSize}&search=${params.keyword}`
   )
   return await response.json()
 }
@@ -424,28 +550,37 @@ const handleError = error => {
 ### 3. 性能优化
 
 ```vue
-<!-- 避免在查看模式下传入 fetchData -->
+<!-- 查看模式下组件会自动跳过数据请求 -->
 <IipPaginationSelect
   v-model="selectedValue"
   :view-mode="true"
   :display-label="displayLabel"
-  :fetch-data="isViewMode ? undefined : fetchData"
+  :fetch-data="fetchData"
+/>
+
+<!-- 编辑模式数据回显优化 -->
+<IipPaginationSelect
+  v-model="form.userId"
+  :fetch-data="fetchUsers"
+  :display-label="form.userName"
+  placeholder="请选择用户"
 />
 ```
 
 ## 注意事项
 
-1. **必需属性**：`fetchData` 属性在编辑模式下是必需的
+1. **必需属性**：`fetchData` 属性在编辑模式下是必需的，查看模式下可选
 2. **数据格式**：返回的数据格式必须符合 `FetchDataResult` 接口
-3. **查看模式**：启用 `viewMode` 时，必须同时提供 `displayLabel`
+3. **查看模式**：启用 `viewMode` 时，建议同时提供 `displayLabel` 以获得最佳显示效果
 4. **性能考虑**：查看模式下不会发起数据请求，提升页面加载性能
 5. **状态管理**：组件会自动处理加载状态和错误状态
 6. **防抖处理**：搜索功能内置防抖处理，避免频繁请求
 7. **分页显示**：分页器只在数据总数大于每页显示条数时显示
-8. **兼容性**：查看模式功能向下兼容，不影响现有代码
-9. **内存优化**：启用 `clearOptionsOnClose` 可在关闭下拉框时清空选项列表，适用于大数据集场景
+8. **数据回显**：组件支持编辑模式下的数据回显，通过虚拟选项机制实现
+9. **兼容性**：所有新功能都向下兼容，不影响现有代码
 10. **样式定制**：支持通过 `style`、`popperClass` 和 CSS 变量多种方式自定义样式
 11. **实例方法**：可通过 `getSelectInstance` 方法获取内部 ElSelect 实例，进行更深层次的操作
+12. **虚拟选项**：编辑模式下的虚拟选项不会在下拉列表中显示，仅用于回显
 
 ## 常见问题
 
@@ -473,9 +608,13 @@ A: 可以通过 CSS 变量或者 `popper-class` 属性来自定义样式。
 
 A: 组件通过 `v-bind="$attrs"` 支持大部分 Element Plus Select 的原生属性，但某些属性可能会被覆盖以保证分页功能正常工作。
 
-### Q: clearOptionsOnClose 什么时候使用？
+### Q: 编辑模式下如何实现数据回显？
 
-A: 当处理大数据集时，启用此选项可以在关闭下拉框时清空选项列表，释放内存。但注意这会导致重新打开时需要重新加载数据。
+A: 组件会自动处理数据回显。当 `modelValue` 有值但在当前选项列表中找不到对应项时，会创建虚拟选项来显示。建议配合 `displayLabel` 属性使用以获得最佳显示效果。
+
+### Q: 虚拟选项是什么？会影响用户选择吗？
+
+A: 虚拟选项是组件内部用于数据回显的机制，它们不会在下拉列表中显示（通过 `v-show="!item._isVirtual"` 控制），仅用于在输入框中显示已选中的值，不会影响用户的正常选择操作。
 
 ### Q: 如何获取选中项的完整信息？
 

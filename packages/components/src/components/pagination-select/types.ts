@@ -1,5 +1,5 @@
 import type { CSSProperties, Ref } from 'vue'
-import type { ElSelect } from 'element-plus'
+import { ElSelect } from 'element-plus'
 export type OptionItem = {
   [key: string]: any
   disabled?: boolean
@@ -36,18 +36,14 @@ export type PaginationSelectProps = {
   popperClass?: string
   /** 搜索防抖时间(ms) */
   debounceTime?: number
-  /** 是否立即加载数据 */
-  immediate?: boolean
   /** 获取数据的方法 */
-  fetchData?: (params: FetchDataParams) => Promise<FetchDataResult>
-  /** 直接显示的标签文本（查看模式使用） */
-  displayLabel?: string
+  fetchData: (params: FetchDataParams) => Promise<FetchDataResult>
+  /** 直接显示的标签文本 */
+  displayLabel: string
   /** 是否为查看模式 */
   viewMode?: boolean
   /** Style样式 */
   style?: CSSProperties
-  /** 关闭下拉框是否清空选项 */
-  clearOptionsOnClose?: boolean
 }
 
 export type PaginationSelectEmits = {
@@ -81,3 +77,5 @@ export type PaginationSelectInstance = {
   /** 获取Select组件实例 */
   getSelectInstance: () => InstanceType<typeof ElSelect>
 }
+
+export type PaginationSelectSlots = InstanceType<typeof ElSelect>['$slots']
