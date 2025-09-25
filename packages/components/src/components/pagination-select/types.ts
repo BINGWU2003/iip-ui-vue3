@@ -38,7 +38,7 @@ export type PaginationSelectProps = {
   debounceTime?: number
   /** 获取数据的方法 */
   fetchData: (params: FetchDataParams) => Promise<FetchDataResult>
-  /** 直接显示的标签文本 */
+  /** 直接显示的标签文本（必需，分页时options中无数据） */
   displayLabel: string
   /** 是否为查看模式 */
   viewMode?: boolean
