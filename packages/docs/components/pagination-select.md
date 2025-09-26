@@ -1,4 +1,4 @@
-# IipPaginationSelect 分页选择器
+# PaginationSelect 分页选择器
 
 基于 Element Plus 的 `el-select` 组件二次封装，支持下拉分页搜索功能。
 
@@ -22,10 +22,12 @@
     <IipPaginationSelect
       v-model="selectedValue"
       :fetch-data="fetchUserData"
+      :display-label="displayLabel"
       placeholder="请选择用户"
       value-key="id"
       label-key="name"
       :page-size="20"
+      @change="handleChange"
     />
   </div>
 </template>
@@ -36,6 +38,14 @@ import { IipPaginationSelect } from '@bingwu/iip-ui-components'
 import type { FetchDataParams, FetchDataResult } from '@bingwu/iip-ui-components'
 
 const selectedValue = ref()
+const displayLabel = ref('')
+
+// 处理选择变化，获取displayLabel
+const handleChange = (value, option) => {
+  if (option) {
+    displayLabel.value = option.name
+  }
+}
 
 // 模拟数据获取函数
 const fetchUserData = async (params: FetchDataParams): Promise<FetchDataResult> => {
@@ -233,6 +243,7 @@ const displayOptions = computed(() => {
       ref="selectRef"
       v-model="selectedValue"
       :fetch-data="fetchData"
+      :display-label="displayLabel"
       placeholder="搜索并选择"
       value-key="id"
       label-key="title"
@@ -260,6 +271,7 @@ import type {
 } from '@bingwu/iip-ui-components'
 
 const selectedValue = ref()
+const displayLabel = ref('')
 const selectRef = ref<PaginationSelectInstance>()
 
 const fetchData = async (params: FetchDataParams): Promise<FetchDataResult> => {
@@ -274,6 +286,11 @@ const fetchData = async (params: FetchDataParams): Promise<FetchDataResult> => {
 
 const handleChange = (value: any, option?: OptionItem) => {
   console.log('选择变化:', value, option)
+
+  // 更新displayLabel用于回显
+  if (option) {
+    displayLabel.value = option.title
+  }
 }
 
 const handleDataLoaded = (result: FetchDataResult) => {
@@ -537,10 +554,20 @@ interface PaginationSelectInstance {
 <IipPaginationSelect
   v-model="form.userId"
   :fetch-data="fetchUsers"
+  :display-label="form.userName"
   placeholder="请选择用户"
   value-key="id"
   label-key="name"
+  @change="handleUserChange"
 />
+
+<script setup>
+const handleUserChange = (value, option) => {
+  if (option) {
+    form.value.userName = option.name
+  }
+}
+</script>
 ```
 
 ### 2. 表单查看模式
@@ -667,9 +694,24 @@ const handleUserChange = (value, option) => {
 ### 2. 错误处理
 
 ```vue
-<IipPaginationSelect v-model="selectedValue" :fetch-data="fetchData" @error="handleError" />
+<IipPaginationSelect
+  v-model="selectedValue"
+  :fetch-data="fetchData"
+  :display-label="displayLabel"
+  @change="handleChange"
+  @error="handleError"
+/>
 
 <script setup>
+const selectedValue = ref()
+const displayLabel = ref('')
+
+const handleChange = (value, option) => {
+  if (option) {
+    displayLabel.value = option.name
+  }
+}
+
 const handleError = error => {
   console.error('数据加载失败:', error)
   // 显示错误提示
@@ -695,7 +737,17 @@ const handleError = error => {
   :fetch-data="fetchUsers"
   :display-label="form.userName"
   placeholder="请选择用户"
+  @change="handleUserChange"
 />
+
+<script setup>
+const handleUserChange = (value, option) => {
+  if (option) {
+    // 及时更新displayLabel，确保下次回显正确
+    form.value.userName = option.name
+  }
+}
+</script>
 ```
 
 ## 注意事项

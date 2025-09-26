@@ -1,4 +1,4 @@
-# Select 选择器
+# Select 选择器(不要使用，后续将移除)
 
 基于 Element Plus Select 组件的二次封装，提供了更丰富的功能和更好的用户体验。
 
