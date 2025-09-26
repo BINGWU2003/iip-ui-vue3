@@ -188,7 +188,7 @@ importers:
   packages/vue-project-demo:
     dependencies:
       '@bingwu/iip-ui-components':
-        specifier: ^1.2.13
+        specifier: ^1.2.14
         version: link:../components
       '@bingwu/iip-ui-theme':
         specifier: ^1.2.8
