@@ -60,8 +60,6 @@ export default defineConfig({
           text: '数据录入',
           items: [
             { text: 'Form 表单 🔥', link: '/components/form' },
-            { text: 'Input 输入框', link: '/components/input' },
-            { text: 'Select 选择器', link: '/components/select' },
             { text: 'PaginationSelect 分页选择器', link: '/components/pagination-select' },
             { text: 'DateRange 日期范围', link: '/components/date-range' }
           ]
