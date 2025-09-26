@@ -96,7 +96,7 @@ import {
   ElSwitch,
   ElInputNumber
 } from 'element-plus'
-import type { FormItemConfig, FormExpose, FormProps } from './types'
+import type { FormItemConfig, FormExpose, FormProps, FormEmits } from './types'
 
 defineOptions({
   name: 'IipForm'
@@ -104,10 +104,7 @@ defineOptions({
 
 const props = defineProps<FormProps>()
 // 定义事件
-const emit = defineEmits<{
-  submit: [data: Record<string, any>]
-  reset: [data: Record<string, any>]
-}>()
+const emit = defineEmits<FormEmits>()
 const attrs = useAttrs()
 const slots = useSlots()
 const { formItems, actionsConfig, rowProps } = toRefs(props)

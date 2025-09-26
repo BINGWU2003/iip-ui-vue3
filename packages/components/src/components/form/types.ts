@@ -6,7 +6,7 @@ import type { CSSProperties } from 'vue'
 export type FormItemType = 'input' | 'number' | 'select' | 'datetime' | 'time' | 'switch' | 'custom'
 
 // 表单项配置
-export interface FormItemConfig {
+export type FormItemConfig = {
   // 基础属性
   formItemProps?: Partial<FormItemProps>
   // 布局属性
@@ -30,7 +30,7 @@ export interface FormItemConfig {
 }
 
 // 表单组件 Props
-export interface FormProps {
+export type FormProps = {
   // 操作按钮配置
   actionsConfig?: {
     show?: boolean
@@ -50,7 +50,13 @@ export interface FormProps {
   // 其他透传的属性
 }
 
+// 表单组件emits
+export type FormEmits = {
+  submit: [data: Record<string, any>]
+  reset: [data: Record<string, any>]
+}
+
 // 表单组件实例方法
-export interface FormExpose {
+export type FormExpose = {
   getFormInstance: () => InstanceType<typeof ElForm>
 }

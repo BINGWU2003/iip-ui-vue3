@@ -1,30 +1,30 @@
 import type { VxeColumnProps, VxeTableInstance } from 'vxe-table'
 import type { VxePagerProps } from 'vxe-pc-ui'
-export interface TableColumn {
+export type TableColumn = {
   /** 表格列原生属性 */
   tableColumnProps: VxeColumnProps
 }
-export interface seqColumnConfigProps {
+export type seqColumnConfigProps = {
   /** 是否显示序号 */
   show?: boolean
   tableColumnProps?: VxeColumnProps
 }
-export interface checkBoxColumnConfigProps {
+export type checkBoxColumnConfigProps = {
   /** 是否显示复选框 */
   show?: boolean
   tableColumnProps?: VxeColumnProps
 }
-export interface expandColumnConfigProps {
+export type expandColumnConfigProps = {
   /** 是否显示展开列 */
   show?: boolean
   tableColumnProps?: VxeColumnProps
 }
-export interface radioColumnConfigProps {
+export type radioColumnConfigProps = {
   /** 是否显示单选框 */
   show?: boolean
   tableColumnProps?: VxeColumnProps
 }
-export interface IipTableProps {
+export type IipTableProps = {
   /** 表格列配置 */
   columns?: TableColumn[]
   /** 表格复选框列配置 */
@@ -39,6 +39,6 @@ export interface IipTableProps {
   pagination?: VxePagerProps
 }
 
-export interface IipTableExpose {
+export type IipTableExpose = {
   getTableInstance: () => VxeTableInstance
 }

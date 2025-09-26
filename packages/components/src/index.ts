@@ -1,24 +1,10 @@
 import type { App, Component } from 'vue'
 
 // 导入所有组件
-import {
-  IipInput,
-  IipSelect,
-  IipTable,
-  IipForm,
-  IipDateRange,
-  IipPaginationSelect
-} from './components'
+import { IipTable, IipForm, IipDateRange, IipPaginationSelect } from './components'
 
 // 所有组件列表
-const components: Component[] = [
-  IipInput,
-  IipSelect,
-  IipTable,
-  IipForm,
-  IipDateRange,
-  IipPaginationSelect
-]
+const components: Component[] = [IipTable, IipForm, IipDateRange, IipPaginationSelect]
 
 // 定义 install 方法
 const install = (app: App): void => {
@@ -30,26 +16,19 @@ const install = (app: App): void => {
   })
 }
 
-// 版本号
-const version = '1.0.0'
-
 export {
   // 导出所有组件
-  IipInput,
-  IipSelect,
   IipTable,
   IipForm,
   IipDateRange,
   IipPaginationSelect,
   // 导出 install 方法和版本号
-  install,
-  version
+  install
 }
 
 // 默认导出
 export default {
-  install,
-  version
+  install
 }
 
 // 导出类型
