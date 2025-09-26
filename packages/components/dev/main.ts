@@ -3,7 +3,7 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import VXETable from 'vxe-table'
 import 'vxe-table/lib/style.css'
-
+import 'vxe-pc-ui/es/style.css'
 // 导入组件库
 import IipUI from '../src/index'
 

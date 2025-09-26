@@ -99,7 +99,6 @@ import { ref, computed, toRefs, useAttrs, useSlots } from 'vue'
 import { VxeTable, VxeColumn, VxeTableInstance } from 'vxe-table'
 import { VxePager } from 'vxe-pc-ui'
 import type { IipTableProps, IipTableExpose, TableColumn } from './types'
-import 'vxe-pc-ui/es/style.css'
 defineOptions({
   name: 'IipTable'
 })

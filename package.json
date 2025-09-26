@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "dev": "pnpm --filter @bingwu/iip-ui-components dev",
+    "demo:dev": "pnpm --filter @bingwu/vue-project-demo dev",
     "build:components": "pnpm --filter @bingwu/iip-ui-components build",
     "build:utils": "pnpm --filter @bingwu/iip-ui-utils build",
     "docs:dev": "pnpm --filter @bingwu/iip-ui-docs dev",

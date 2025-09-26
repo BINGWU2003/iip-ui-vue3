@@ -93,7 +93,7 @@ import 'vxe-pc-ui/lib/style.css'
 
 // IIP UI 组件库
 import IipUI from '@bingwu/iip-ui-components'
-import '@bingwu/iip-ui-theme/dist/index.css'
+import '@bingwu/iip-ui-components/dist/style.css'
 
 import App from './App.vue'
 
@@ -208,7 +208,7 @@ import 'vxe-pc-ui/lib/style.css'
 
 // 样式文件
 import 'element-plus/dist/index.css'
-import '@bingwu/iip-ui-theme/dist/index.css'
+import '@bingwu/iip-ui-components/dist/style.css'
 
 import App from './App.vue'
 
@@ -731,7 +731,7 @@ app.use(IipUI) // 最后注册
 import 'vxe-table/lib/style.css' // vxe-table 样式
 import 'vxe-pc-ui/lib/style.css' // vxe-pc-ui 样式
 import 'element-plus/dist/index.css' // Element Plus 样式
-import '@bingwu/iip-ui-theme/dist/index.css' // IIP UI 主题样式（最后引入）
+import '@bingwu/iip-ui-components/dist/style.css' // IIP UI 主题样式（最后引入）
 ```
 
 ### Q: 如何自定义主题颜色？

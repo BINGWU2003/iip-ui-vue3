@@ -59,7 +59,7 @@ import 'vxe-pc-ui/lib/style.css'
 
 // IIP UI 组件库
 import IipUI from '@bingwu/iip-ui-components'
-import '@bingwu/iip-ui-theme/dist/index.css'
+import '@bingwu/iip-ui-components/dist/style.css'
 
 import App from './App.vue'
 import router from './router'
@@ -83,7 +83,7 @@ app.mount('#app')
 
 ```ts
 import { IipTable } from '@bingwu/iip-ui-components'
-import '@bingwu/iip-ui-theme/dist/index.css'
+import '@bingwu/iip-ui-components/dist/style.css'
 
 // 仍需要注册 vxe-table 相关插件
 import VxeUITable from 'vxe-table'

@@ -9,7 +9,7 @@ import VxePCUI from 'vxe-pc-ui'
 import 'vxe-pc-ui/lib/style.css'
 // IIP UI 组件库
 import IipUI from '@bingwu/iip-ui-components'
-import '@bingwu/iip-ui-theme/dist/index.css'
+import '@bingwu/iip-ui-components/dist/style.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
