@@ -37,7 +37,7 @@
 <script setup lang="ts">
 import type { DateRangeProps, DateRangeEmits, DateRangeSlots, DateRangeSlotsKeys } from './types'
 import { splitSlots } from '../../utils/tools'
-import { reactive, computed, watch, toRefs, withDefaults } from 'vue'
+import { reactive, computed, watch, toRefs } from 'vue'
 import dayjs from 'dayjs'
 interface dateKey {
   yesterday: string
