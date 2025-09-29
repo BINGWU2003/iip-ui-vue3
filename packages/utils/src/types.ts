@@ -18,7 +18,8 @@ export const isBoolean = (val: unknown): val is boolean => typeof val === 'boole
 /**
  * 判断是否为函数
  */
-export const isFunction = (val: unknown): val is Function => typeof val === 'function'
+export const isFunction = (val: unknown): val is (...args: any[]) => any =>
+  typeof val === 'function'
 
 /**
  * 判断是否为对象
