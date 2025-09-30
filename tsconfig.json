@@ -22,14 +22,5 @@
     "paths": {
       "@bingwu/*": ["packages/*/src"]
     }
-  },
-  "include": [],
-  "references": [
-    {
-      "path": "./packages/components"
-    },
-    {
-      "path": "./packages/utils"
-    }
-  ]
+  }
 }

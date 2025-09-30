@@ -24,6 +24,6 @@
     "declarationMap": true,
     "emitDeclarationOnly": false
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "vitest.config.*", "vite.config.*"],
   "exclude": ["node_modules", "dist"]
 }

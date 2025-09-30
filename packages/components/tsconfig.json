@@ -32,7 +32,10 @@
     "src/**/*.d.ts",
     "src/**/*.vue",
     "auto-imports.d.ts",
-    "components.d.ts"
+    "components.d.ts",
+    "vite.config.*",
+    "vitest.config.*",
+    "vite.dev.config.ts"
   ],
   "exclude": ["node_modules", "dist"]
 }
