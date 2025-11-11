@@ -98,20 +98,17 @@ pnpm lint:style
 
 ### 自动化发布
 
-使用内置的发布脚本进行版本发布：
+使用changesets/cli发布：
 
 ```bash
-# 发布补丁版本 (bug 修复: 1.2.8 -> 1.2.9)
-pnpm release:patch
+# 创建版本变更记录
+pnpm changeset
 
-# 发布次版本 (新功能: 1.2.8 -> 1.3.0)
-pnpm release:minor
+# 更新版本
+pnpm changeset version
 
-# 发布主版本 (破坏性变更: 1.2.8 -> 2.0.0)
-pnpm release:major
-
-# 交互式发布（手动选择版本类型）
-pnpm release
+# 发布版本
+pnpm changeset publish
 ```
 
 ### 发布流程

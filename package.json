@@ -23,10 +23,6 @@
     "prepare": "husky install",
     "clean": "turbo run clean",
     "preinstall": "npx only-allow pnpm",
-    "release": "node scripts/release.cjs",
-    "release:patch": "node scripts/release.cjs patch",
-    "release:minor": "node scripts/release.cjs minor",
-    "release:major": "node scripts/release.cjs major",
     "test:all": "turbo run test",
     "docs:preview": "pnpm --filter @bingwu/iip-ui-docs preview"
   },
