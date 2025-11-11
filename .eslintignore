@@ -1,0 +1,34 @@
+# 依赖
+node_modules/
+
+# 构建产物
+dist/
+dev-dist/
+build/
+public/
+
+# 类型声明文件
+*.d.ts
+auto-imports.d.ts
+components.d.ts
+
+# 配置文件
+*.config.js
+*.config.ts
+
+# 其他
+.DS_Store
+*.min.js
+
+# 锁文件
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Turbo 和缓存
+turbo.json
+.turbo/
+
+# VitePress
+.vitepress/cache/
+.vitepress/dist/
