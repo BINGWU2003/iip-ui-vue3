@@ -1,6 +1,6 @@
 {
   "name": "@bingwu/iip-ui-theme",
-  "version": "1.2.8",
+  "version": "1.2.9",
   "description": "iip-ui-vue3 主题样式",
   "type": "module",
   "main": "./dist/index.css",
@@ -11,7 +11,8 @@
   "scripts": {
     "build": "sass src/index.scss dist/index.css --style=compressed",
     "dev": "sass src/index.scss dist/index.css --watch",
-    "clean": "rimraf dist"
+    "clean": "rimraf dist",
+    "prepublishOnly": "pnpm build"
   },
   "devDependencies": {
     "sass": "^1.90.0"

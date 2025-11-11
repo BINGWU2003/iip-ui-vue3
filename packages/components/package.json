@@ -1,6 +1,6 @@
 {
   "name": "@bingwu/iip-ui-components",
-  "version": "1.2.14",
+  "version": "1.2.15",
   "description": "iip-ui-vue3 核心组件库",
   "type": "module",
   "main": "./dist/index.umd.js",
@@ -29,7 +29,8 @@
     "test:run": "vitest run",
     "test:run:coverage": "vitest run --coverage",
     "test:run:verbose": "vitest run --reporter=verbose",
-    "clean": "rimraf dist dev-dist"
+    "clean": "rimraf dist dev-dist",
+    "prepublishOnly": "pnpm build"
   },
   "dependencies": {},
   "peerDependencies": {
@@ -39,7 +40,7 @@
     "vxe-pc-ui": "4.8.15",
     "vxe-table": "^4.15.6",
     "xe-utils": "^3.7.8",
-    "@bingwu/iip-ui-utils": "^1.2.9",
+    "@bingwu/iip-ui-utils": "^1.2.11",
     "dayjs": "^1.11.13"
   },
   "devDependencies": {
@@ -58,7 +59,7 @@
     "vxe-pc-ui": "4.8.15",
     "vxe-table": "^4.15.6",
     "xe-utils": "^3.7.8",
-    "@bingwu/iip-ui-utils": "^1.2.10",
+    "@bingwu/iip-ui-utils": "^1.2.11",
     "dayjs": "^1.11.13",
     "vue": "^3.3.8"
   },

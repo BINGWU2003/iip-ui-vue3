@@ -31,6 +31,7 @@
     "docs:preview": "pnpm --filter @bingwu/iip-ui-docs preview"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.29.7",
     "@commitlint/cli": "^18.4.3",
     "@commitlint/config-conventional": "^18.4.3",
     "@typescript-eslint/eslint-plugin": "^6.13.1",
