@@ -141,7 +141,7 @@ components.d.ts
 dist/
 lib/
 es/
-
+.turbo/
 # Test outputs
 coverage/
 test-results/

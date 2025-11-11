@@ -24,7 +24,7 @@
     "test:run": "vitest run",
     "test:run:coverage": "vitest run --coverage",
     "test:run:verbose": "vitest run --reporter=verbose",
-    "clean": "rm -rf dist"
+    "clean": "rimraf dist"
   },
   "dependencies": {},
   "peerDependencies": {},

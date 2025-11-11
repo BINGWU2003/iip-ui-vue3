@@ -352,12 +352,12 @@ const inlineFormModel = reactive({
 })
 
 // DateRange 组件数据
-const dateRangeModel = reactive({
+const dateRangeModel = ref({
   startTime: '',
   endTime: '',
 })
 
-const dateRangeModel2 = reactive({
+const dateRangeModel2 = ref({
   startTime: '',
   endTime: '',
 })

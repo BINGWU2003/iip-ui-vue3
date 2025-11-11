@@ -11,7 +11,7 @@
   "scripts": {
     "build": "sass src/index.scss dist/index.css --style=compressed",
     "dev": "sass src/index.scss dist/index.css --watch",
-    "clean": "rm -rf dist"
+    "clean": "rimraf dist"
   },
   "devDependencies": {
     "sass": "^1.90.0"
