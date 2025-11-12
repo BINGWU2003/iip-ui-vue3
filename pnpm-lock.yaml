@@ -164,7 +164,7 @@ importers:
   packages/components:
     devDependencies:
       '@bingwu/iip-ui-utils':
-        specifier: ^1.2.11
+        specifier: workspace:*
         version: link:../utils
       '@element-plus/icons-vue':
         specifier: ^2.1.0
