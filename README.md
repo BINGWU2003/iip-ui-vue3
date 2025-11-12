@@ -20,11 +20,16 @@
 
 本项目采用 Monorepo 架构，包含以下包：
 
+### Packages（核心包）
+
 - **@bingwu/iip-ui-components** - 核心组件库
 - **@bingwu/iip-ui-utils** - 工具函数库
 - **@bingwu/iip-ui-theme** - 主题样式库
+
+### Apps（应用）
+
 - **@bingwu/iip-ui-docs** - 文档站点
-- **@bingwu/vue-project-demo** - vue-demo（用于测试开发环境的包使用能正常使用）
+- **@bingwu/vue-project-demo** - Demo 应用（用于测试和演示组件库）
 
 ## 📋 环境要求
 
@@ -40,23 +45,35 @@
 pnpm install
 
 # 打包构建（必须先打包构建再运行项目）
-pnpm build:all
+pnpm build
 
-# 启动组件库开发服务器
-pnpm dev
+# 启动所有包的开发服务器
+pnpm dev:packages
+
+# 启动所有应用的开发服务器
+pnpm dev:apps
+
+# 启动 Demo 应用
+pnpm dev:demo
+
+# 启动 Demo 应用（包含依赖包的监听）
+pnpm dev:demo:watch
 
 # 启动文档站点
-pnpm docs:dev
-
-# 启动主题开发监听
-pnpm --filter @bingwu/iip-ui-theme dev
+pnpm dev:docs
 ```
 
 ### 构建命令
 
 ```bash
-# 构建所有包（不包括文档）
-pnpm build:all
+# 构建所有包和应用
+pnpm build
+
+# 构建所有包（packages）
+pnpm build:packages
+
+# 构建所有应用（apps）
+pnpm build:apps
 
 # 单独构建组件库
 pnpm build:components
@@ -64,21 +81,24 @@ pnpm build:components
 # 单独构建工具库
 pnpm build:utils
 
+# 单独构建主题库
+pnpm build:theme
+
 # 构建文档站点
-pnpm docs:build
+pnpm build:docs
+
+# 预览文档站点
+pnpm preview:docs
 ```
 
 ### 测试命令
 
 ```bash
-# 运行所有测试（待完善）
-pnpm test:all
+# 运行所有测试
+pnpm test
 
-# 运行组件库测试（待完善）
+# 运行组件库测试
 pnpm test:components
-
-# 运行单元测试（待完善）
-pnpm test:unit
 ```
 
 ### 代码质量
@@ -86,12 +106,6 @@ pnpm test:unit
 ```bash
 # 代码格式化
 pnpm format
-
-# ESLint 检查并修复
-pnpm lint:components
-
-# 样式检查
-pnpm lint:style
 ```
 
 ## 🚀 发布指南
@@ -140,8 +154,8 @@ pnpm changeset publish
 如需手动发布单个包：
 
 ```bash
-# 构建包
-pnpm build:all
+# 构建所有包
+pnpm build:packages
 
 # 发布组件库
 cd packages/components
