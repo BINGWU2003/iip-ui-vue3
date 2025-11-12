@@ -67,80 +67,7 @@ importers:
         specifier: ^3.2.4
         version: 3.2.4(@types/node@22.18.5)(terser@5.44.0)
 
-  packages/components:
-    devDependencies:
-      '@bingwu/iip-ui-utils':
-        specifier: ^1.2.11
-        version: link:../utils
-      '@element-plus/icons-vue':
-        specifier: ^2.1.0
-        version: 2.3.2(vue@3.5.21)
-      '@types/node':
-        specifier: ^20.9.0
-        version: 20.19.16
-      '@vitejs/plugin-vue':
-        specifier: ^4.5.0
-        version: 4.6.2(vite@5.4.20)(vue@3.5.21)
-      '@vue/test-utils':
-        specifier: ^2.4.2
-        version: 2.4.6
-      dayjs:
-        specifier: ^1.11.13
-        version: 1.11.18
-      element-plus:
-        specifier: ^2.11.2
-        version: 2.11.2(vue@3.5.21)
-      jsdom:
-        specifier: ^23.0.1
-        version: 23.2.0
-      sass:
-        specifier: ^1.90.0
-        version: 1.92.1
-      unplugin-auto-import:
-        specifier: ^0.17.2
-        version: 0.17.8
-      unplugin-vue-components:
-        specifier: ^0.25.2
-        version: 0.25.2(vue@3.5.21)
-      vite:
-        specifier: ^5.0.0
-        version: 5.4.20(@types/node@20.19.16)(sass@1.92.1)(terser@5.44.0)
-      vite-plugin-dts:
-        specifier: ^3.6.3
-        version: 3.9.1(@types/node@20.19.16)(typescript@5.8.3)(vite@5.4.20)
-      vue:
-        specifier: ^3.3.8
-        version: 3.5.21(typescript@5.8.3)
-      vue-tsc:
-        specifier: ^2.0.0
-        version: 2.2.12(typescript@5.8.3)
-      vxe-pc-ui:
-        specifier: 4.8.15
-        version: 4.8.15(vue@3.5.21)
-      vxe-table:
-        specifier: ^4.15.6
-        version: 4.15.6(vue@3.5.21)
-      xe-utils:
-        specifier: ^3.7.8
-        version: 3.7.8
-
-  packages/docs:
-    dependencies:
-      element-plus:
-        specifier: ^2.4.4
-        version: 2.11.2(vue@3.5.21)
-      vue:
-        specifier: ^3.3.8
-        version: 3.5.21(typescript@5.8.3)
-      vxe-pc-ui:
-        specifier: 4.8.15
-        version: 4.8.15(vue@3.5.21)
-      vxe-table:
-        specifier: 4.15.6
-        version: 4.15.6(vue@3.5.21)
-      xe-utils:
-        specifier: 3.7.8
-        version: 3.7.8
+  apps/docs:
     devDependencies:
       '@types/node':
         specifier: ^20.9.0
@@ -155,38 +82,17 @@ importers:
         specifier: ^1.0.0-rc.31
         version: 1.6.4(@algolia/client-search@5.37.0)(@types/node@20.19.16)(sass@1.92.1)(search-insights@2.17.3)(terser@5.44.0)(typescript@5.8.3)
 
-  packages/theme:
-    devDependencies:
-      sass:
-        specifier: ^1.90.0
-        version: 1.92.1
-
-  packages/utils:
-    devDependencies:
-      '@types/node':
-        specifier: ^20.9.0
-        version: 20.19.16
-      typescript:
-        specifier: ^5.3.2
-        version: 5.8.3
-      vite:
-        specifier: ^5.0.0
-        version: 5.4.20(@types/node@20.19.16)(sass@1.92.1)(terser@5.44.0)
-      vite-plugin-dts:
-        specifier: ^3.6.3
-        version: 3.9.1(@types/node@20.19.16)(typescript@5.8.3)(vite@5.4.20)
-
-  packages/vue-project-demo:
+  apps/vue-project-demo:
     dependencies:
       '@bingwu/iip-ui-components':
         specifier: workspace:*
-        version: link:../components
+        version: link:../../packages/components
       '@bingwu/iip-ui-theme':
         specifier: workspace:*
-        version: link:../theme
+        version: link:../../packages/theme
       '@bingwu/iip-ui-utils':
         specifier: workspace:*
-        version: link:../utils
+        version: link:../../packages/utils
       element-plus:
         specifier: 2.11.2
         version: 2.11.2(vue@3.5.21)
@@ -254,6 +160,84 @@ importers:
       vue-tsc:
         specifier: ^3.0.4
         version: 3.0.7(typescript@5.8.3)
+
+  packages/components:
+    devDependencies:
+      '@bingwu/iip-ui-utils':
+        specifier: ^1.2.11
+        version: link:../utils
+      '@element-plus/icons-vue':
+        specifier: ^2.1.0
+        version: 2.3.2(vue@3.5.21)
+      '@types/node':
+        specifier: ^20.9.0
+        version: 20.19.16
+      '@vitejs/plugin-vue':
+        specifier: ^4.5.0
+        version: 4.6.2(vite@5.4.20)(vue@3.5.21)
+      '@vue/test-utils':
+        specifier: ^2.4.2
+        version: 2.4.6
+      dayjs:
+        specifier: ^1.11.13
+        version: 1.11.18
+      element-plus:
+        specifier: ^2.11.2
+        version: 2.11.2(vue@3.5.21)
+      jsdom:
+        specifier: ^23.0.1
+        version: 23.2.0
+      sass:
+        specifier: ^1.90.0
+        version: 1.92.1
+      unplugin-auto-import:
+        specifier: ^0.17.2
+        version: 0.17.8
+      unplugin-vue-components:
+        specifier: ^0.25.2
+        version: 0.25.2(vue@3.5.21)
+      vite:
+        specifier: ^5.0.0
+        version: 5.4.20(@types/node@20.19.16)(sass@1.92.1)(terser@5.44.0)
+      vite-plugin-dts:
+        specifier: ^3.6.3
+        version: 3.9.1(@types/node@20.19.16)(typescript@5.8.3)(vite@5.4.20)
+      vue:
+        specifier: ^3.3.8
+        version: 3.5.21(typescript@5.8.3)
+      vue-tsc:
+        specifier: ^2.0.0
+        version: 2.2.12(typescript@5.8.3)
+      vxe-pc-ui:
+        specifier: 4.8.15
+        version: 4.8.15(vue@3.5.21)
+      vxe-table:
+        specifier: ^4.15.6
+        version: 4.15.6(vue@3.5.21)
+      xe-utils:
+        specifier: ^3.7.8
+        version: 3.7.8
+
+  packages/theme:
+    devDependencies:
+      sass:
+        specifier: ^1.90.0
+        version: 1.92.1
+
+  packages/utils:
+    devDependencies:
+      '@types/node':
+        specifier: ^20.9.0
+        version: 20.19.16
+      typescript:
+        specifier: ^5.3.2
+        version: 5.8.3
+      vite:
+        specifier: ^5.0.0
+        version: 5.4.20(@types/node@20.19.16)(sass@1.92.1)(terser@5.44.0)
+      vite-plugin-dts:
+        specifier: ^3.6.3
+        version: 3.9.1(@types/node@20.19.16)(typescript@5.8.3)(vite@5.4.20)
 
 packages:
 

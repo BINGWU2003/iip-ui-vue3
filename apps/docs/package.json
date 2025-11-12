@@ -10,13 +10,6 @@
     "preview": "vitepress preview",
     "clean": "rimraf .vitepress/dist"
   },
-  "dependencies": {
-    "element-plus": "^2.4.4",
-    "vue": "^3.3.8",
-    "vxe-pc-ui": "4.8.15",
-    "vxe-table": "4.15.6",
-    "xe-utils": "3.7.8"
-  },
   "devDependencies": {
     "@types/node": "^20.9.0",
     "sass": "^1.90.0",
