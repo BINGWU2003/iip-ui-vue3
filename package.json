@@ -27,7 +27,9 @@
     "prepare": "husky install",
     "clean": "turbo run clean",
     "preinstall": "npx only-allow pnpm",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "changeset": "changeset",
+    "publish": "turbo run build --filter=./packages/* && pnpm changeset publish"
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.7",
