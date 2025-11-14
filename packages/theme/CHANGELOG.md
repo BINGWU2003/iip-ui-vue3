@@ -1,5 +1,11 @@
 # @bingwu/iip-ui-theme
 
+## 1.2.11
+
+### Patch Changes
+
+- test
+
 ## 1.2.10
 
 ### Patch Changes
