@@ -29,7 +29,7 @@
     "preinstall": "npx only-allow pnpm",
     "test": "turbo run test",
     "changeset": "changeset",
-    "publish": "pnpm changeset publish"
+    "release": "pnpm build:packages && changeset publish"
   },
   "devDependencies": {
     "@changesets/cli": "^2.29.7",

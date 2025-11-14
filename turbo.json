@@ -28,9 +28,9 @@
     "clean": {
       "cache": false
     },
-    "publish": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**"]
+    "prepublishOnly": {
+      "dependsOn": ["build"],
+      "cache": false
     }
   }
 }

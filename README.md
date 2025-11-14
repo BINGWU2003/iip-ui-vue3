@@ -122,7 +122,7 @@ pnpm changeset
 pnpm changeset version
 
 # 发布版本
-pnpm changeset publish
+pnpm release
 ```
 
 ### 发布流程

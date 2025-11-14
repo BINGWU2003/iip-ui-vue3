@@ -1,5 +1,13 @@
 # @bingwu/iip-ui-components
 
+## 1.2.17
+
+### Patch Changes
+
+- test
+- Updated dependencies
+  - @bingwu/iip-ui-utils@1.2.13
+
 ## 1.2.16
 
 ### Patch Changes
