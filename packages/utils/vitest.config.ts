@@ -1,6 +1,5 @@
-import { mergeConfig } from 'vitest/config'
-import viteConfig from './vite.config'
-export default mergeConfig(viteConfig, {
+import { defineConfig } from 'vitest/config'
+export default defineConfig({
   test: {
     // 测试环境
     environment: 'node',
