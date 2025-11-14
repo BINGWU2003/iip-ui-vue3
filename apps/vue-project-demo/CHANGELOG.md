@@ -1,5 +1,14 @@
 # @bingwu/vue-project-demo
 
+## 0.0.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @bingwu/iip-ui-components@1.2.16
+  - @bingwu/iip-ui-theme@1.2.10
+  - @bingwu/iip-ui-utils@1.2.12
+
 ## 0.0.1
 
 ### Patch Changes
