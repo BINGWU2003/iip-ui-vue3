@@ -27,6 +27,10 @@
     },
     "clean": {
       "cache": false
+    },
+    "publish": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
     }
   }
 }
