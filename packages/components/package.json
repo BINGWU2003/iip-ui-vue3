@@ -49,8 +49,6 @@
     "element-plus": "^2.11.2",
     "jsdom": "^23.0.1",
     "sass": "^1.90.0",
-    "unplugin-auto-import": "^0.17.2",
-    "unplugin-vue-components": "^0.25.2",
     "vite": "^5.0.0",
     "vite-plugin-dts": "^3.6.3",
     "vue-tsc": "^2.0.0",

@@ -1,40 +1,48 @@
 <template>
-  <div :style="{ display: 'flex', alignItems: 'center', gap: (gap || 10) + 'px' }">
-    <el-date-picker
-      placeholder="开始日期"
-      format="YYYY-MM-DD"
-      value-format="YYYY-MM-DD"
-      v-bind="startProps"
-      v-model="formData.startTime"
-      type="date"
-      :shortcuts="shortcuts"
-      :style="getStartPickerCss"
-      @change="handleStartTimeChange"
-      :disabled-date="(date: Date) => isDisabledDate(date, 'start')"
-    >
-      <template v-for="slot in getSlots($slots, 'start')" :key="`start-${slot}`" #[slot]="slotData">
-        <slot :name="`start-${slot}`" v-bind="slotData"></slot>
-      </template>
-    </el-date-picker>
-    <el-date-picker
-      placeholder="结束日期"
-      format="YYYY-MM-DD"
-      value-format="YYYY-MM-DD"
-      v-bind="endProps"
-      v-model="formData.endTime"
-      @change="handleEndTimeChange"
-      type="date"
-      :style="getEndPickerCss"
-      :disabled-date="(date: Date) => isDisabledDate(date, 'end')"
-    >
-      <template v-for="slot in getSlots($slots, 'end')" :key="`end-${slot}`" #[slot]="slotData">
-        <slot :name="`end-${slot}`" v-bind="slotData"></slot>
-      </template>
-    </el-date-picker>
-  </div>
+  <el-config-provider :locale="zhCn">
+    <div :style="{ display: 'flex', alignItems: 'center', gap: (gap || 10) + 'px' }">
+      <el-date-picker
+        placeholder="开始日期"
+        format="YYYY-MM-DD"
+        value-format="YYYY-MM-DD"
+        v-bind="startProps"
+        v-model="formData.startTime"
+        type="date"
+        :shortcuts="shortcuts"
+        :style="getStartPickerCss"
+        @change="handleStartTimeChange"
+        :disabled-date="(date: Date) => isDisabledDate(date, 'start')"
+      >
+        <template
+          v-for="slot in getSlots($slots, 'start')"
+          :key="`start-${slot}`"
+          #[slot]="slotData"
+        >
+          <slot :name="`start-${slot}`" v-bind="slotData"></slot>
+        </template>
+      </el-date-picker>
+      <el-date-picker
+        placeholder="结束日期"
+        format="YYYY-MM-DD"
+        value-format="YYYY-MM-DD"
+        v-bind="endProps"
+        v-model="formData.endTime"
+        @change="handleEndTimeChange"
+        type="date"
+        :style="getEndPickerCss"
+        :disabled-date="(date: Date) => isDisabledDate(date, 'end')"
+      >
+        <template v-for="slot in getSlots($slots, 'end')" :key="`end-${slot}`" #[slot]="slotData">
+          <slot :name="`end-${slot}`" v-bind="slotData"></slot>
+        </template>
+      </el-date-picker>
+    </div>
+  </el-config-provider>
 </template>
 
 <script setup lang="ts">
+import zhCn from 'element-plus/es/locale/lang/zh-cn'
+import { ElDatePicker, ElConfigProvider } from 'element-plus'
 import type { DateRangeProps, DateRangeEmits, DateRangeSlots, DateRangeSlotsKeys } from './types'
 import { splitSlots } from '../../utils/tools'
 import { reactive, computed, watch, toRefs } from 'vue'

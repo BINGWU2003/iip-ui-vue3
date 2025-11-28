@@ -1,55 +1,58 @@
 <template>
-  <el-select
-    v-model="selectedValue"
-    :placeholder="placeholder"
-    :loading="loading && !viewMode"
-    :remote="!viewMode"
-    :remote-method="handleRemoteMethod"
-    :clearable="clearable && !viewMode"
-    :filterable="!viewMode"
-    :disabled="viewMode"
-    :reserve-keyword="false"
-    :popper-class="`${popperClass} pagination-select-popper`"
-    v-bind="$attrs"
-    :style="style"
-    @change="handleChange"
-    @clear="handleClear"
-    @visible-change="handleVisibleChange"
-    ref="selectRef"
-  >
-    <template v-for="(_, slot) in $slots" #[slot]="slotData">
-      <slot :name="slot" v-bind="slotData"></slot>
-    </template>
-    <template v-for="item in displayOptions" :key="item[valueKey]">
-      <el-option
-        v-show="!item._isVirtual"
-        :label="item[labelKey]"
-        :value="item[valueKey]"
-        :disabled="item.disabled"
-      />
-    </template>
-
-    <!-- 分页器 -->
-    <template v-if="showPagination && total > 0" #footer>
-      <div class="pagination-select-footer">
-        <el-pagination
-          v-model:current-page="currentPage"
-          :page-size="pageSize"
-          :total="total"
-          :pager-count="5"
-          layout="prev, pager, next"
-          small
-          @current-change="handlePageChange"
+  <el-config-provider :locale="zhCn">
+    <el-select
+      v-model="selectedValue"
+      :placeholder="placeholder"
+      :loading="loading && !viewMode"
+      :remote="!viewMode"
+      :remote-method="handleRemoteMethod"
+      :clearable="clearable && !viewMode"
+      :filterable="!viewMode"
+      :disabled="viewMode"
+      :reserve-keyword="false"
+      :popper-class="`${popperClass} pagination-select-popper`"
+      v-bind="$attrs"
+      :style="style"
+      @change="handleChange"
+      @clear="handleClear"
+      @visible-change="handleVisibleChange"
+      ref="selectRef"
+    >
+      <template v-for="(_, slot) in $slots" #[slot]="slotData">
+        <slot :name="slot" v-bind="slotData"></slot>
+      </template>
+      <template v-for="item in displayOptions" :key="item[valueKey]">
+        <el-option
+          v-show="!item._isVirtual"
+          :label="item[labelKey]"
+          :value="item[valueKey]"
+          :disabled="item.disabled"
         />
-        <div class="pagination-info">共 {{ total }} 条</div>
-      </div>
-    </template>
-  </el-select>
+      </template>
+
+      <!-- 分页器 -->
+      <template v-if="showPagination && total > 0" #footer>
+        <div class="pagination-select-footer">
+          <el-pagination
+            v-model:current-page="currentPage"
+            :page-size="pageSize"
+            :total="total"
+            :pager-count="5"
+            layout="prev, pager, next"
+            small
+            @current-change="handlePageChange"
+          />
+          <div class="pagination-info">共 {{ total }} 条</div>
+        </div>
+      </template>
+    </el-select>
+  </el-config-provider>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch, readonly } from 'vue'
-import type { ElSelect } from 'element-plus'
+import { ElSelect, ElPagination, ElConfigProvider } from 'element-plus'
+import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import type {
   PaginationSelectProps,
   PaginationSelectEmits,
