@@ -1,5 +1,11 @@
 # @bingwu/iip-ui-components
 
+## 1.2.18
+
+### Patch Changes
+
+- 中文化支持
+
 ## 1.2.17
 
 ### Patch Changes
