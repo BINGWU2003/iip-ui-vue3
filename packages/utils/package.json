@@ -1,6 +1,6 @@
 {
   "name": "@bingwu/iip-ui-utils",
-  "version": "1.2.13",
+  "version": "1.2.14",
   "description": "iip-ui-vue3 工具函数库",
   "type": "module",
   "main": "./dist/index.cjs",
