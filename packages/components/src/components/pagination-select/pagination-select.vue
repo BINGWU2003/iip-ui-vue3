@@ -3,12 +3,11 @@
     <el-select
       v-model="selectedValue"
       :placeholder="placeholder"
-      :loading="loading && !viewMode"
-      :remote="!viewMode"
+      :loading="loading"
+      remote
       :remote-method="handleRemoteMethod"
-      :clearable="clearable && !viewMode"
-      :filterable="!viewMode"
-      :disabled="viewMode"
+      :clearable="clearable"
+      filterable
       :reserve-keyword="false"
       :popper-class="`${popperClass} pagination-select-popper`"
       v-bind="$attrs"
@@ -74,8 +73,6 @@ const props = withDefaults(defineProps<PaginationSelectProps>(), {
   showPagination: true,
   popperClass: '',
   debounceTime: 300,
-  displayLabel: '',
-  viewMode: false,
   style: () => ({})
 })
 
@@ -98,14 +95,15 @@ const showPagination = computed(() => props.showPagination && total.value > prop
 const displayOptions = computed(() => {
   const baseOptions = [...options.value]
 
-  // 如果有选中值但在当前选项中找不到对应项，则创建虚拟选项
-  if (props.modelValue !== undefined && props.modelValue !== null && props.modelValue !== '') {
-    const existingOption = baseOptions.find(item => item[props.valueKey] === props.modelValue)
+  // 如果有选中值但在当前选项中找不到对应项，则创建虚拟选项用于回显
+  const currentValue = props.modelValue?.[props.valueKey]
+  if (currentValue !== undefined && currentValue !== null && currentValue !== '') {
+    const existingOption = baseOptions.find(item => item[props.valueKey] === currentValue)
     if (!existingOption) {
-      // 创建虚拟选项用于回显
+      // 创建虚拟选项用于回显（例如：选中的是第二页的数据）
       const virtualOption = {
-        [props.valueKey]: props.modelValue,
-        [props.labelKey]: props.displayLabel || String(props.modelValue), // 编辑模式可能没有displayLabel，使用value作为fallback
+        [props.valueKey]: props.modelValue![props.valueKey],
+        [props.labelKey]: props.modelValue![props.labelKey],
         _isVirtual: true
       }
 
@@ -116,27 +114,33 @@ const displayOptions = computed(() => {
   return baseOptions
 })
 
-// 监听 modelValue 变化
+// 监听 modelValue 变化，同步到内部selectedValue
 watch(
   () => props.modelValue,
   newVal => {
-    selectedValue.value = newVal
+    selectedValue.value = newVal?.[props.valueKey]
   },
   { immediate: true }
 )
 
-// 监听选中值变化
+// 监听选中值变化，发出事件
 watch(selectedValue, newVal => {
-  emit('update:modelValue', newVal)
+  if (newVal === undefined || newVal === null) {
+    emit('update:modelValue', null)
+  } else {
+    // 从displayOptions中找到对应的label
+    const selectedOption = displayOptions.value.find(item => item[props.valueKey] === newVal)
+    const label = selectedOption ? selectedOption[props.labelKey] : String(newVal)
+
+    emit('update:modelValue', {
+      [props.valueKey]: newVal,
+      [props.labelKey]: label
+    })
+  }
 })
 
 // 处理远程搜索
 const handleRemoteMethod = (query: string) => {
-  // 查看模式下不执行远程搜索
-  if (props.viewMode) {
-    return
-  }
-
   searchKeyword.value = query
 
   // 防抖处理
@@ -192,7 +196,20 @@ const handlePageChange = (page: number) => {
 const handleChange = (value: unknown) => {
   // 从displayOptions中查找，这样可以包含虚拟选项
   const selectedOption = displayOptions.value.find(item => item[props.valueKey] === value)
-  emit('change', value, selectedOption)
+
+  if (value === undefined || value === null || value === '') {
+    emit('change', null, selectedOption)
+  } else {
+    const label = selectedOption ? selectedOption[props.labelKey] : String(value)
+    emit(
+      'change',
+      {
+        [props.valueKey]: value,
+        [props.labelKey]: label
+      },
+      selectedOption
+    )
+  }
 }
 
 // 处理清空

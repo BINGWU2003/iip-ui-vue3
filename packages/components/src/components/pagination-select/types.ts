@@ -18,8 +18,8 @@ export type FetchDataResult = {
 }
 
 export type PaginationSelectProps = {
-  /** 绑定值 */
-  modelValue?: any
+  /** 绑定值，对象形式，属性名由 valueKey 和 labelKey 决定 */
+  modelValue?: Record<string, any> | null
   /** 占位符 */
   placeholder?: string
   /** 选项值的键名 */
@@ -38,19 +38,15 @@ export type PaginationSelectProps = {
   debounceTime?: number
   /** 获取数据的方法 */
   fetchData: (params: FetchDataParams) => Promise<FetchDataResult>
-  /** 直接显示的标签文本（必需，分页时options中无数据） */
-  displayLabel: string
-  /** 是否为查看模式 */
-  viewMode?: boolean
   /** Style样式 */
   style?: CSSProperties
 }
 
 export type PaginationSelectEmits = {
-  /** 更新绑定值 */
-  'update:modelValue': [value: any]
+  /** 更新绑定值，返回对象形式，属性名由 valueKey 和 labelKey 决定 */
+  'update:modelValue': [value: Record<string, any> | null]
   /** 选择变化 */
-  change: [value: any, option?: OptionItem]
+  change: [value: Record<string, any> | null, option?: OptionItem]
   /** 清空 */
   clear: []
   /** 下拉框显示/隐藏 */
