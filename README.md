@@ -50,6 +50,9 @@ pnpm build
 # 启动所有包的开发服务器
 pnpm dev:packages
 
+# 启动组件库UI页面
+pnpm dev:ui
+
 # 启动所有应用的开发服务器
 pnpm dev:apps
 
