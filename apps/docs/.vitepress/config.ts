@@ -14,7 +14,7 @@ export default defineConfig({
     // 导航栏
     nav: [
       { text: '指南', link: '/guide/introduction' },
-      { text: '组件', link: '/components/table' },
+      { text: '组件', link: '/components/date-range' },
       { text: '工具函数', link: '/utils/utils' },
       { text: '主题', link: '/theme/theme' },
       { text: '更新日志', link: '/guide/changelog' },
@@ -53,13 +53,8 @@ export default defineConfig({
       ],
       '/components/': [
         {
-          text: '数据展示',
-          items: [{ text: 'Table 表格 🔥', link: '/components/table' }]
-        },
-        {
           text: '数据录入',
           items: [
-            { text: 'Form 表单 🔥', link: '/components/form' },
             { text: 'PaginationSelect 分页选择器', link: '/components/pagination-select' },
             { text: 'DateRange 日期范围', link: '/components/date-range' }
           ]
