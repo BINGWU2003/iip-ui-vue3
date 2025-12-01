@@ -9,8 +9,5 @@ export * from './common'
 // 验证工具
 export * from './validate'
 
-// Eova 工具
-export * from './eova'
-
 // 请求工具
 export * from './request'

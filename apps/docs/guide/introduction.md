@@ -82,7 +82,6 @@ IIP UI Vue3 是一个基于 Element Plus、Vue 3 和 TypeScript 技术栈构建�
 
 ### 🛠️ 工具函数
 
-- **Eova 转换器**: 将 Eova 字段定义转换为表格列配置
 - **通用工具**: 类型检查、对象操作、数组处理等
 
 查看 [更新日志](/guide/changelog) 了解版本变更详情。

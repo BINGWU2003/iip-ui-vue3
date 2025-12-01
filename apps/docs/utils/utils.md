@@ -1,6 +1,6 @@
 # Utils 工具函数
 
-IIP UI Vue3 提供了一系列实用的工具函数，包括类型检查、通用工具、数据验证、Vue 工具和 Eova 转换等功能。
+IIP UI Vue3 提供了一系列实用的工具函数，包括类型检查、通用工具、数据验证和 Vue 工具等功能。
 
 ## 安装和引入
 
@@ -37,8 +37,7 @@ import {
   isIdCard, // 验证工具
   withInstall,
   createNamespace, // Vue 工具
-  createRequestManager, // 请求管理
-  eovaConverter // Eova 转换
+  createRequestManager // 请求管理
 } from '@bingwu/iip-ui-utils'
 ```
 
@@ -980,216 +979,6 @@ const fetchDataWithErrorHandling = async () => {
    }
    ```
 
-## Eova 转换工具
-
-### 基础使用
-
-```typescript
-import { eovaConverter, EovaToAvueConverter } from '@bingwu/iip-ui-utils'
-
-// 定义 Eova 字段数据
-const eovaFields = [
-  {
-    id: 1,
-    cn: '用户姓名',
-    en: 'userName',
-    type: '文本框',
-    width: 120,
-    is_show: true,
-    is_order: true,
-    is_required: true,
-    placeholder: '请输入用户姓名'
-  },
-  {
-    id: 2,
-    cn: '用户邮箱',
-    en: 'email',
-    type: '文本框',
-    width: 180,
-    is_show: true,
-    is_order: false,
-    is_required: true
-  },
-  {
-    id: 3,
-    cn: '注册时间',
-    en: 'createTime',
-    type: '日期框',
-    width: 160,
-    is_show: true,
-    is_order: true
-  },
-  {
-    id: 4,
-    cn: '用户状态',
-    en: 'status',
-    type: '下拉框',
-    width: 100,
-    is_show: true,
-    is_order: false
-  }
-]
-
-// 使用预设转换器实例
-const tableColumns = eovaConverter.convertColumns(eovaFields)
-console.log(tableColumns)
-/*
-输出:
-[
-  {
-    field: 'userName',
-    title: '用户姓名',
-    width: 120,
-    visible: true,
-    sortable: true
-  },
-  {
-    field: 'email',
-    title: '用户邮箱',
-    width: 180,
-    visible: true,
-    sortable: false
-  },
-  {
-    field: 'createTime',
-    title: '注册时间',
-    width: 160,
-    visible: true,
-    sortable: true
-  },
-  {
-    field: 'status',
-    title: '用户状态',
-    width: 100,
-    visible: true,
-    sortable: false
-  }
-]
-*/
-```
-
-### 自定义转换器
-
-```typescript
-import { EovaToAvueConverter } from '@bingwu/iip-ui-utils'
-
-// 创建自定义转换器
-const customConverter = new EovaToAvueConverter()
-
-// 查看默认字段类型映射
-console.log(customConverter.fieldTypeMap)
-/*
-{
-  文本框: 'input',
-  文本域: 'textarea',
-  数字框: 'number',
-  密码框: 'password',
-  日期框: 'date',
-  时间框: 'datetime',
-  下拉框: 'select',
-  单选框: 'radio',
-  复选框: 'checkbox',
-  布尔框: 'switch',
-  图片框: 'upload',
-  文件框: 'upload',
-  编辑框: 'ueditor',
-  // ... 更多类型映射
-}
-*/
-
-// 扩展字段类型映射
-customConverter.fieldTypeMap = {
-  ...customConverter.fieldTypeMap,
-  自定义输入框: 'custom-input',
-  地址选择器: 'address-picker',
-  标签选择器: 'tag-selector'
-}
-
-// 使用自定义转换器
-const customFields = [
-  {
-    cn: '详细地址',
-    en: 'address',
-    type: '地址选择器',
-    width: 200,
-    is_show: true,
-    is_order: false
-  }
-]
-
-const customColumns = customConverter.convertColumns(customFields)
-console.log(customColumns)
-```
-
-### 在表格组件中使用
-
-```vue
-<template>
-  <div class="user-table">
-    <iip-table :data="tableData" :columns="tableColumns" :loading="loading" border stripe />
-  </div>
-</template>
-
-<script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { eovaConverter, isNullOrUndefined } from '@bingwu/iip-ui-utils'
-
-// 表格数据
-const tableData = ref([])
-const loading = ref(false)
-
-// 从后端获取的 Eova 字段配置
-const eovaFields = ref([])
-
-// 转换为表格列配置
-const tableColumns = computed(() => {
-  if (eovaFields.value.length === 0) return []
-
-  const columns = eovaConverter.convertColumns(eovaFields.value)
-
-  // 可以进一步自定义列配置
-  return columns.map(col => ({
-    tableColumnProps: {
-      ...col,
-      // 添加自定义格式化函数
-      formatter: ({ cellValue, row, column }: any) => {
-        if (col.field === 'createTime' && !isNullOrUndefined(cellValue)) {
-          return new Date(cellValue).toLocaleDateString()
-        }
-        if (col.field === 'status') {
-          return cellValue === 1 ? '激活' : '禁用'
-        }
-        return cellValue
-      }
-    }
-  }))
-})
-
-// 获取字段配置和数据
-const fetchData = async () => {
-  loading.value = true
-  try {
-    // 模拟 API 调用
-    const [fieldsResponse, dataResponse] = await Promise.all([
-      fetch('/api/eova/fields'),
-      fetch('/api/users')
-    ])
-
-    eovaFields.value = await fieldsResponse.json()
-    tableData.value = await dataResponse.json()
-  } catch (error) {
-    console.error('获取数据失败:', error)
-  } finally {
-    loading.value = false
-  }
-}
-
-onMounted(() => {
-  fetchData()
-})
-</script>
-```
-
 ## 实际应用示例
 
 ### 用户管理页面
@@ -1247,14 +1036,7 @@ onMounted(() => {
 
 <script setup lang="ts">
 import { ref, computed, reactive, onMounted } from 'vue'
-import {
-  debounce,
-  deepClone,
-  generateId,
-  isEmail,
-  isPhone,
-  eovaConverter
-} from '@bingwu/iip-ui-utils'
+import { debounce, deepClone, generateId, isEmail, isPhone } from '@bingwu/iip-ui-utils'
 
 // 响应式数据
 const loading = ref(false)
@@ -1317,76 +1099,70 @@ const filteredUsers = computed(() => {
   )
 })
 
-// 表格列配置（使用 Eova 转换器）
+// 表格列配置
 const userColumns = computed(() => {
-  const eovaFields = [
+  return [
     {
-      cn: '用户姓名',
-      en: 'userName',
-      type: '文本框',
-      width: 120,
-      is_show: true,
-      is_order: true
+      tableColumnProps: {
+        field: 'userName',
+        title: '用户姓名',
+        width: 120,
+        visible: true,
+        sortable: true
+      }
     },
     {
-      cn: '邮箱地址',
-      en: 'email',
-      type: '文本框',
-      width: 200,
-      is_show: true,
-      is_order: false
+      tableColumnProps: {
+        field: 'email',
+        title: '邮箱地址',
+        width: 200,
+        visible: true,
+        sortable: false
+      }
     },
     {
-      cn: '手机号码',
-      en: 'phone',
-      type: '文本框',
-      width: 140,
-      is_show: true,
-      is_order: false
+      tableColumnProps: {
+        field: 'phone',
+        title: '手机号码',
+        width: 140,
+        visible: true,
+        sortable: false
+      }
     },
     {
-      cn: '注册时间',
-      en: 'createTime',
-      type: '日期框',
-      width: 160,
-      is_show: true,
-      is_order: true
-    },
-    {
-      cn: '用户状态',
-      en: 'status',
-      type: '下拉框',
-      width: 100,
-      is_show: true,
-      is_order: false
-    }
-  ]
-
-  const columns = eovaConverter.convertColumns(eovaFields)
-
-  // 添加操作列
-  columns.push({
-    field: 'action',
-    title: '操作',
-    width: 150,
-    visible: true,
-    sortable: false
-  })
-
-  return columns.map(col => ({
-    tableColumnProps: {
-      ...col,
-      formatter: ({ cellValue, row }: any) => {
-        if (col.field === 'status') {
-          return cellValue === 1 ? '激活' : '禁用'
-        }
-        if (col.field === 'createTime') {
+      tableColumnProps: {
+        field: 'createTime',
+        title: '注册时间',
+        width: 160,
+        visible: true,
+        sortable: true,
+        formatter: ({ cellValue }: any) => {
           return new Date(cellValue).toLocaleString()
         }
-        return cellValue
+      }
+    },
+    {
+      tableColumnProps: {
+        field: 'status',
+        title: '用户状态',
+        width: 100,
+        visible: true,
+        sortable: false,
+        formatter: ({ cellValue }: any) => {
+          return cellValue === 1 ? '激活' : '禁用'
+        }
+      }
+    },
+    {
+      tableColumnProps: {
+        field: 'action',
+        title: '操作',
+        width: 150,
+        visible: true,
+        sortable: false
       }
     }
-  }))
+  ]
 })
 
 // 方法
@@ -1540,14 +1316,5 @@ onMounted(() => {
 | `RequestResult.isLatest`              | 属性                               | `boolean`                   | 是否是最新请求的结果        |
 | `RequestResult.result`                | 属性                               | `any`                       | onSuccess回调返回值         |
 | `RequestResult.error`                 | 属性                               | `Error`                     | 请求错误信息                |
-
-### Eova 转换工具
-
-| 类/函数名                | 方法/参数     | 返回值                   | 描述                 |
-| ------------------------ | ------------- | ------------------------ | -------------------- |
-| `EovaToAvueConverter`    | 构造函数      | `EovaToAvueConverter`    | 创建转换器实例       |
-| `convertColumns(fields)` | `EovaField[]` | `TableColumnProps[]`     | 转换字段为表格列配置 |
-| `fieldTypeMap`           | getter/setter | `Record<string, string>` | 字段类型映射         |
-| `eovaConverter`          | 预设实例      | `EovaToAvueConverter`    | 默认转换器实例       |
 
 通过这些工具函数，你可以大大简化日常开发中的常见任务，提高开发效率和代码质量。所有函数都经过 TypeScript 类型检查，提供完整的类型支持和 IDE 智能提示。

@@ -167,9 +167,7 @@ export default defineConfig({
             'getPasswordStrength',
             'withInstall',
             'withInstallFunction',
-            'createNamespace',
-            'eovaConverter',
-            'EovaToAvueConverter'
+            'createNamespace'
           ]
         }
       ]
@@ -619,11 +617,7 @@ import type {
   DeepPartial,
 
   // 防抖函数类型
-  DebouncedFunction,
-
-  // Eova 相关类型
-  EovaField,
-  EovaToAvueConverter
+  DebouncedFunction
 } from '@bingwu/iip-ui-utils'
 
 // 使用类型示例
@@ -668,22 +662,6 @@ import { debounce, type DebouncedFunction } from '@bingwu/iip-ui-utils'
 const debouncedSave: DebouncedFunction<(data: any) => void> = debounce((data: any) => {
   console.log('保存数据:', data)
 }, 500)
-
-// 使用 Eova 转换器类型
-import { eovaConverter, type EovaField } from '@bingwu/iip-ui-utils'
-
-const fields: EovaField[] = [
-  {
-    cn: '姓名',
-    en: 'name',
-    type: '文本框',
-    width: 120,
-    is_show: true,
-    is_order: true
-  }
-]
-
-const columns = eovaConverter.convertColumns(fields)
 ```
 
 ### 3. 组合式 API 类型支持

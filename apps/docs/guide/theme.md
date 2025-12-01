@@ -208,16 +208,8 @@ $border-radius-base: 6px;
 $border-width-base: 1px;
 $spacing-unit: 8px;
 
-// 组件特定变量
-$table-border-color: #f0f0f0;
-$table-header-bg: #fafafa;
-$table-row-hover-bg: #f5f5f5;
-
 // 导入主题（需要在变量定义之后）
 @import '@bingwu/iip-ui-theme/src/index.scss';
-
-// 或者只导入特定组件的样式
-@import '@bingwu/iip-ui-theme/src/components/table.scss';
 ```
 
 ## 动态主题切换
