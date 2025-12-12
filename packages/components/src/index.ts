@@ -1,10 +1,10 @@
 import type { App, Component } from 'vue'
 
 // 导入所有组件
-import { IipDateRange, IipPaginationSelect } from './components'
+import { IipDateRange, IipPaginationSelect, IipDialogSelect } from './components'
 
 // 所有组件列表
-const components: Component[] = [IipDateRange, IipPaginationSelect]
+const components: Component[] = [IipDateRange, IipPaginationSelect, IipDialogSelect]
 
 // 定义 install 方法
 const install = (app: App): void => {

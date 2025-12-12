@@ -121,6 +121,79 @@
         </div>
       </div>
     </div>
+
+    <!-- DialogSelect 示例 -->
+    <div class="component-group">
+      <h2 class="component-title">DialogSelect 组件</h2>
+
+      <div class="demo-section">
+        <h3>基础用法（单选）</h3>
+        <IipDialogSelect
+          v-model="dialogSelect1"
+          :fetch-data="fetchEmployeeData"
+          :columns="employeeColumns"
+          placeholder="请选择员工"
+          dialog-title="选择员工"
+          @change="handleDialogSelectChange1"
+        />
+        <div class="result">
+          <p>选中的值：</p>
+          <pre>{{ JSON.stringify(dialogSelect1, null, 2) }}</pre>
+        </div>
+      </div>
+
+      <div class="demo-section">
+        <h3>多选模式</h3>
+        <IipDialogSelect
+          v-model="dialogSelect2"
+          :fetch-data="fetchEmployeeData"
+          :columns="employeeColumns"
+          :multiple="true"
+          placeholder="请选择员工（可多选）"
+          dialog-title="选择员工（多选）"
+          @change="handleDialogSelectChange2"
+        />
+        <div class="result">
+          <p>选中的值：</p>
+          <pre>{{ JSON.stringify(dialogSelect2, null, 2) }}</pre>
+        </div>
+      </div>
+
+      <div class="demo-section">
+        <h3>带表单筛选</h3>
+        <IipDialogSelect
+          v-model="dialogSelect3"
+          :fetch-data="fetchEmployeeData"
+          :columns="employeeColumns"
+          :form-config="employeeFormConfig"
+          placeholder="请选择员工（带筛选）"
+          dialog-title="选择员工（带筛选）"
+          @change="handleDialogSelectChange3"
+        />
+        <div class="result">
+          <p>选中的值：</p>
+          <pre>{{ JSON.stringify(dialogSelect3, null, 2) }}</pre>
+        </div>
+      </div>
+
+      <div class="demo-section">
+        <h3>自定义 valueKey 和 labelKey</h3>
+        <IipDialogSelect
+          v-model="dialogSelect4"
+          :fetch-data="fetchProductDataForDialog"
+          :columns="productColumns"
+          value-key="id"
+          label-key="name"
+          placeholder="请选择产品"
+          dialog-title="选择产品"
+          @change="handleDialogSelectChange4"
+        />
+        <div class="result">
+          <p>选中的值：</p>
+          <pre>{{ JSON.stringify(dialogSelect4, null, 2) }}</pre>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -128,11 +201,17 @@
 import { ref } from 'vue'
 import { IipDateRange } from '../src/components/date-range'
 import { IipPaginationSelect } from '../src/components/pagination-select'
+import { IipDialogSelect } from '../src/components/dialog-select'
 import type {
   FetchDataParams,
   FetchDataResult,
   OptionItem
 } from '../src/components/pagination-select/types'
+import type {
+  FetchDialogSelectDataParams,
+  FetchDialogSelectDataResult,
+  TableRowItem
+} from '../src/components/dialog-select/types'
 
 // DateRange 相关
 const dateRange1 = ref({ startTime: '', endTime: '' })
@@ -246,6 +325,143 @@ const handlePaginationSelectChange4 = (value, option?: OptionItem) => {
 
 const handlePaginationSelectChange5 = (value, option?: OptionItem) => {
   console.log('paginationSelect5 changed:', value, option)
+}
+
+// DialogSelect 相关
+const dialogSelect1 = ref<TableRowItem | null>(null)
+const dialogSelect2 = ref<TableRowItem[] | null>(null)
+const dialogSelect3 = ref<TableRowItem | null>(null)
+const dialogSelect4 = ref<TableRowItem | null>(null)
+
+// 模拟员工数据
+const mockEmployees = Array.from({ length: 100 }, (_, i) => ({
+  id: i + 1,
+  name: `员工${i + 1}`,
+  department: ['技术部', '产品部', '运营部', '市场部', '人事部'][i % 5],
+  email: `employee${i + 1}@example.com`,
+  phone: `138${String(i + 1).padStart(8, '0')}`,
+  status: i % 3 === 0 ? '在职' : '离职'
+}))
+
+// 表格列配置
+const employeeColumns = [
+  { field: 'id', title: 'ID', width: 80 },
+  { field: 'name', title: '姓名', width: 120 },
+  { field: 'department', title: '部门', width: 120 },
+  { field: 'email', title: '邮箱', width: 200 },
+  { field: 'phone', title: '电话', width: 150 },
+  { field: 'status', title: '状态', width: 100 }
+]
+
+// 表单配置（用于筛选）
+const employeeFormConfig = {
+  items: [
+    {
+      field: 'name',
+      title: '姓名',
+      itemRender: {
+        name: 'VxeInput',
+        props: { placeholder: '请输入姓名' }
+      }
+    },
+    {
+      field: 'department',
+      title: '部门',
+      itemRender: {
+        name: 'VxeSelect',
+
+        props: {
+          placeholder: '请选择部门',
+          clearable: true,
+          transfer: true
+          // optionProps: {
+          //   label: 'label',
+          //   value: 'value'
+          // },
+        },
+        options: [
+          { label: '技术部', value: '技术部' },
+          { label: '产品部', value: '产品部' },
+          { label: '运营部', value: '运营部' },
+          { label: '市场部', value: '市场部' },
+          { label: '人事部', value: '人事部' }
+        ]
+      }
+    }
+  ]
+}
+
+// 获取员工数据
+const fetchEmployeeData = async (
+  params: FetchDialogSelectDataParams
+): Promise<FetchDialogSelectDataResult> => {
+  // 模拟网络延迟
+  await new Promise(resolve => setTimeout(resolve, 300))
+
+  const { page, pageSize, name, department } = params
+
+  // 根据筛选条件过滤
+  let filteredEmployees = mockEmployees
+  if (name) {
+    filteredEmployees = filteredEmployees.filter(employee => employee.name.includes(name as string))
+  }
+  if (department) {
+    filteredEmployees = filteredEmployees.filter(employee => employee.department === department)
+  }
+
+  // 分页处理
+  const start = (page - 1) * pageSize
+  const end = start + pageSize
+  const data = filteredEmployees.slice(start, end)
+
+  return {
+    data,
+    total: filteredEmployees.length
+  }
+}
+
+// 产品表格列配置
+const productColumns = [
+  { field: 'id', title: '产品ID' },
+  { field: 'name', title: '产品名称' },
+  { field: 'price', title: '价格' },
+  { field: 'category', title: '分类' }
+]
+
+// 获取产品数据（用于 DialogSelect）
+const fetchProductDataForDialog = async (
+  params: FetchDialogSelectDataParams
+): Promise<FetchDialogSelectDataResult> => {
+  // 模拟网络延迟
+  await new Promise(resolve => setTimeout(resolve, 300))
+
+  const { page, pageSize } = params
+
+  // 分页处理
+  const start = (page - 1) * pageSize
+  const end = start + pageSize
+  const data = mockProducts.slice(start, end)
+
+  return {
+    data,
+    total: mockProducts.length
+  }
+}
+
+const handleDialogSelectChange1 = (value: TableRowItem | null, selectedRows: TableRowItem[]) => {
+  console.log('dialogSelect1 changed:', value, selectedRows)
+}
+
+const handleDialogSelectChange2 = (value: TableRowItem[] | null, selectedRows: TableRowItem[]) => {
+  console.log('dialogSelect2 changed:', value, selectedRows)
+}
+
+const handleDialogSelectChange3 = (value: TableRowItem | null, selectedRows: TableRowItem[]) => {
+  console.log('dialogSelect3 changed:', value, selectedRows)
+}
+
+const handleDialogSelectChange4 = (value: TableRowItem | null, selectedRows: TableRowItem[]) => {
+  console.log('dialogSelect4 changed:', value, selectedRows)
 }
 </script>
 
