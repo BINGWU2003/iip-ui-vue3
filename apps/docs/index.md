@@ -14,7 +14,7 @@ hero:
       link: /guide/quickstart
     - theme: alt
       text: 组件文档
-      link: /components/date-range
+      link: /components/pagination-select
     - theme: alt
       text: 在 GitHub 查看
       link: https://github.com/BINGWU2003/iip-ui-vue3
