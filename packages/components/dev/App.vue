@@ -127,11 +127,13 @@
       <h2 class="component-title">DialogSelect 组件</h2>
 
       <div class="demo-section">
-        <h3>基础用法（单选）</h3>
+        <h3>单选 + 筛选 + keyGetter</h3>
         <IipDialogSelect
           v-model="dialogSelect1"
           :fetch-data="fetchEmployeeData"
           :columns="employeeColumns"
+          :form-items="employeeFormItems"
+          :key-getter="employeeKeyGetter"
           placeholder="请选择员工"
           dialog-title="选择员工"
           @change="handleDialogSelectChange1"
@@ -143,11 +145,13 @@
       </div>
 
       <div class="demo-section">
-        <h3>多选模式</h3>
+        <h3>多选 + 筛选 + keyGetter</h3>
         <IipDialogSelect
           v-model="dialogSelect2"
           :fetch-data="fetchEmployeeData"
           :columns="employeeColumns"
+          :form-items="employeeFormItems"
+          :key-getter="employeeKeyGetter"
           :multiple="true"
           placeholder="请选择员工（可多选）"
           dialog-title="选择员工（多选）"
@@ -160,37 +164,22 @@
       </div>
 
       <div class="demo-section">
-        <h3>带表单筛选</h3>
+        <h3>自定义 valueKey/labelKey + 筛选 + keyGetter + 初始化表单数据</h3>
         <IipDialogSelect
           v-model="dialogSelect3"
-          :fetch-data="fetchEmployeeData"
-          :columns="employeeColumns"
-          :form-config="employeeFormConfig"
-          placeholder="请选择员工（带筛选）"
-          dialog-title="选择员工（带筛选）"
+          :fetch-data="fetchProductDataForDialog"
+          :columns="productColumns"
+          :form-items="productFormItems"
+          :key-getter="productKeyGetter"
+          value-key="id"
+          label-key="name"
+          placeholder="请选择产品"
+          dialog-title="选择产品"
           @change="handleDialogSelectChange3"
         />
         <div class="result">
           <p>选中的值：</p>
           <pre>{{ JSON.stringify(dialogSelect3, null, 2) }}</pre>
-        </div>
-      </div>
-
-      <div class="demo-section">
-        <h3>自定义 valueKey 和 labelKey</h3>
-        <IipDialogSelect
-          v-model="dialogSelect4"
-          :fetch-data="fetchProductDataForDialog"
-          :columns="productColumns"
-          value-key="id"
-          label-key="name"
-          placeholder="请选择产品"
-          dialog-title="选择产品"
-          @change="handleDialogSelectChange4"
-        />
-        <div class="result">
-          <p>选中的值：</p>
-          <pre>{{ JSON.stringify(dialogSelect4, null, 2) }}</pre>
         </div>
       </div>
     </div>
@@ -331,7 +320,6 @@ const handlePaginationSelectChange5 = (value, option?: OptionItem) => {
 const dialogSelect1 = ref<TableRowItem | null>(null)
 const dialogSelect2 = ref<TableRowItem[] | null>(null)
 const dialogSelect3 = ref<TableRowItem | null>(null)
-const dialogSelect4 = ref<TableRowItem | null>(null)
 
 // 模拟员工数据
 const mockEmployees = Array.from({ length: 100 }, (_, i) => ({
@@ -345,51 +333,47 @@ const mockEmployees = Array.from({ length: 100 }, (_, i) => ({
 
 // 表格列配置
 const employeeColumns = [
-  { field: 'id', title: 'ID', width: 80 },
-  { field: 'name', title: '姓名', width: 120 },
-  { field: 'department', title: '部门', width: 120 },
-  { field: 'email', title: '邮箱', width: 200 },
-  { field: 'phone', title: '电话', width: 150 },
-  { field: 'status', title: '状态', width: 100 }
+  { field: 'id', title: 'ID' },
+  { field: 'name', title: '姓名' },
+  { field: 'department', title: '部门' },
+  { field: 'email', title: '邮箱' },
+  { field: 'phone', title: '电话' },
+  { field: 'status', title: '状态' }
 ]
 
 // 表单配置（用于筛选）
-const employeeFormConfig = {
-  items: [
-    {
-      field: 'name',
-      title: '姓名',
-      itemRender: {
-        name: 'VxeInput',
-        props: { placeholder: '请输入姓名' }
-      }
-    },
-    {
-      field: 'department',
-      title: '部门',
-      itemRender: {
-        name: 'VxeSelect',
-
-        props: {
-          placeholder: '请选择部门',
-          clearable: true,
-          transfer: true
-          // optionProps: {
-          //   label: 'label',
-          //   value: 'value'
-          // },
-        },
-        options: [
-          { label: '技术部', value: '技术部' },
-          { label: '产品部', value: '产品部' },
-          { label: '运营部', value: '运营部' },
-          { label: '市场部', value: '市场部' },
-          { label: '人事部', value: '人事部' }
-        ]
-      }
+const employeeFormItems = [
+  {
+    field: 'name',
+    label: '姓名',
+    type: 'input' as const,
+    placeholder: '请输入姓名'
+  },
+  {
+    field: 'department',
+    label: '部门',
+    type: 'select' as const,
+    placeholder: '请选择部门',
+    // 使用函数返回选项，支持从接口获取
+    options: async () => {
+      // 模拟从接口获取数据
+      await new Promise(resolve => setTimeout(resolve, 200))
+      return [
+        { label: '技术部', value: '技术部' },
+        { label: '产品部', value: '产品部' },
+        { label: '运营部', value: '运营部' },
+        { label: '市场部', value: '市场部' },
+        { label: '人事部', value: '人事部' }
+      ]
     }
-  ]
-}
+  },
+  {
+    field: 'createDate',
+    label: '创建日期',
+    type: 'date' as const,
+    placeholder: '请选择创建日期'
+  }
+]
 
 // 获取员工数据
 const fetchEmployeeData = async (
@@ -428,6 +412,30 @@ const productColumns = [
   { field: 'category', title: '分类' }
 ]
 
+// 产品表单配置（用于筛选）
+const productFormItems = [
+  {
+    field: 'name',
+    label: '产品名称',
+    type: 'input' as const,
+    placeholder: '请输入产品名称',
+    defaultValue: '产品'
+  },
+  {
+    field: 'category',
+    label: '分类',
+    type: 'select' as const,
+    placeholder: '请选择分类',
+    defaultValue: '电子产品',
+    options: [
+      { label: '电子产品', value: '电子产品' },
+      { label: '服装', value: '服装' },
+      { label: '食品', value: '食品' },
+      { label: '家居', value: '家居' }
+    ]
+  }
+]
+
 // 获取产品数据（用于 DialogSelect）
 const fetchProductDataForDialog = async (
   params: FetchDialogSelectDataParams
@@ -435,17 +443,36 @@ const fetchProductDataForDialog = async (
   // 模拟网络延迟
   await new Promise(resolve => setTimeout(resolve, 300))
 
-  const { page, pageSize } = params
+  const { page, pageSize, name, category } = params
+
+  // 根据筛选条件过滤
+  let filteredProducts = mockProducts
+  if (name) {
+    filteredProducts = filteredProducts.filter(product => product.name.includes(name as string))
+  }
+  if (category) {
+    filteredProducts = filteredProducts.filter(product => product.category === category)
+  }
 
   // 分页处理
   const start = (page - 1) * pageSize
   const end = start + pageSize
-  const data = mockProducts.slice(start, end)
+  const data = filteredProducts.slice(start, end)
 
   return {
     data,
-    total: mockProducts.length
+    total: filteredProducts.length
   }
+}
+
+// 员工 keyGetter：使用 id 作为 key
+const employeeKeyGetter = (row: TableRowItem) => {
+  return row.id
+}
+
+// 产品 keyGetter：使用 id 和 category 拼接作为 key
+const productKeyGetter = (row: TableRowItem) => {
+  return `${row.id}-${row.category}`
 }
 
 const handleDialogSelectChange1 = (value: TableRowItem | null, selectedRows: TableRowItem[]) => {
@@ -458,10 +485,6 @@ const handleDialogSelectChange2 = (value: TableRowItem[] | null, selectedRows: T
 
 const handleDialogSelectChange3 = (value: TableRowItem | null, selectedRows: TableRowItem[]) => {
   console.log('dialogSelect3 changed:', value, selectedRows)
-}
-
-const handleDialogSelectChange4 = (value: TableRowItem | null, selectedRows: TableRowItem[]) => {
-  console.log('dialogSelect4 changed:', value, selectedRows)
 }
 </script>
 
