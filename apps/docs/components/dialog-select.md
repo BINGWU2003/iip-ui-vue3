@@ -124,7 +124,51 @@ const fetchEmployeeData = async (
 <script setup lang="ts">
 import { ref } from 'vue'
 import { IipDialogSelect } from '@bingwu/iip-ui-components'
-import type { TableRowItem } from '@bingwu/iip-ui-components'
+import type {
+  FetchDialogSelectDataParams,
+  FetchDialogSelectDataResult,
+  TableRowItem
+} from '@bingwu/iip-ui-components'
+
+// 模拟员工数据
+const mockEmployees = Array.from({ length: 100 }, (_, i) => ({
+  id: i + 1,
+  name: `员工${i + 1}`,
+  department: ['技术部', '产品部', '运营部', '市场部', '人事部'][i % 5],
+  email: `employee${i + 1}@example.com`,
+  phone: `138${String(i + 1).padStart(8, '0')}`,
+  status: i % 3 === 0 ? '在职' : '离职'
+}))
+
+// 表格列配置
+const employeeColumns = [
+  { field: 'id', title: 'ID', width: 80 },
+  { field: 'name', title: '姓名', width: 120 },
+  { field: 'department', title: '部门', width: 120 },
+  { field: 'email', title: '邮箱', width: 200 },
+  { field: 'phone', title: '电话', width: 150 },
+  { field: 'status', title: '状态', width: 100 }
+]
+
+// 获取员工数据
+const fetchEmployeeData = async (
+  params: FetchDialogSelectDataParams
+): Promise<FetchDialogSelectDataResult> => {
+  // 模拟网络延迟
+  await new Promise(resolve => setTimeout(resolve, 300))
+
+  const { page, pageSize } = params
+
+  // 分页处理
+  const start = (page - 1) * pageSize
+  const end = start + pageSize
+  const data = mockEmployees.slice(start, end)
+
+  return {
+    data,
+    total: mockEmployees.length
+  }
+}
 
 // 多选时 modelValue 是数组
 const selectedEmployees = ref<TableRowItem[] | null>(null)
