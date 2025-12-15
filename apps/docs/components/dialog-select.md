@@ -14,24 +14,32 @@
 - 🎨 **样式定制**: 支持透传 vxe-grid 的所有配置
 - ⚡ **异步选项**: 支持从接口异步获取下拉选项数据
 - 🛠️ **TypeScript**: 完整的 TypeScript 类型支持
+- 📝 **统一配置**: 通过 `dialogSelectOptions` 统一配置表格列和表单项，提取公共字段 `field` 和 `title`
 
 ## 基础用法
 
-最简单的单选用法：
+基础用法包含多选和表单筛选功能：
 
 ```vue
 <template>
   <div>
     <IipDialogSelect
-      v-model="selectedEmployee"
+      v-model="selectedEmployees"
       :fetch-data="fetchEmployeeData"
-      :columns="employeeColumns"
-      placeholder="请选择员工"
+      :dialog-select-options="employeeDialogSelectOptions"
+      :multiple="true"
+      placeholder="请选择员工（可多选）"
+      dialog-title="选择员工"
       @change="handleChange"
     />
 
-    <div v-if="selectedEmployee" style="margin-top: 10px;">
-      已选择：{{ selectedEmployee.name }} (ID: {{ selectedEmployee.id }})
+    <div v-if="selectedEmployees && selectedEmployees.length > 0" style="margin-top: 10px;">
+      已选择 {{ selectedEmployees.length }} 个员工：
+      <ul>
+        <li v-for="emp in selectedEmployees" :key="emp.id">
+          {{ emp.name }} ({{ emp.department }})
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -42,12 +50,14 @@ import { IipDialogSelect } from '@bingwu/iip-ui-components'
 import type {
   FetchDialogSelectDataParams,
   FetchDialogSelectDataResult,
+  DialogSelectOptions,
   TableRowItem
 } from '@bingwu/iip-ui-components'
 
-const selectedEmployee = ref<TableRowItem | null>(null)
+// 多选时 modelValue 是数组
+const selectedEmployees = ref<TableRowItem[] | null>(null)
 
-const handleChange = (value: TableRowItem | null, selectedRows: TableRowItem[]) => {
+const handleChange = (value: TableRowItem[] | null, selectedRows: TableRowItem[]) => {
   console.log('选中的员工：', value)
 }
 
@@ -61,33 +71,70 @@ const mockEmployees = Array.from({ length: 100 }, (_, i) => ({
   status: i % 3 === 0 ? '在职' : '离职'
 }))
 
-// 表格列配置
-const employeeColumns = [
-  { field: 'id', title: 'ID', width: 80 },
-  { field: 'name', title: '姓名', width: 120 },
-  { field: 'department', title: '部门', width: 120 },
-  { field: 'email', title: '邮箱', width: 200 },
-  { field: 'phone', title: '电话', width: 150 },
-  { field: 'status', title: '状态', width: 100 }
+// DialogSelect 选项配置（合并 columns 和 formItems）
+const employeeDialogSelectOptions: DialogSelectOptions = [
+  // 表格列配置（useForm 默认为 false）
+  { field: 'id', title: 'ID', columnProps: { width: 80 } },
+  // name 字段同时作为列和表单项
+  {
+    field: 'name',
+    title: '姓名',
+    columnProps: { width: 120 },
+    useForm: true,
+    formItemProps: {
+      type: 'input',
+      placeholder: '请输入姓名'
+    }
+  },
+  // department 字段同时作为列和表单项
+  {
+    field: 'department',
+    title: '部门',
+    columnProps: { width: 120 },
+    useForm: true,
+    formItemProps: {
+      type: 'select',
+      placeholder: '请选择部门',
+      options: [
+        { label: '技术部', value: '技术部' },
+        { label: '产品部', value: '产品部' },
+        { label: '运营部', value: '运营部' },
+        { label: '市场部', value: '市场部' },
+        { label: '人事部', value: '人事部' }
+      ]
+    }
+  },
+  { field: 'email', title: '邮箱', columnProps: { width: 200 } },
+  { field: 'phone', title: '电话', columnProps: { width: 150 } },
+  { field: 'status', title: '状态', columnProps: { width: 100 } }
 ]
 
-// 获取员工数据
+// 获取员工数据（需要处理筛选参数）
 const fetchEmployeeData = async (
   params: FetchDialogSelectDataParams
 ): Promise<FetchDialogSelectDataResult> => {
   // 模拟网络延迟
   await new Promise(resolve => setTimeout(resolve, 300))
 
-  const { page, pageSize } = params
+  const { page, pageSize, name, department } = params
+
+  // 根据筛选条件过滤
+  let filteredEmployees = mockEmployees
+  if (name) {
+    filteredEmployees = filteredEmployees.filter(employee => employee.name.includes(name as string))
+  }
+  if (department) {
+    filteredEmployees = filteredEmployees.filter(employee => employee.department === department)
+  }
 
   // 分页处理
   const start = (page - 1) * pageSize
   const end = start + pageSize
-  const data = mockEmployees.slice(start, end)
+  const data = filteredEmployees.slice(start, end)
 
   return {
     data,
-    total: mockEmployees.length
+    total: filteredEmployees.length
   }
 }
 </script>
@@ -103,7 +150,7 @@ const fetchEmployeeData = async (
     <IipDialogSelect
       v-model="selectedEmployees"
       :fetch-data="fetchEmployeeData"
-      :columns="employeeColumns"
+      :dialog-select-options="employeeDialogSelectOptions"
       :multiple="true"
       placeholder="请选择员工（可多选）"
       dialog-title="选择员工（多选）"
@@ -127,6 +174,7 @@ import { IipDialogSelect } from '@bingwu/iip-ui-components'
 import type {
   FetchDialogSelectDataParams,
   FetchDialogSelectDataResult,
+  DialogSelectOptions,
   TableRowItem
 } from '@bingwu/iip-ui-components'
 
@@ -140,14 +188,14 @@ const mockEmployees = Array.from({ length: 100 }, (_, i) => ({
   status: i % 3 === 0 ? '在职' : '离职'
 }))
 
-// 表格列配置
-const employeeColumns = [
-  { field: 'id', title: 'ID', width: 80 },
-  { field: 'name', title: '姓名', width: 120 },
-  { field: 'department', title: '部门', width: 120 },
-  { field: 'email', title: '邮箱', width: 200 },
-  { field: 'phone', title: '电话', width: 150 },
-  { field: 'status', title: '状态', width: 100 }
+// DialogSelect 选项配置
+const employeeDialogSelectOptions: DialogSelectOptions = [
+  { field: 'id', title: 'ID', columnProps: { width: 80 } },
+  { field: 'name', title: '姓名', columnProps: { width: 120 } },
+  { field: 'department', title: '部门', columnProps: { width: 120 } },
+  { field: 'email', title: '邮箱', columnProps: { width: 200 } },
+  { field: 'phone', title: '电话', columnProps: { width: 150 } },
+  { field: 'status', title: '状态', columnProps: { width: 100 } }
 ]
 
 // 获取员工数据
@@ -181,7 +229,7 @@ const handleChange = (value: TableRowItem[] | null, selectedRows: TableRowItem[]
 
 ## 表单筛选
 
-通过 `formItems` 配置筛选表单，支持 input、select、date 三种类型：
+通过 `dialogSelectOptions` 配置筛选表单，使用 `useForm: true` 标识表单项，支持 input、select、date 三种类型：
 
 ```vue
 <template>
@@ -189,8 +237,7 @@ const handleChange = (value: TableRowItem[] | null, selectedRows: TableRowItem[]
     <IipDialogSelect
       v-model="selectedEmployee"
       :fetch-data="fetchEmployeeData"
-      :columns="employeeColumns"
-      :form-items="employeeFormItems"
+      :dialog-select-options="employeeDialogSelectOptions"
       placeholder="请选择员工（带筛选）"
       dialog-title="选择员工（带筛选）"
       @change="handleChange"
@@ -204,7 +251,7 @@ import { IipDialogSelect } from '@bingwu/iip-ui-components'
 import type {
   FetchDialogSelectDataParams,
   FetchDialogSelectDataResult,
-  FormItem,
+  DialogSelectOptions,
   TableRowItem
 } from '@bingwu/iip-ui-components'
 
@@ -218,42 +265,49 @@ const mockEmployees = Array.from({ length: 100 }, (_, i) => ({
   status: i % 3 === 0 ? '在职' : '离职'
 }))
 
-// 表格列配置
-const employeeColumns = [
-  { field: 'id', title: 'ID', width: 80 },
-  { field: 'name', title: '姓名', width: 120 },
-  { field: 'department', title: '部门', width: 120 },
-  { field: 'email', title: '邮箱', width: 200 },
-  { field: 'phone', title: '电话', width: 150 },
-  { field: 'status', title: '状态', width: 100 }
-]
-
-// 表单配置（用于筛选）
-const employeeFormItems: FormItem[] = [
+// DialogSelect 选项配置（合并 columns 和 formItems）
+const employeeDialogSelectOptions: DialogSelectOptions = [
+  // 表格列配置（useForm 默认为 false）
+  { field: 'id', title: 'ID', columnProps: { width: 80 } },
+  { field: 'name', title: '姓名', columnProps: { width: 120 } },
+  { field: 'department', title: '部门', columnProps: { width: 120 } },
+  { field: 'email', title: '邮箱', columnProps: { width: 200 } },
+  { field: 'phone', title: '电话', columnProps: { width: 150 } },
+  { field: 'status', title: '状态', columnProps: { width: 100 } },
+  // 表单配置（用于筛选，useForm 设置为 true）
   {
     field: 'name',
-    label: '姓名',
-    type: 'input',
-    placeholder: '请输入姓名'
+    title: '姓名',
+    useForm: true,
+    formItemProps: {
+      type: 'input',
+      placeholder: '请输入姓名'
+    }
   },
   {
     field: 'department',
-    label: '部门',
-    type: 'select',
-    placeholder: '请选择部门',
-    options: [
-      { label: '技术部', value: '技术部' },
-      { label: '产品部', value: '产品部' },
-      { label: '运营部', value: '运营部' },
-      { label: '市场部', value: '市场部' },
-      { label: '人事部', value: '人事部' }
-    ]
+    title: '部门',
+    useForm: true,
+    formItemProps: {
+      type: 'select',
+      placeholder: '请选择部门',
+      options: [
+        { label: '技术部', value: '技术部' },
+        { label: '产品部', value: '产品部' },
+        { label: '运营部', value: '运营部' },
+        { label: '市场部', value: '市场部' },
+        { label: '人事部', value: '人事部' }
+      ]
+    }
   },
   {
     field: 'createDate',
-    label: '创建日期',
-    type: 'date',
-    placeholder: '请选择创建日期'
+    title: '创建日期',
+    useForm: true,
+    formItemProps: {
+      type: 'date',
+      placeholder: '请选择创建日期'
+    }
   }
 ]
 
@@ -300,6 +354,8 @@ const handleChange = (value: TableRowItem | null, selectedRows: TableRowItem[]) 
 
 ```vue
 <script setup lang="ts">
+import type { DialogSelectOptions } from '@bingwu/iip-ui-components'
+
 // 模拟部门数据
 const mockDepartments = [
   { id: 'tech', name: '技术部' },
@@ -309,20 +365,24 @@ const mockDepartments = [
   { id: 'hr', name: '人事部' }
 ]
 
-const employeeFormItems: FormItem[] = [
+const employeeDialogSelectOptions: DialogSelectOptions = [
+  // ... 其他配置
   {
     field: 'department',
-    label: '部门',
-    type: 'select',
-    placeholder: '请选择部门',
-    // 使用函数返回选项，支持从接口获取
-    options: async () => {
-      // 模拟从接口获取数据（实际使用时替换为真实 API 调用）
-      await new Promise(resolve => setTimeout(resolve, 200))
-      return mockDepartments.map(item => ({
-        label: item.name,
-        value: item.id
-      }))
+    title: '部门',
+    useForm: true,
+    formItemProps: {
+      type: 'select',
+      placeholder: '请选择部门',
+      // 使用函数返回选项，支持从接口获取
+      options: async () => {
+        // 模拟从接口获取数据（实际使用时替换为真实 API 调用）
+        await new Promise(resolve => setTimeout(resolve, 200))
+        return mockDepartments.map(item => ({
+          label: item.name,
+          value: item.id
+        }))
+      }
     }
   }
 ]
@@ -335,26 +395,35 @@ const employeeFormItems: FormItem[] = [
 
 ```vue
 <script setup lang="ts">
-const productFormItems: FormItem[] = [
+import type { DialogSelectOptions } from '@bingwu/iip-ui-components'
+
+const productDialogSelectOptions: DialogSelectOptions = [
+  // ... 其他配置
   {
     field: 'name',
-    label: '产品名称',
-    type: 'input',
-    placeholder: '请输入产品名称',
-    // 方式1：直接值
-    defaultValue: '产品'
+    title: '产品名称',
+    useForm: true,
+    formItemProps: {
+      type: 'input',
+      placeholder: '请输入产品名称',
+      // 方式1：直接值
+      defaultValue: '产品'
+    }
   },
   {
     field: 'category',
-    label: '分类',
-    type: 'select',
-    placeholder: '请选择分类',
-    // 方式2：同步函数
-    defaultValue: () => '电子产品',
-    options: [
-      { label: '电子产品', value: '电子产品' },
-      { label: '服装', value: '服装' }
-    ]
+    title: '分类',
+    useForm: true,
+    formItemProps: {
+      type: 'select',
+      placeholder: '请选择分类',
+      // 方式2：同步函数
+      defaultValue: () => '电子产品',
+      options: [
+        { label: '电子产品', value: '电子产品' },
+        { label: '服装', value: '服装' }
+      ]
+    }
   }
 ]
 </script>
@@ -369,7 +438,7 @@ const productFormItems: FormItem[] = [
   <IipDialogSelect
     v-model="selectedProduct"
     :fetch-data="fetchProductData"
-    :columns="productColumns"
+    :dialog-select-options="productDialogSelectOptions"
     value-key="productId"
     label-key="productName"
     placeholder="请选择产品"
@@ -383,6 +452,7 @@ import { IipDialogSelect } from '@bingwu/iip-ui-components'
 import type {
   FetchDialogSelectDataParams,
   FetchDialogSelectDataResult,
+  DialogSelectOptions,
   TableRowItem
 } from '@bingwu/iip-ui-components'
 
@@ -394,11 +464,11 @@ const mockProducts = Array.from({ length: 50 }, (_, i) => ({
   category: ['电子产品', '服装', '食品', '家居'][i % 4]
 }))
 
-const productColumns = [
-  { field: 'productId', title: '产品ID' },
-  { field: 'productName', title: '产品名称' },
-  { field: 'price', title: '价格' },
-  { field: 'category', title: '分类' }
+const productDialogSelectOptions: DialogSelectOptions = [
+  { field: 'productId', title: '产品ID', columnProps: { width: 120 } },
+  { field: 'productName', title: '产品名称', columnProps: { width: 150 } },
+  { field: 'price', title: '价格', columnProps: { width: 100 } },
+  { field: 'category', title: '分类', columnProps: { width: 120 } }
 ]
 
 // 获取产品数据
@@ -438,7 +508,7 @@ const handleChange = (value: TableRowItem | null, selectedRows: TableRowItem[]) 
   <IipDialogSelect
     v-model="selectedProduct"
     :fetch-data="fetchProductData"
-    :columns="productColumns"
+    :dialog-select-options="productDialogSelectOptions"
     :key-getter="productKeyGetter"
     value-key="id"
     label-key="name"
@@ -452,6 +522,7 @@ import { IipDialogSelect } from '@bingwu/iip-ui-components'
 import type {
   FetchDialogSelectDataParams,
   FetchDialogSelectDataResult,
+  DialogSelectOptions,
   TableRowItem
 } from '@bingwu/iip-ui-components'
 
@@ -463,11 +534,11 @@ const mockProducts = Array.from({ length: 50 }, (_, i) => ({
   category: ['电子产品', '服装', '食品', '家居'][i % 4]
 }))
 
-const productColumns = [
-  { field: 'id', title: '产品ID' },
-  { field: 'name', title: '产品名称' },
-  { field: 'price', title: '价格' },
-  { field: 'category', title: '分类' }
+const productDialogSelectOptions: DialogSelectOptions = [
+  { field: 'id', title: '产品ID', columnProps: { width: 120 } },
+  { field: 'name', title: '产品名称', columnProps: { width: 150 } },
+  { field: 'price', title: '价格', columnProps: { width: 100 } },
+  { field: 'category', title: '分类', columnProps: { width: 120 } }
 ]
 
 // 获取产品数据
@@ -508,7 +579,7 @@ const selectedProduct = ref<TableRowItem | null>(null)
   <IipDialogSelect
     v-model="selectedEmployee"
     :fetch-data="fetchEmployeeData"
-    :columns="employeeColumns"
+    :dialog-select-options="employeeDialogSelectOptions"
     :grid-config="{
       border: false,
       height: '600px',
@@ -526,6 +597,7 @@ import { IipDialogSelect } from '@bingwu/iip-ui-components'
 import type {
   FetchDialogSelectDataParams,
   FetchDialogSelectDataResult,
+  DialogSelectOptions,
   TableRowItem
 } from '@bingwu/iip-ui-components'
 
@@ -539,14 +611,13 @@ const mockEmployees = Array.from({ length: 100 }, (_, i) => ({
   status: i % 3 === 0 ? '在职' : '离职'
 }))
 
-// 表格列配置
-const employeeColumns = [
-  { field: 'id', title: 'ID', width: 80 },
-  { field: 'name', title: '姓名', width: 120 },
-  { field: 'department', title: '部门', width: 120 },
-  { field: 'email', title: '邮箱', width: 200 },
-  { field: 'phone', title: '电话', width: 150 },
-  { field: 'status', title: '状态', width: 100 }
+const employeeDialogSelectOptions: DialogSelectOptions = [
+  { field: 'id', title: 'ID', columnProps: { width: 80 } },
+  { field: 'name', title: '姓名', columnProps: { width: 120 } },
+  { field: 'department', title: '部门', columnProps: { width: 120 } },
+  { field: 'email', title: '邮箱', columnProps: { width: 200 } },
+  { field: 'phone', title: '电话', columnProps: { width: 150 } },
+  { field: 'status', title: '状态', columnProps: { width: 100 } }
 ]
 
 // 获取员工数据
@@ -584,7 +655,7 @@ const selectedEmployee = ref<TableRowItem | null>(null)
       ref="dialogSelectRef"
       v-model="selectedEmployee"
       :fetch-data="fetchEmployeeData"
-      :columns="employeeColumns"
+      :dialog-select-options="employeeDialogSelectOptions"
       placeholder="请选择员工"
     />
 
@@ -601,6 +672,7 @@ import type {
   DialogSelectInstance,
   FetchDialogSelectDataParams,
   FetchDialogSelectDataResult,
+  DialogSelectOptions,
   TableRowItem
 } from '@bingwu/iip-ui-components'
 
@@ -614,14 +686,13 @@ const mockEmployees = Array.from({ length: 100 }, (_, i) => ({
   status: i % 3 === 0 ? '在职' : '离职'
 }))
 
-// 表格列配置
-const employeeColumns = [
-  { field: 'id', title: 'ID', width: 80 },
-  { field: 'name', title: '姓名', width: 120 },
-  { field: 'department', title: '部门', width: 120 },
-  { field: 'email', title: '邮箱', width: 200 },
-  { field: 'phone', title: '电话', width: 150 },
-  { field: 'status', title: '状态', width: 100 }
+const employeeDialogSelectOptions: DialogSelectOptions = [
+  { field: 'id', title: 'ID', columnProps: { width: 80 } },
+  { field: 'name', title: '姓名', columnProps: { width: 120 } },
+  { field: 'department', title: '部门', columnProps: { width: 120 } },
+  { field: 'email', title: '邮箱', columnProps: { width: 200 } },
+  { field: 'phone', title: '电话', columnProps: { width: 150 } },
+  { field: 'status', title: '状态', columnProps: { width: 100 } }
 ]
 
 // 获取员工数据
@@ -665,35 +736,42 @@ const handleRefresh = () => {
 
 ### Props
 
-| 参数        | 说明                                                | 类型                                                                            | 默认值     |
-| ----------- | --------------------------------------------------- | ------------------------------------------------------------------------------- | ---------- |
-| modelValue  | 绑定值，单选时为对象，多选时为对象数组              | `TableRowItem \| TableRowItem[] \| null`                                        | `null`     |
-| placeholder | 占位符                                              | `string`                                                                        | `'请选择'` |
-| multiple    | 是否多选                                            | `boolean`                                                                       | `false`    |
-| valueKey    | 选项值的键名                                        | `string`                                                                        | `'id'`     |
-| labelKey    | 选项标签的键名（用于显示在输入框中）                | `string`                                                                        | `'name'`   |
-| keyGetter   | 获取行的唯一标识key的函数，如果不提供则使用valueKey | `(row: TableRowItem) => string \| number`                                       | -          |
-| clearable   | 是否可清空                                          | `boolean`                                                                       | `true`     |
-| disabled    | 是否禁用                                            | `boolean`                                                                       | `false`    |
-| dialogTitle | 弹窗标题                                            | `string`                                                                        | `'请选择'` |
-| dialogWidth | 弹窗宽度                                            | `string \| number`                                                              | `'1100px'` |
-| fetchData   | 获取数据的方法                                      | `(params: FetchDialogSelectDataParams) => Promise<FetchDialogSelectDataResult>` | -          |
-| columns     | 表格列配置（vxe-grid的columns配置）                 | `VxeGridProps['columns']`                                                       | -          |
-| formItems   | 表单配置（用于筛选）                                | `FormItem[]`                                                                    | `[]`       |
-| gridConfig  | vxe-grid 配置，支持透传 vxe-grid 的所有 props       | `VxeGridProps`                                                                  | -          |
-| style       | 输入框样式                                          | `CSSProperties`                                                                 | -          |
+| 参数                | 说明                                                   | 类型                                                                            | 默认值     |
+| ------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------- | ---------- |
+| modelValue          | 绑定值，单选时为对象，多选时为对象数组                 | `TableRowItem \| TableRowItem[] \| null`                                        | `null`     |
+| placeholder         | 占位符                                                 | `string`                                                                        | `'请选择'` |
+| multiple            | 是否多选                                               | `boolean`                                                                       | `false`    |
+| valueKey            | 选项值的键名                                           | `string`                                                                        | `'id'`     |
+| labelKey            | 选项标签的键名（用于显示在输入框中）                   | `string`                                                                        | `'name'`   |
+| keyGetter           | 获取行的唯一标识key的函数，如果不提供则使用valueKey    | `(row: TableRowItem) => string \| number`                                       | -          |
+| clearable           | 是否可清空                                             | `boolean`                                                                       | `true`     |
+| disabled            | 是否禁用                                               | `boolean`                                                                       | `false`    |
+| dialogTitle         | 弹窗标题                                               | `string`                                                                        | `'请选择'` |
+| dialogWidth         | 弹窗宽度                                               | `string \| number`                                                              | `'1100px'` |
+| fetchData           | 获取数据的方法                                         | `(params: FetchDialogSelectDataParams) => Promise<FetchDialogSelectDataResult>` | -          |
+| dialogSelectOptions | DialogSelect 选项配置数组（合并 columns 和 formItems） | `DialogSelectOptions`                                                           | -          |
+| gridConfig          | vxe-grid 配置，支持透传 vxe-grid 的所有 props          | `VxeGridProps`                                                                  | -          |
+| style               | 输入框样式                                             | `CSSProperties`                                                                 | -          |
 
-### FormItem
+### DialogSelectOption
 
-| 参数         | 说明                                                             | 类型                                                                        | 默认值 |
-| ------------ | ---------------------------------------------------------------- | --------------------------------------------------------------------------- | ------ |
-| field        | 字段名                                                           | `string`                                                                    | -      |
-| label        | 标签                                                             | `string`                                                                    | -      |
-| type         | 表单项类型：input（输入框）、select（下拉框）或 date（日期选择） | `'input' \| 'select' \| 'date'`                                             | -      |
-| placeholder  | 占位符                                                           | `string`                                                                    | -      |
-| options      | 下拉选项（当type为select时使用），可以是数组或返回数组的函数     | `FormItemOption[] \| (() => FormItemOption[] \| Promise<FormItemOption[]>)` | -      |
-| defaultValue | 默认值，可以是值或返回值的同步函数                               | `any \| (() => any)`                                                        | -      |
-| props        | 其他属性，会透传给对应的组件                                     | `Record<string, any>`                                                       | -      |
+| 参数          | 说明                                                                        | 类型                                       | 默认值  |
+| ------------- | --------------------------------------------------------------------------- | ------------------------------------------ | ------- |
+| field         | 字段名（公共字段）                                                          | `string`                                   | -       |
+| title         | 标题（公共字段）                                                            | `string`                                   | -       |
+| useForm       | 是否是表单项，默认为 false                                                  | `boolean`                                  | `false` |
+| columnProps   | 列配置属性（当作为表格列时使用），继承 VxeColumnProps 但剔除 field 和 title | `Omit<VxeColumnProps, 'field' \| 'title'>` | -       |
+| formItemProps | 表单项配置属性（当作为表单项时使用）                                        | `FormItemProps`                            | -       |
+
+### FormItemProps
+
+| 参数          | 说明                                                             | 类型                                                                        | 默认值 |
+| ------------- | ---------------------------------------------------------------- | --------------------------------------------------------------------------- | ------ |
+| type          | 表单项类型：input（输入框）、select（下拉框）或 date（日期选择） | `'input' \| 'select' \| 'date'`                                             | -      |
+| placeholder   | 占位符                                                           | `string`                                                                    | -      |
+| options       | 下拉选项（当type为select时使用），可以是数组或返回数组的函数     | `FormItemOption[] \| (() => FormItemOption[] \| Promise<FormItemOption[]>)` | -      |
+| defaultValue  | 默认值，可以是值或返回值的同步函数                               | `any \| (() => any)`                                                        | -      |
+| [key: string] | 其他属性，会透传给对应的组件                                     | `any`                                                                       | -      |
 
 ### Events
 
@@ -731,6 +809,8 @@ const handleRefresh = () => {
 ## 类型定义
 
 ```typescript
+import type { VxeColumnProps } from 'vxe-table'
+
 // 表格行数据
 export type TableRowItem = {
   [key: string]: any
@@ -756,16 +836,36 @@ export type FormItemOption = {
   value: any
 }
 
-// 表单项配置
-export type FormItem = {
+// 列配置类型（从 VxeColumnProps 中提取，剔除公共字段）
+type VxeColumnItem = Omit<VxeColumnProps, 'field' | 'title'>
+
+// DialogSelect 选项配置（合并 columns 和 formItems）
+export type DialogSelectOption = {
+  /** 字段名（公共字段） */
   field: string
-  label: string
-  type: 'input' | 'select' | 'date'
-  placeholder?: string
-  options?: FormItemOption[] | (() => FormItemOption[] | Promise<FormItemOption[]>)
-  defaultValue?: any | (() => any)
-  props?: Record<string, any>
+  /** 标题（公共字段） */
+  title: string
+  /** 是否是表单项，默认为 false */
+  useForm?: boolean
+  /** 列配置属性（当作为表格列时使用），继承 VxeColumnProps 但剔除 field 和 title */
+  columnProps?: VxeColumnItem
+  /** 表单项配置属性（当作为表单项时使用） */
+  formItemProps?: {
+    /** 表单项类型：input（输入框）、select（下拉框）或 date（日期选择） */
+    type?: 'input' | 'select' | 'date'
+    /** 占位符 */
+    placeholder?: string
+    /** 下拉选项（当type为select时使用），可以是数组或返回数组的函数 */
+    options?: FormItemOption[] | (() => FormItemOption[] | Promise<FormItemOption[]>)
+    /** 默认值，可以是值或返回值的同步函数 */
+    defaultValue?: any | (() => any)
+    /** 其他属性，会透传给对应的组件 */
+    [key: string]: any
+  }
 }
+
+// DialogSelect 选项配置数组
+export type DialogSelectOptions = DialogSelectOption[]
 ```
 
 ## 最佳实践
@@ -777,7 +877,7 @@ export type FormItem = {
   <IipDialogSelect
     v-model="selectedEmployee"
     :fetch-data="fetchEmployeeData"
-    :columns="employeeColumns"
+    :dialog-select-options="employeeDialogSelectOptions"
     @error="handleError"
   />
 </template>
@@ -801,8 +901,7 @@ const handleError = (error: any) => {
       <IipDialogSelect
         v-model="form.employee"
         :fetch-data="fetchEmployeeData"
-        :columns="employeeColumns"
-        :form-items="employeeFormItems"
+        :dialog-select-options="employeeDialogSelectOptions"
         placeholder="请选择员工"
       />
     </el-form-item>
@@ -820,8 +919,8 @@ import { IipDialogSelect } from '@bingwu/iip-ui-components'
 import type {
   FetchDialogSelectDataParams,
   FetchDialogSelectDataResult,
-  TableRowItem,
-  FormItem
+  DialogSelectOptions,
+  TableRowItem
 } from '@bingwu/iip-ui-components'
 
 // 模拟员工数据
@@ -834,36 +933,40 @@ const mockEmployees = Array.from({ length: 100 }, (_, i) => ({
   status: i % 3 === 0 ? '在职' : '离职'
 }))
 
-// 表格列配置
-const employeeColumns = [
-  { field: 'id', title: 'ID', width: 80 },
-  { field: 'name', title: '姓名', width: 120 },
-  { field: 'department', title: '部门', width: 120 },
-  { field: 'email', title: '邮箱', width: 200 },
-  { field: 'phone', title: '电话', width: 150 },
-  { field: 'status', title: '状态', width: 100 }
-]
-
-// 表单配置（用于筛选）
-const employeeFormItems: FormItem[] = [
+// DialogSelect 选项配置（合并 columns 和 formItems）
+const employeeDialogSelectOptions: DialogSelectOptions = [
+  // 表格列配置
+  { field: 'id', title: 'ID', columnProps: { width: 80 } },
+  { field: 'name', title: '姓名', columnProps: { width: 120 } },
+  { field: 'department', title: '部门', columnProps: { width: 120 } },
+  { field: 'email', title: '邮箱', columnProps: { width: 200 } },
+  { field: 'phone', title: '电话', columnProps: { width: 150 } },
+  { field: 'status', title: '状态', columnProps: { width: 100 } },
+  // 表单配置（用于筛选）
   {
     field: 'name',
-    label: '姓名',
-    type: 'input',
-    placeholder: '请输入姓名'
+    title: '姓名',
+    useForm: true,
+    formItemProps: {
+      type: 'input',
+      placeholder: '请输入姓名'
+    }
   },
   {
     field: 'department',
-    label: '部门',
-    type: 'select',
-    placeholder: '请选择部门',
-    options: [
-      { label: '技术部', value: '技术部' },
-      { label: '产品部', value: '产品部' },
-      { label: '运营部', value: '运营部' },
-      { label: '市场部', value: '市场部' },
-      { label: '人事部', value: '人事部' }
-    ]
+    title: '部门',
+    useForm: true,
+    formItemProps: {
+      type: 'select',
+      placeholder: '请选择部门',
+      options: [
+        { label: '技术部', value: '技术部' },
+        { label: '产品部', value: '产品部' },
+        { label: '运营部', value: '运营部' },
+        { label: '市场部', value: '市场部' },
+        { label: '人事部', value: '人事部' }
+      ]
+    }
   }
 ]
 
@@ -962,7 +1065,7 @@ onMounted(async () => {
   <IipDialogSelect
     v-model="selectedEmployee"
     :fetch-data="fetchEmployeeData"
-    :columns="employeeColumns"
+    :dialog-select-options="employeeDialogSelectOptions"
     :grid-config="{
       height: '500px',
       // 启用虚拟滚动（如果数据量大）
@@ -972,6 +1075,12 @@ onMounted(async () => {
 </template>
 
 <script setup lang="ts">
+import type {
+  FetchDialogSelectDataParams,
+  FetchDialogSelectDataResult,
+  DialogSelectOptions
+} from '@bingwu/iip-ui-components'
+
 // 模拟员工数据
 const mockEmployees = Array.from({ length: 100 }, (_, i) => ({
   id: i + 1,
@@ -982,10 +1091,21 @@ const mockEmployees = Array.from({ length: 100 }, (_, i) => ({
   status: i % 3 === 0 ? '在职' : '离职'
 }))
 
-// 在 fetchData 中实现数据缓存
-const cache = new Map()
+const employeeDialogSelectOptions: DialogSelectOptions = [
+  { field: 'id', title: 'ID', columnProps: { width: 80 } },
+  { field: 'name', title: '姓名', columnProps: { width: 120 } },
+  { field: 'department', title: '部门', columnProps: { width: 120 } },
+  { field: 'email', title: '邮箱', columnProps: { width: 200 } },
+  { field: 'phone', title: '电话', columnProps: { width: 150 } },
+  { field: 'status', title: '状态', columnProps: { width: 100 } }
+]
 
-const fetchEmployeeData = async params => {
+// 在 fetchData 中实现数据缓存
+const cache = new Map<string, FetchDialogSelectDataResult>()
+
+const fetchEmployeeData = async (
+  params: FetchDialogSelectDataParams
+): Promise<FetchDialogSelectDataResult> => {
   const cacheKey = JSON.stringify(params)
 
   if (cache.has(cacheKey)) {
@@ -1043,7 +1163,9 @@ const fetchEmployeeData = async params => {
 
 9. **fetchData 必需**: 必须提供 `fetchData` 方法，该方法接收分页和筛选参数，返回数据和总数。
 
-10. **columns 必需**: 必须提供 `columns` 配置，用于定义表格列。
+10. **dialogSelectOptions 必需**: 必须提供 `dialogSelectOptions` 配置数组，用于定义表格列和表单项。
+
+11. **useForm 字段**: 使用 `useForm: true` 标识表单项，`useForm: false` 或不设置表示表格列。同一字段可以同时作为列和表单项使用。
 
 ## 常见问题
 
@@ -1077,6 +1199,7 @@ A: 通过 `gridConfig` prop 可以透传 vxe-grid 的所有配置，包括样式
 
 ```vue
 <IipDialogSelect
+  :dialog-select-options="dialogSelectOptions"
   :grid-config="{
     border: false,
     stripe: true,
@@ -1084,6 +1207,26 @@ A: 通过 `gridConfig` prop 可以透传 vxe-grid 的所有配置，包括样式
     // ... 其他 vxe-grid 配置
   }"
 />
+```
+
+也可以通过 `columnProps` 自定义每列的样式：
+
+```vue
+<script setup lang="ts">
+import type { DialogSelectOptions } from '@bingwu/iip-ui-components'
+
+const dialogSelectOptions: DialogSelectOptions = [
+  {
+    field: 'name',
+    title: '姓名',
+    columnProps: {
+      width: 150,
+      align: 'center',
+      sortable: true
+    }
+  }
+]
+</script>
 ```
 
 ### Q: 异步选项数据什么时候加载？
@@ -1097,8 +1240,8 @@ A: 可以监听 `form-change` 事件：
 ```vue
 <IipDialogSelect @form-change="handleFormChange" />
 
-<script setup>
-const handleFormChange = formData => {
+<script setup lang="ts">
+const handleFormChange = (formData: Record<string, any>) => {
   console.log('表单数据变化:', formData)
   // 可以在这里实现实时搜索等功能
 }
@@ -1112,8 +1255,10 @@ A: 通过 `change` 事件的第二个参数可以获取所有选中的行：
 ```vue
 <IipDialogSelect :multiple="true" @change="handleChange" />
 
-<script setup>
-const handleChange = (value, selectedRows) => {
+<script setup lang="ts">
+import type { TableRowItem } from '@bingwu/iip-ui-components'
+
+const handleChange = (value: TableRowItem[] | null, selectedRows: TableRowItem[]) => {
   console.log('选中的值:', value) // 数组
   console.log('所有选中的行:', selectedRows) // 完整的行数据数组
 }
@@ -1126,7 +1271,7 @@ A: 通过 ref 调用组件方法：
 
 ```vue
 <template>
-  <IipDialogSelect ref="dialogRef" />
+  <IipDialogSelect ref="dialogRef" :dialog-select-options="dialogSelectOptions" />
   <el-button @click="dialogRef?.open()">打开</el-button>
   <el-button @click="dialogRef?.close()">关闭</el-button>
 </template>
@@ -1138,7 +1283,55 @@ A: 通过 ref 调用 `refresh` 方法：
 
 ```vue
 <template>
-  <IipDialogSelect ref="dialogRef" />
+  <IipDialogSelect ref="dialogRef" :dialog-select-options="dialogSelectOptions" />
   <el-button @click="dialogRef?.refresh()">刷新</el-button>
 </template>
 ```
+
+### Q: 如何使用 dialogSelectOptions 配置列和表单项？
+
+A: `dialogSelectOptions` 是一个数组，每个项包含 `field`、`title` 等公共字段，以及 `columnProps` 或 `formItemProps`：
+
+```vue
+<script setup lang="ts">
+import type { DialogSelectOptions } from '@bingwu/iip-ui-components'
+
+const dialogSelectOptions: DialogSelectOptions = [
+  // 表格列配置（useForm 默认为 false）
+  {
+    field: 'id',
+    title: 'ID',
+    columnProps: { width: 80 }
+  },
+  // 表单项配置（useForm 设置为 true）
+  {
+    field: 'name',
+    title: '姓名',
+    useForm: true,
+    formItemProps: {
+      type: 'input',
+      placeholder: '请输入姓名'
+    }
+  },
+  // 同一字段可以同时作为列和表单项
+  {
+    field: 'department',
+    title: '部门',
+    columnProps: { width: 120 }, // 作为列
+    useForm: true,
+    formItemProps: {
+      type: 'select',
+      options: [...]
+    }
+  }
+]
+</script>
+```
+
+### Q: useForm 字段的作用是什么？
+
+A: `useForm` 字段用于标识一个选项是否是表单项：
+
+- `useForm: true` → 作为表单项使用，会显示在筛选表单中
+- `useForm: false` 或未设置 → 作为表格列使用，会显示在表格中
+- 同一字段可以同时设置 `columnProps` 和 `formItemProps`，通过 `useForm` 控制是否显示在表单中

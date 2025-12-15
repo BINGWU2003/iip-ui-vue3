@@ -23,22 +23,22 @@
         <!-- 表单筛选区域 -->
         <div v-if="formItems && formItems.length > 0" class="dialog-select-form">
           <el-form :model="formData" inline>
-            <el-form-item v-for="item in formItems" :key="item.field" :label="item.label">
+            <el-form-item v-for="item in formItems" :key="item.field" :label="item.title">
               <el-input
-                v-if="item.type === 'input'"
+                v-if="item.formItemProps?.type === 'input'"
                 v-model="formData[item.field]"
-                :placeholder="item.placeholder || `请输入${item.label}`"
+                :placeholder="item.formItemProps?.placeholder || `请输入${item.title}`"
                 clearable
-                v-bind="item.props"
+                v-bind="getFormItemProps(item)"
                 style="width: 200px"
                 @change="handleFormChange"
               />
               <el-select
-                v-else-if="item.type === 'select'"
+                v-else-if="item.formItemProps?.type === 'select'"
                 v-model="formData[item.field]"
-                :placeholder="item.placeholder || `请选择${item.label}`"
+                :placeholder="item.formItemProps?.placeholder || `请选择${item.title}`"
                 clearable
-                v-bind="item.props"
+                v-bind="getFormItemProps(item)"
                 style="width: 200px"
                 @change="handleFormChange"
               >
@@ -50,11 +50,11 @@
                 />
               </el-select>
               <el-date-picker
-                v-else
+                v-else-if="item.formItemProps?.type === 'date'"
                 v-model="formData[item.field]"
-                :placeholder="item.placeholder || `请选择${item.label}`"
+                :placeholder="item.formItemProps?.placeholder || `请选择${item.title}`"
                 clearable
-                v-bind="item.props"
+                v-bind="getFormItemProps(item)"
                 style="width: 200px"
                 @change="handleFormChange"
               />
@@ -124,7 +124,7 @@ import type {
   TableRowItem,
   FetchDialogSelectDataParams,
   FormItemOption,
-  FormItem
+  DialogSelectOption
 } from './types'
 
 defineOptions({
@@ -144,7 +144,6 @@ const props = withDefaults(defineProps<DialogSelectProps>(), {
   disabled: false,
   dialogTitle: '请选择',
   dialogWidth: '1100px',
-  formItems: () => [],
   gridConfig: undefined,
   style: () => ({})
 })
@@ -187,26 +186,34 @@ const displayText = computed(() => {
   }
 })
 
+// 从 dialogSelectOptions 中提取表单项（useForm 为 true 的项）
+const formItems = computed(() => {
+  return props.dialogSelectOptions.filter(option => option.useForm === true)
+})
+
 // 初始化表单数据
 const initFormData = () => {
   const data: Record<string, any> = {}
 
-  for (const item of props.formItems || []) {
-    if (item.defaultValue !== undefined) {
+  for (const item of formItems.value) {
+    const formItemProps = item.formItemProps
+    if (!formItemProps) continue
+
+    if (formItemProps.defaultValue !== undefined) {
       // 如果 defaultValue 是函数，执行函数获取值
-      if (typeof item.defaultValue === 'function') {
+      if (typeof formItemProps.defaultValue === 'function') {
         try {
-          data[item.field] = item.defaultValue()
+          data[item.field] = formItemProps.defaultValue()
         } catch (error) {
           console.error(`获取表单项 ${item.field} 的默认值失败:`, error)
           data[item.field] = undefined
         }
       } else {
         // 否则直接使用值
-        data[item.field] = item.defaultValue
+        data[item.field] = formItemProps.defaultValue
       }
     } else {
-      if (item.type === 'select' || item.type === 'date') {
+      if (formItemProps.type === 'select' || formItemProps.type === 'date') {
         data[item.field] = undefined
       } else {
         data[item.field] = ''
@@ -217,17 +224,33 @@ const initFormData = () => {
   formData.value = data
 }
 
+// 获取应该透传给 Element Plus 组件的属性（排除内部使用的属性）
+const getFormItemProps = (item: DialogSelectOption): Record<string, any> => {
+  const formItemProps = item.formItemProps
+  if (!formItemProps) return {}
+
+  // 排除不应该透传的属性
+  const {
+    type: _type,
+    options: _options,
+    defaultValue: _defaultValue,
+    ...restProps
+  } = formItemProps
+  return restProps
+}
+
 // 获取下拉选项
-const getSelectOptions = (item: FormItem): FormItemOption[] => {
-  if (!item.options) return []
+const getSelectOptions = (item: DialogSelectOption): FormItemOption[] => {
+  const formItemProps = item.formItemProps
+  if (!formItemProps?.options) return []
 
   // 如果 options 是数组，直接返回
-  if (Array.isArray(item.options)) {
-    return item.options
+  if (Array.isArray(formItemProps.options)) {
+    return formItemProps.options
   }
 
   // 如果 options 是函数，从缓存中获取或执行函数
-  if (typeof item.options === 'function') {
+  if (typeof formItemProps.options === 'function') {
     if (formItemOptions.value[item.field]) {
       return formItemOptions.value[item.field]
     }
@@ -240,12 +263,13 @@ const getSelectOptions = (item: FormItem): FormItemOption[] => {
 
 // 加载表单项的选项数据
 const loadFormItemOptions = async () => {
-  if (!props.formItems) return
+  if (!formItems.value.length) return
 
-  for (const item of props.formItems) {
-    if (item.type === 'select' && typeof item.options === 'function') {
+  for (const item of formItems.value) {
+    const formItemProps = item.formItemProps
+    if (formItemProps?.type === 'select' && typeof formItemProps.options === 'function') {
       try {
-        const result = await item.options()
+        const result = await formItemProps.options()
         formItemOptions.value[item.field] = Array.isArray(result) ? result : []
       } catch (error) {
         console.error(`加载表单项 ${item.field} 的选项失败:`, error)
@@ -257,7 +281,14 @@ const loadFormItemOptions = async () => {
 
 // 计算列配置，动态添加 radio 或 checkbox 列
 const computedColumns = computed(() => {
-  const baseColumns = props.columns || []
+  // 从 dialogSelectOptions 中提取列（useForm 不为 true 的项，或者有 columnProps 的项）
+  const baseColumns = props.dialogSelectOptions
+    .filter(option => option.useForm !== true && option.columnProps)
+    .map(option => ({
+      field: option.field,
+      title: option.title,
+      ...option.columnProps
+    }))
 
   // 检查是否已经有 radio 或 checkbox 列
   const hasRadioOrCheckbox = baseColumns.some(
@@ -265,7 +296,7 @@ const computedColumns = computed(() => {
   )
 
   if (hasRadioOrCheckbox) {
-    return baseColumns
+    return baseColumns as any
   }
 
   // 根据 multiple 添加对应的列

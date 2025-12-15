@@ -131,8 +131,7 @@
         <IipDialogSelect
           v-model="dialogSelect1"
           :fetch-data="fetchEmployeeData"
-          :columns="employeeColumns"
-          :form-items="employeeFormItems"
+          :dialog-select-options="employeeDialogSelectOptions"
           :key-getter="employeeKeyGetter"
           placeholder="请选择员工"
           dialog-title="选择员工"
@@ -149,8 +148,7 @@
         <IipDialogSelect
           v-model="dialogSelect2"
           :fetch-data="fetchEmployeeData"
-          :columns="employeeColumns"
-          :form-items="employeeFormItems"
+          :dialog-select-options="employeeDialogSelectOptions"
           :key-getter="employeeKeyGetter"
           :multiple="true"
           placeholder="请选择员工（可多选）"
@@ -168,8 +166,7 @@
         <IipDialogSelect
           v-model="dialogSelect3"
           :fetch-data="fetchProductDataForDialog"
-          :columns="productColumns"
-          :form-items="productFormItems"
+          :dialog-select-options="productDialogSelectOptions"
           :key-getter="productKeyGetter"
           value-key="id"
           label-key="name"
@@ -331,47 +328,54 @@ const mockEmployees = Array.from({ length: 100 }, (_, i) => ({
   status: i % 3 === 0 ? '在职' : '离职'
 }))
 
-// 表格列配置
-const employeeColumns = [
-  { field: 'id', title: 'ID' },
-  { field: 'name', title: '姓名' },
-  { field: 'department', title: '部门' },
-  { field: 'email', title: '邮箱' },
-  { field: 'phone', title: '电话' },
-  { field: 'status', title: '状态' }
-]
-
-// 表单配置（用于筛选）
-const employeeFormItems = [
+// DialogSelect 选项配置（合并 columns 和 formItems）
+const employeeDialogSelectOptions = [
+  // 表格列配置（useForm 默认为 false，或显式设置为 false）
+  { field: 'id', title: 'ID', useForm: false, columnProps: { width: 80 } },
+  { field: 'name', title: '姓名', useForm: false, columnProps: { width: 120 } },
+  { field: 'department', title: '部门', useForm: false, columnProps: { width: 120 } },
+  { field: 'email', title: '邮箱', useForm: false, columnProps: { width: 200 } },
+  { field: 'phone', title: '电话', useForm: false, columnProps: { width: 150 } },
+  { field: 'status', title: '状态', useForm: false, columnProps: { width: 100 } },
+  // 表单配置（用于筛选，useForm 设置为 true）
   {
     field: 'name',
-    label: '姓名',
-    type: 'input' as const,
-    placeholder: '请输入姓名'
+    title: '姓名',
+    useForm: true,
+    formItemProps: {
+      type: 'input' as const,
+      placeholder: '请输入姓名'
+    }
   },
   {
     field: 'department',
-    label: '部门',
-    type: 'select' as const,
-    placeholder: '请选择部门',
-    // 使用函数返回选项，支持从接口获取
-    options: async () => {
-      // 模拟从接口获取数据
-      await new Promise(resolve => setTimeout(resolve, 200))
-      return [
-        { label: '技术部', value: '技术部' },
-        { label: '产品部', value: '产品部' },
-        { label: '运营部', value: '运营部' },
-        { label: '市场部', value: '市场部' },
-        { label: '人事部', value: '人事部' }
-      ]
+    title: '部门',
+    useForm: true,
+    formItemProps: {
+      type: 'select' as const,
+      placeholder: '请选择部门',
+      // 使用函数返回选项，支持从接口获取
+      options: async () => {
+        // 模拟从接口获取数据
+        await new Promise(resolve => setTimeout(resolve, 200))
+        return [
+          { label: '技术部', value: '技术部' },
+          { label: '产品部', value: '产品部' },
+          { label: '运营部', value: '运营部' },
+          { label: '市场部', value: '市场部' },
+          { label: '人事部', value: '人事部' }
+        ]
+      }
     }
   },
   {
     field: 'createDate',
-    label: '创建日期',
-    type: 'date' as const,
-    placeholder: '请选择创建日期'
+    title: '创建日期',
+    useForm: true,
+    formItemProps: {
+      type: 'date' as const,
+      placeholder: '请选择创建日期'
+    }
   }
 ]
 
@@ -404,35 +408,39 @@ const fetchEmployeeData = async (
   }
 }
 
-// 产品表格列配置
-const productColumns = [
-  { field: 'id', title: '产品ID' },
-  { field: 'name', title: '产品名称' },
-  { field: 'price', title: '价格' },
-  { field: 'category', title: '分类' }
-]
-
-// 产品表单配置（用于筛选）
-const productFormItems = [
+// DialogSelect 选项配置（合并 columns 和 formItems）
+const productDialogSelectOptions = [
+  // 表格列配置（useForm 默认为 false）
+  { field: 'id', title: '产品ID', columnProps: { width: 120 } },
+  { field: 'name', title: '产品名称', columnProps: { width: 150 } },
+  { field: 'price', title: '价格', columnProps: { width: 100 } },
+  { field: 'category', title: '分类', columnProps: { width: 120 } },
+  // 表单配置（用于筛选，useForm 设置为 true）
   {
     field: 'name',
-    label: '产品名称',
-    type: 'input' as const,
-    placeholder: '请输入产品名称',
-    defaultValue: '产品'
+    title: '产品名称',
+    useForm: true,
+    formItemProps: {
+      type: 'input' as const,
+      placeholder: '请输入产品名称',
+      defaultValue: '产品'
+    }
   },
   {
     field: 'category',
-    label: '分类',
-    type: 'select' as const,
-    placeholder: '请选择分类',
-    defaultValue: '电子产品',
-    options: [
-      { label: '电子产品', value: '电子产品' },
-      { label: '服装', value: '服装' },
-      { label: '食品', value: '食品' },
-      { label: '家居', value: '家居' }
-    ]
+    title: '分类',
+    useForm: true,
+    formItemProps: {
+      type: 'select' as const,
+      placeholder: '请选择分类',
+      defaultValue: '电子产品',
+      options: [
+        { label: '电子产品', value: '电子产品' },
+        { label: '服装', value: '服装' },
+        { label: '食品', value: '食品' },
+        { label: '家居', value: '家居' }
+      ]
+    }
   }
 ]
 

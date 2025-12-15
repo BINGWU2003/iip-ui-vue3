@@ -14,7 +14,7 @@ export default defineConfig({
     // 导航栏
     nav: [
       { text: '指南', link: '/guide/introduction' },
-      { text: '组件', link: '/components/date-range' },
+      { text: '组件', link: '/components/pagination-select' },
       { text: '工具函数', link: '/utils/utils' },
       { text: '主题', link: '/theme/theme' },
       { text: '更新日志', link: '/guide/changelog' },

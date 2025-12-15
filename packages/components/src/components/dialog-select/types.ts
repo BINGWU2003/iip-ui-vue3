@@ -1,5 +1,5 @@
 import type { CSSProperties, Ref } from 'vue'
-import type { VxeGridProps } from 'vxe-table'
+import type { VxeGridProps, VxeColumnProps } from 'vxe-table'
 
 export type TableRowItem = {
   [key: string]: any
@@ -22,22 +22,36 @@ export type FormItemOption = {
   value: any
 }
 
-export type FormItem = {
-  /** 字段名 */
+/** 列配置类型（从 VxeColumnProps 中提取，剔除公共字段） */
+type VxeColumnItem = Omit<VxeColumnProps, 'field' | 'title'>
+
+/** DialogSelect 选项配置（合并 columns 和 formItems） */
+export type DialogSelectOption = {
+  /** 字段名（公共字段） */
   field: string
-  /** 标签 */
-  label: string
-  /** 表单项类型：input（输入框）、select（下拉框）或 date（日期选择） */
-  type: 'input' | 'select' | 'date'
-  /** 占位符 */
-  placeholder?: string
-  /** 下拉选项（当type为select时使用），可以是数组或返回数组的函数 */
-  options?: FormItemOption[] | (() => FormItemOption[] | Promise<FormItemOption[]>)
-  /** 默认值，可以是值或返回值的同步函数 */
-  defaultValue?: any | (() => any)
-  /** 其他属性，会透传给对应的组件 */
-  props?: Record<string, any>
+  /** 标题（公共字段） */
+  title: string
+  /** 是否是表单项，默认为 false */
+  useForm?: boolean
+  /** 列配置属性（当作为表格列时使用），继承 VxeGridProps['columns'] 但剔除 field 和 title */
+  columnProps?: VxeColumnItem
+  /** 表单项配置属性（当作为表单项时使用） */
+  formItemProps?: {
+    /** 表单项类型：input（输入框）、select（下拉框）或 date（日期选择） */
+    type?: 'input' | 'select' | 'date'
+    /** 占位符 */
+    placeholder?: string
+    /** 下拉选项（当type为select时使用），可以是数组或返回数组的函数 */
+    options?: FormItemOption[] | (() => FormItemOption[] | Promise<FormItemOption[]>)
+    /** 默认值，可以是值或返回值的同步函数 */
+    defaultValue?: any | (() => any)
+    /** 其他属性，会透传给对应的组件 */
+    [key: string]: any
+  }
 }
+
+/** DialogSelect 选项配置数组 */
+export type DialogSelectOptions = DialogSelectOption[]
 
 export type DialogSelectProps = {
   /** 绑定值，单选时为对象，多选时为对象数组 */
@@ -62,10 +76,8 @@ export type DialogSelectProps = {
   dialogWidth?: string | number
   /** 获取数据的方法 */
   fetchData: (params: FetchDialogSelectDataParams) => Promise<FetchDialogSelectDataResult>
-  /** 表格列配置（vxe-grid的columns配置） */
-  columns: VxeGridProps['columns']
-  /** 表单配置（用于筛选） */
-  formItems?: FormItem[]
+  /** DialogSelect 选项配置数组（合并 columns 和 formItems） */
+  dialogSelectOptions: DialogSelectOptions
   /** vxe-grid 配置，支持透传 vxe-grid 的所有 props */
   gridConfig?: VxeGridProps
   /** 输入框样式 */

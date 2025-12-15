@@ -20,6 +20,7 @@ export {
   // 导出所有组件
   IipDateRange,
   IipPaginationSelect,
+  IipDialogSelect,
   // 导出 install 方法和版本号
   install
 }
