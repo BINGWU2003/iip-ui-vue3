@@ -314,7 +314,14 @@ const handlePaginationSelectChange5 = (value, option?: OptionItem) => {
 }
 
 // DialogSelect 相关
-const dialogSelect1 = ref<TableRowItem | null>(null)
+const dialogSelect1 = ref<TableRowItem | null>({
+  id: 5,
+  name: '员工5',
+  department: '人事部',
+  email: 'employee5@example.com',
+  phone: '13800000005',
+  status: '离职'
+})
 const dialogSelect2 = ref<TableRowItem[] | null>(null)
 const dialogSelect3 = ref<TableRowItem | null>(null)
 
