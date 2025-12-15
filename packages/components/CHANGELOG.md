@@ -1,5 +1,11 @@
 # @bingwu/iip-ui-components
 
+## 1.2.21
+
+### Patch Changes
+
+- 新增类型导出
+
 ## 1.2.20
 
 ### Patch Changes
