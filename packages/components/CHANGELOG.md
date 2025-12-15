@@ -1,5 +1,11 @@
 # @bingwu/iip-ui-components
 
+## 1.2.20
+
+### Patch Changes
+
+- 新增弹窗下拉组件
+
 ## 1.2.19
 
 ### Patch Changes
