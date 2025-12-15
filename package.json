@@ -14,6 +14,7 @@
     "dev:demo": "turbo run dev --filter=./apps/vue-project-demo",
     "dev:demo:watch": "turbo run dev --filter=./packages/* --filter=./apps/vue-project-demo",
     "dev:docs": "turbo run dev --filter=./apps/docs",
+    "dev:ui": "pnpm --filter @bingwu/iip-ui-components dev:ui",
     "build": "turbo run build",
     "build:packages": "turbo run build --filter=./packages/*",
     "build:apps": "turbo run build --filter=./apps/*",
