@@ -20,21 +20,21 @@ hero:
       link: https://github.com/BINGWU2003/iip-ui-vue3
 
 features:
-  - icon: 🚀
-    title: 高性能表格
-    details: 基于 vxe-table 4.15+ 构建的企业级表格组件，支持虚拟滚动、编辑、筛选等功能
-  - icon: 📝
-    title: 配置化表单
-    details: 通过 JSON 配置快速生成表单，支持 20+ 种表单项类型，内置验证规则和动态显示
-  - icon: ⚡️
-    title: 智能插槽渲染
-    details: v1.2.0+ 版本实现插槽性能优化，只渲染实际使用的插槽，避免不必要的性能开销
+  - icon: 📄
+    title: DialogSelect 弹窗选择器
+    details: 基于 vxe-table 和 Element Plus 构建的弹窗选择器，支持表格展示、表单筛选、单选/多选、分页等功能
+  - icon: 📋
+    title: PaginationSelect 分页选择器
+    details: 基于 Element Plus 的分页选择器，支持远程搜索、分页加载、搜索防抖、自动数据回显等功能
+  - icon: 📅
+    title: DateRange 日期范围
+    details: 基于 Element Plus 的日期范围选择器，支持快速选择预设日期、范围限制、智能联动等功能
   - icon: 🛠️
     title: TypeScript 支持
     details: 完整的 TypeScript 类型定义，提供更好的开发体验和代码提示
   - icon: 🎨
-    title: 主题定制
-    details: 支持动态主题切换，提供亮色和暗色主题，支持自定义主题变量
+    title: 内置样式类
+    details: 提供可选的主题样式包，封装内置样式类（工具类），供公司内部项目使用
   - icon: 📦
     title: 按需引入
     details: 支持 Tree Shaking，可以按需引入组件，减小打包体积
