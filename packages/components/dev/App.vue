@@ -180,6 +180,62 @@
         </div>
       </div>
     </div>
+
+    <!-- openDialogSelect 函数式调用示例 -->
+    <div class="component-group">
+      <h2 class="component-title">openDialogSelect 函数式调用</h2>
+
+      <div class="demo-section">
+        <h3>点击表格单元格选择员工（单选）</h3>
+        <p style="margin-bottom: 15px; color: #666">点击"负责人"列的单元格可以选择员工</p>
+        <el-table :data="taskTableData" border stripe style="width: 100%" max-height="300">
+          <el-table-column prop="id" label="ID" width="80" />
+          <el-table-column prop="taskName" label="任务名称" min-width="200" />
+          <el-table-column prop="owner" label="负责人" width="150">
+            <template #default="{ row }">
+              <span class="cell-link" @click="handleOwnerClick(row)">
+                {{ row.owner || '点击选择' }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="status" label="状态" width="120" />
+        </el-table>
+      </div>
+
+      <div class="demo-section">
+        <h3>点击表格单元格选择产品（多选）</h3>
+        <p style="margin-bottom: 15px; color: #666">点击"已选产品"列的单元格可以选择多个产品</p>
+        <el-table :data="projectTableData" border stripe style="width: 100%" max-height="250">
+          <el-table-column prop="id" label="ID" width="80" />
+          <el-table-column prop="projectName" label="项目名称" min-width="200" />
+          <el-table-column prop="productsDisplay" label="已选产品" min-width="300">
+            <template #default="{ row }">
+              <span class="cell-link" @click="handleProductsClick(row)">
+                {{ row.productsDisplay || '点击选择' }}
+              </span>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+
+      <div class="demo-section">
+        <h3>带初始值的选择</h3>
+        <p style="margin-bottom: 15px; color: #666">点击单元格时会带上当前选中的值作为初始值</p>
+        <el-table :data="ticketTableData" border stripe style="width: 100%" max-height="250">
+          <el-table-column prop="id" label="ID" width="80" />
+          <el-table-column prop="ticketNo" label="工单号" width="120" />
+          <el-table-column prop="title" label="标题" min-width="200" />
+          <el-table-column prop="assignee" label="指派人" width="150">
+            <template #default="{ row }">
+              <span class="cell-link" @click="handleAssigneeClick(row)">
+                {{ row.assignee || '点击选择' }}
+              </span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="priority" label="优先级" width="100" />
+        </el-table>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -187,7 +243,7 @@
 import { ref } from 'vue'
 import { IipDateRange } from '../src/components/date-range'
 import { IipPaginationSelect } from '../src/components/pagination-select'
-import { IipDialogSelect } from '../src/components/dialog-select'
+import { IipDialogSelect, openDialogSelect } from '../src/components/dialog-select'
 import type {
   FetchDataParams,
   FetchDataResult,
@@ -198,6 +254,7 @@ import type {
   FetchDialogSelectDataResult,
   TableRowItem
 } from '../src/components/dialog-select/types'
+import { ElMessage } from 'element-plus'
 
 // DateRange 相关
 const dateRange1 = ref({ startTime: '', endTime: '' })
@@ -473,7 +530,7 @@ const fetchProductDataForDialog = async (
   const start = (page - 1) * pageSize
   const end = start + pageSize
   const data = filteredProducts.slice(start, end)
-
+  console.log('data', data)
   return {
     data,
     total: filteredProducts.length
@@ -500,6 +557,122 @@ const handleDialogSelectChange2 = (value: TableRowItem[] | null, selectedRows: T
 
 const handleDialogSelectChange3 = (value: TableRowItem | null, selectedRows: TableRowItem[]) => {
   console.log('dialogSelect3 changed:', value, selectedRows)
+}
+
+// openDialogSelect 函数式调用相关
+// 示例1：任务表格数据（单选员工作为负责人）
+const taskTableData = ref([
+  { id: 1, taskName: '开发用户登录功能', owner: '', ownerData: null, status: '进行中' },
+  { id: 2, taskName: '设计产品首页', owner: '', ownerData: null, status: '未开始' },
+  { id: 3, taskName: '编写API文档', owner: '', ownerData: null, status: '进行中' },
+  { id: 4, taskName: '修复Bug #123', owner: '', ownerData: null, status: '已完成' },
+  { id: 5, taskName: '优化数据库查询', owner: '', ownerData: null, status: '进行中' }
+])
+
+const handleOwnerClick = async (row: any) => {
+  try {
+    const result = await openDialogSelect({
+      fetchData: fetchEmployeeData,
+      dialogSelectOptions: employeeDialogSelectOptions,
+      keyGetter: employeeKeyGetter,
+      dialogTitle: '选择负责人',
+      initialValue: row.ownerData
+    })
+
+    if (result && typeof result === 'object' && !Array.isArray(result)) {
+      row.owner = result.name as string
+      row.ownerData = result
+      ElMessage.success(`已选择负责人：${result.name}`)
+    }
+  } catch (error: any) {
+    console.log('取消选择:', error.message)
+  }
+}
+
+// 示例2：项目表格数据（多选产品）
+const projectTableData = ref([
+  { id: 1, projectName: '电商平台开发', products: [], productsDisplay: '' },
+  { id: 2, projectName: '移动应用设计', products: [], productsDisplay: '' },
+  { id: 3, projectName: '数据分析系统', products: [], productsDisplay: '' }
+])
+
+const handleProductsClick = async (row: any) => {
+  try {
+    const result = await openDialogSelect({
+      fetchData: fetchProductDataForDialog,
+      dialogSelectOptions: productDialogSelectOptions,
+      keyGetter: productKeyGetter,
+      multiple: true,
+      valueKey: 'id',
+      labelKey: 'name',
+      dialogTitle: '选择产品',
+      initialValue: row.products
+    })
+
+    if (result && Array.isArray(result)) {
+      row.products = result
+      row.productsDisplay = result.map((item: any) => item.name).join(', ')
+      ElMessage.success(`已选择 ${result.length} 个产品`)
+    }
+  } catch (error: any) {
+    console.log('取消选择:', error.message)
+  }
+}
+
+// 示例3：工单表格数据（带初始值的单选）
+const ticketTableData = ref([
+  {
+    id: 1,
+    ticketNo: 'TK-001',
+    title: '系统登录异常',
+    assignee: '员工3',
+    assigneeData: {
+      id: 3,
+      name: '员工3',
+      department: '运营部',
+      email: 'employee3@example.com',
+      phone: '13800000003',
+      status: '离职'
+    },
+    priority: '高'
+  },
+  {
+    id: 2,
+    ticketNo: 'TK-002',
+    title: '页面加载缓慢',
+    assignee: '',
+    assigneeData: null,
+    priority: '中'
+  },
+  {
+    id: 3,
+    ticketNo: 'TK-003',
+    title: '数据导出功能失效',
+    assignee: '',
+    assigneeData: null,
+    priority: '低'
+  }
+])
+
+const handleAssigneeClick = async (row: any) => {
+  try {
+    const result = await openDialogSelect({
+      fetchData: fetchEmployeeData,
+      dialogSelectOptions: employeeDialogSelectOptions,
+      keyGetter: employeeKeyGetter,
+      dialogTitle: '选择指派人',
+      // 传入初始值，会在弹窗打开时自动选中
+      initialValue: row.assigneeData
+    })
+
+    if (result && typeof result === 'object' && !Array.isArray(result)) {
+      row.assignee = result.name as string
+      row.assigneeData = result
+      ElMessage.success(`已指派给：${result.name}`)
+    }
+  } catch (error: any) {
+    console.log('取消选择:', error.message)
+  }
 }
 </script>
 
@@ -569,5 +742,16 @@ h3 {
   overflow-x: auto;
   font-size: 14px;
   color: #666;
+}
+
+.cell-link {
+  color: #409eff;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.cell-link:hover {
+  color: #66b1ff;
 }
 </style>

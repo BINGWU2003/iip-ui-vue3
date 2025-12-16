@@ -117,7 +117,7 @@ import {
   ElConfigProvider
 } from 'element-plus'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
-import type { VxeGridInstance } from 'vxe-table'
+import { VxeGrid, type VxeGridInstance } from 'vxe-table'
 import type {
   DialogSelectProps,
   DialogSelectEmits,
@@ -392,7 +392,6 @@ watch(
 // 同步选中状态到表格
 const syncSelectedToTable = async () => {
   if (!gridRef.value || !dialogVisible.value) return
-
   await nextTick()
   if (props.multiple) {
     // 多选模式：根据 selectedRows 设置表格选中状态

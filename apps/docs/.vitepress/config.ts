@@ -57,7 +57,11 @@ export default defineConfig({
           items: [
             { text: 'PaginationSelect 分页选择器', link: '/components/pagination-select' },
             { text: 'DateRange 日期范围', link: '/components/date-range' },
-            { text: 'DialogSelect 弹窗选择器', link: '/components/dialog-select' }
+            { text: 'DialogSelect 弹窗选择器', link: '/components/dialog-select' },
+            {
+              text: 'DialogSelect 弹窗选择器(函数式调用)',
+              link: '/components/dialog-select-function'
+            }
           ]
         }
       ]

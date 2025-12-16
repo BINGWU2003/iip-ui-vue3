@@ -2,3 +2,4 @@
 export * from '../components/date-range/types'
 export * from '../components/pagination-select/types'
 export * from '../components/dialog-select/types'
+export * from '../components/dialog-select/dialog-select'
