@@ -77,7 +77,6 @@
             :checkbox-config="checkboxConfig"
             :radio-config="radioConfig"
             :row-config="rowConfig"
-            highlight-current-row
             v-bind="gridConfig"
             @page-change="handlePageChange"
             @checkbox-change="handleCheckboxChange"
