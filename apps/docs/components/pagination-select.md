@@ -12,6 +12,7 @@
 - 🚀 性能优化，避免重复请求
 - 🔄 自动数据回显，支持跨页选择
 - 📋 虚拟选项机制，确保选中项正确显示
+- ✅ 支持单选和多选模式
 
 ## 基础用法
 
@@ -93,11 +94,101 @@ const fetchUserDataFromAPI = async (params: FetchDataParams): Promise<FetchDataR
 </script>
 ```
 
+## 多选用法
+
+通过设置 `multiple` 属性启用多选模式，多选模式下 `modelValue` 为对象数组。
+
+```vue
+<template>
+  <div>
+    <IipPaginationSelect
+      v-model="selectedUsers"
+      :fetch-data="fetchUserData"
+      placeholder="请选择用户（可多选）"
+      value-key="id"
+      label-key="name"
+      multiple
+      @change="handleChange"
+    />
+
+    <div v-if="selectedUsers.length > 0">
+      已选择 {{ selectedUsers.length }} 个用户：
+      <el-tag v-for="user in selectedUsers" :key="user.id" style="margin-right: 8px">
+        {{ user.name }}
+      </el-tag>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { IipPaginationSelect } from '@bingwu/iip-ui-components'
+import type { FetchDataParams, FetchDataResult } from '@bingwu/iip-ui-components'
+
+// 多选模式下 modelValue 是对象数组
+const selectedUsers = ref<{ id: number; name: string }[]>([])
+
+// 处理选择变化
+const handleChange = (value, options) => {
+  console.log('选中的用户：', value) // [{ id: 1, name: '用户1' }, { id: 2, name: '用户2' }]
+  console.log('完整选项：', options) // 包含所有字段的完整选项数组
+}
+
+// 模拟用户数据
+const mockUsers = Array.from({ length: 100 }, (_, i) => ({
+  id: i + 1,
+  name: `用户${i + 1}`,
+  email: `user${i + 1}@example.com`
+}))
+
+// 模拟数据获取函数
+const fetchUserData = async (params: FetchDataParams): Promise<FetchDataResult> => {
+  await new Promise(resolve => setTimeout(resolve, 300))
+
+  const { page, pageSize, keyword } = params
+
+  let filteredUsers = mockUsers
+  if (keyword) {
+    filteredUsers = mockUsers.filter(
+      user => user.name.includes(keyword) || user.email.includes(keyword)
+    )
+  }
+
+  const start = (page - 1) * pageSize
+  const end = start + pageSize
+  const data = filteredUsers.slice(start, end)
+
+  return {
+    data,
+    total: filteredUsers.length
+  }
+}
+</script>
+```
+
+### 多选模式初始值
+
+多选模式下可以设置初始选中值，组件会自动回显：
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+
+// 设置初始选中值
+const selectedUsers = ref([
+  { id: 16, name: '用户16' },
+  { id: 17, name: '用户17' }
+])
+</script>
+```
+
 ## 核心特性说明
 
 ### 1. modelValue 对象形式
 
-组件的 `modelValue` **必须是对象形式**，包含 `valueKey` 和 `labelKey` 对应的属性：
+组件的 `modelValue` 包含 `valueKey` 和 `labelKey` 对应的属性：
+
+**单选模式**：对象形式
 
 ```typescript
 // 默认情况下 (valueKey="value", labelKey="label")
@@ -107,15 +198,34 @@ const selected = ref<{ value: any; label: string } | null>(null)
 const selected = ref<{ id: number; name: string } | null>(null)
 ```
 
+**多选模式**：对象数组形式
+
+```typescript
+// 默认情况下 (valueKey="value", labelKey="label")
+const selectedList = ref<{ value: any; label: string }[]>([])
+
+// 自定义属性名 (valueKey="id", labelKey="name")
+const selectedList = ref<{ id: number; name: string }[]>([])
+
+// 设置初始值
+const selectedList = ref([
+  { id: 1, name: '用户1' },
+  { id: 2, name: '用户2' }
+])
+```
+
 **优势：**
 
 - ✅ 同时保存 value 和 label，无需额外管理
 - ✅ 自动处理跨页选择的回显问题
 - ✅ 不需要手动维护 displayLabel
+- ✅ 单选/多选模式统一的数据结构
 
 ### 2. 自动数据回显
 
 当选中的数据不在当前页时（例如选择了第二页的某个选项），组件会自动创建虚拟选项进行回显：
+
+**单选模式**
 
 ```vue
 <template>
@@ -137,6 +247,33 @@ const selectedItem = ref({
   name: '用户 25'
 })
 // 组件会自动创建虚拟选项显示"用户 25"，而不是只显示数字 25
+</script>
+```
+
+**多选模式**
+
+```vue
+<template>
+  <!-- 多选模式同样支持跨页回显 -->
+  <IipPaginationSelect
+    v-model="selectedItems"
+    :fetch-data="fetchItems"
+    value-key="id"
+    label-key="name"
+    multiple
+  />
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+
+// 假设这些是从后端获取的已选中数据（分别来自不同页）
+const selectedItems = ref([
+  { id: 5, name: '用户 5' }, // 第一页
+  { id: 25, name: '用户 25' }, // 第三页
+  { id: 50, name: '用户 50' } // 第五页
+])
+// 组件会为每个选中项创建虚拟选项，确保正确回显
 </script>
 ```
 
@@ -717,38 +854,79 @@ const fetchUsers = async params => {
 
 ### Props
 
-| 属性名         | 类型                          | 默认值     | 说明                                                 |
-| -------------- | ----------------------------- | ---------- | ---------------------------------------------------- |
-| modelValue     | `Record<string, any> \| null` | `null`     | 绑定值，对象形式，属性名由 valueKey 和 labelKey 决定 |
-| placeholder    | `string`                      | `'请选择'` | 占位符                                               |
-| valueKey       | `string`                      | `'value'`  | 选项值的键名                                         |
-| labelKey       | `string`                      | `'label'`  | 选项标签的键名                                       |
-| pageSize       | `number`                      | `10`       | 每页显示条数                                         |
-| clearable      | `boolean`                     | `true`     | 是否可清空                                           |
-| showPagination | `boolean`                     | `true`     | 是否显示分页器                                       |
-| popperClass    | `string`                      | `''`       | 下拉框类名                                           |
-| debounceTime   | `number`                      | `300`      | 搜索防抖时间(ms)                                     |
-| fetchData      | `Function`                    | **必需**   | 获取数据的方法                                       |
-| style          | `CSSProperties`               | `{}`       | 组件样式对象                                         |
+| 属性名         | 类型                                                   | 默认值     | 说明                                                                   |
+| -------------- | ------------------------------------------------------ | ---------- | ---------------------------------------------------------------------- |
+| modelValue     | `Record<string, any> \| Record<string, any>[] \| null` | `null`     | 绑定值，单选为对象，多选为对象数组，属性名由 valueKey 和 labelKey 决定 |
+| placeholder    | `string`                                               | `'请选择'` | 占位符                                                                 |
+| valueKey       | `string`                                               | `'value'`  | 选项值的键名                                                           |
+| labelKey       | `string`                                               | `'label'`  | 选项标签的键名                                                         |
+| pageSize       | `number`                                               | `10`       | 每页显示条数                                                           |
+| clearable      | `boolean`                                              | `true`     | 是否可清空                                                             |
+| showPagination | `boolean`                                              | `true`     | 是否显示分页器                                                         |
+| popperClass    | `string`                                               | `''`       | 下拉框类名                                                             |
+| debounceTime   | `number`                                               | `300`      | 搜索防抖时间(ms)                                                       |
+| fetchData      | `Function`                                             | **必需**   | 获取数据的方法                                                         |
+| style          | `CSSProperties`                                        | `{}`       | 组件样式对象                                                           |
+| multiple       | `boolean`                                              | `false`    | 是否多选                                                               |
 
 ### Events
 
-| 事件名            | 参数                                                        | 说明                            |
-| ----------------- | ----------------------------------------------------------- | ------------------------------- |
-| update:modelValue | `(value: Record<string, any> \| null)`                      | 绑定值更新，返回对象形式或 null |
-| change            | `(value: Record<string, any> \| null, option?: OptionItem)` | 选择变化                        |
-| clear             | `()`                                                        | 清空选择                        |
-| visible-change    | `(visible: boolean)`                                        | 下拉框显示/隐藏                 |
-| data-loaded       | `(result: FetchDataResult)`                                 | 数据加载完成                    |
-| error             | `(error: any)`                                              | 数据加载错误                    |
+| 事件名            | 参数                                                                                                 | 说明                                                      |
+| ----------------- | ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| update:modelValue | `(value: Record<string, any> \| Record<string, any>[] \| null)`                                      | 绑定值更新，单选返回对象或 null，多选返回对象数组或空数组 |
+| change            | `(value: Record<string, any> \| Record<string, any>[] \| null, option?: OptionItem \| OptionItem[])` | 选择变化，多选模式下 value 和 option 均为数组             |
+| clear             | `()`                                                                                                 | 清空选择                                                  |
+| visible-change    | `(visible: boolean)`                                                                                 | 下拉框显示/隐藏                                           |
+| data-loaded       | `(result: FetchDataResult)`                                                                          | 数据加载完成                                              |
+| error             | `(error: any)`                                                                                       | 数据加载错误                                              |
 
 ### Methods
 
-| 方法名            | 参数                | 说明                   |
-| ----------------- | ------------------- | ---------------------- |
-| refresh           | `()`                | 刷新数据               |
-| search            | `(keyword: string)` | 搜索指定关键词         |
-| getSelectInstance | `()`                | 获取内部 ElSelect 实例 |
+组件实例继承了 Element Plus ElSelect 的所有方法和属性，可以直接调用原生方法。
+
+**自定义方法**
+
+| 方法名  | 参数                | 返回值 | 说明                           |
+| ------- | ------------------- | ------ | ------------------------------ |
+| refresh | `()`                | `void` | 重置搜索关键词和页码并刷新数据 |
+| search  | `(keyword: string)` | `void` | 搜索指定关键词，重置页码为1    |
+
+**自定义属性**
+
+| 属性名      | 类型                          | 说明             |
+| ----------- | ----------------------------- | ---------------- |
+| loading     | `Readonly<Ref<boolean>>`      | 数据加载状态     |
+| options     | `Readonly<Ref<OptionItem[]>>` | 当前页的选项列表 |
+| total       | `Readonly<Ref<number>>`       | 数据总条数       |
+| currentPage | `Readonly<Ref<number>>`       | 当前页码         |
+
+**继承的 ElSelect 方法**
+
+| 方法名 | 参数 | 说明                   |
+| ------ | ---- | ---------------------- |
+| focus  | `()` | 使选择器获取焦点       |
+| blur   | `()` | 使选择器失去焦点       |
+| ...    | -    | 支持 ElSelect 所有方法 |
+
+**使用示例**
+
+```typescript
+const selectRef = ref<PaginationSelectInstance>()
+
+// 调用自定义方法
+selectRef.value?.refresh()
+selectRef.value?.search('关键词')
+
+// 访问自定义属性
+console.log(selectRef.value?.loading) // 是否正在加载
+console.log(selectRef.value?.options) // 当前选项列表
+console.log(selectRef.value?.total) // 数据总数
+console.log(selectRef.value?.currentPage) // 当前页码
+
+// 直接调用 ElSelect 的原生方法
+selectRef.value?.focus()
+selectRef.value?.blur()
+```
 
 ### Slots
 
@@ -787,8 +965,58 @@ interface FetchDataResult {
   [key: string]: any
 }
 
-// 组件实例接口
-interface PaginationSelectInstance {
+// Props 接口
+interface PaginationSelectProps {
+  /** 绑定值，单选为对象，多选为对象数组 */
+  modelValue?: Record<string, any> | Record<string, any>[] | null
+  /** 占位符 */
+  placeholder?: string
+  /** 选项值的键名 */
+  valueKey?: string
+  /** 选项标签的键名 */
+  labelKey?: string
+  /** 每页显示条数 */
+  pageSize?: number
+  /** 是否可清空 */
+  clearable?: boolean
+  /** 是否显示分页器 */
+  showPagination?: boolean
+  /** 下拉框类名 */
+  popperClass?: string
+  /** 搜索防抖时间(ms) */
+  debounceTime?: number
+  /** 获取数据的方法 */
+  fetchData: (params: FetchDataParams) => Promise<FetchDataResult>
+  /** Style样式 */
+  style?: CSSProperties
+  /** 是否多选 */
+  multiple?: boolean
+}
+
+// Emits 接口
+interface PaginationSelectEmits {
+  /** 更新绑定值，单选返回对象或 null，多选返回对象数组 */
+  'update:modelValue': [value: Record<string, any> | Record<string, any>[] | null]
+  /** 选择变化，多选模式下 value 和 option 均为数组 */
+  change: [
+    value: Record<string, any> | Record<string, any>[] | null,
+    option?: OptionItem | OptionItem[]
+  ]
+  /** 清空 */
+  clear: []
+  /** 下拉框显示/隐藏 */
+  'visible-change': [visible: boolean]
+  /** 数据加载完成 */
+  'data-loaded': [result: FetchDataResult]
+  /** 错误 */
+  error: [error: any]
+}
+
+// ElSelect 实例类型
+type ElSelectInstanceType = InstanceType<typeof ElSelect>
+
+// 组件实例接口（继承 ElSelect 的所有方法和属性）
+type PaginationSelectInstance = ElSelectInstanceType & {
   /** 刷新数据 */
   refresh: () => void
   /** 搜索 */
@@ -801,8 +1029,6 @@ interface PaginationSelectInstance {
   total: Readonly<Ref<number>>
   /** 当前页 */
   currentPage: Readonly<Ref<number>>
-  /** 获取Select组件实例 */
-  getSelectInstance: () => InstanceType<typeof ElSelect>
 }
 ```
 
@@ -873,7 +1099,7 @@ const handleError = error => {
 
 ## 注意事项
 
-1. **modelValue 格式**：必须是对象形式，包含 valueKey 和 labelKey 对应的属性
+1. **modelValue 格式**：单选模式必须是对象形式，多选模式必须是对象数组形式，均包含 valueKey 和 labelKey 对应的属性
 2. **fetchData 必需**：必须提供数据获取方法
 3. **数据格式**：返回的数据格式必须符合 `FetchDataResult` 接口
 4. **自动回显**：组件会自动处理跨页选择的回显，无需手动维护 displayLabel
@@ -883,15 +1109,23 @@ const handleError = error => {
 8. **分页显示**：分页器只在数据总数大于每页显示条数时显示
 9. **插槽支持**：支持 Element Plus Select 的大部分插槽，但 `footer` 插槽已被分页器占用
 10. **样式定制**：支持通过 `style`、`popperClass` 和 CSS 变量多种方式自定义样式
+11. **多选模式**：多选模式下 modelValue 必须初始化为数组（可以是空数组 `[]`），清空后返回空数组而非 `null`
 
 ## 常见问题
 
 ### Q: modelValue 的格式是什么？
 
-A: modelValue 必须是对象形式，包含 valueKey 和 labelKey 对应的属性。例如：
+A: modelValue 的格式取决于是否为多选模式：
+
+**单选模式**：对象形式，包含 valueKey 和 labelKey 对应的属性
 
 - 默认情况：`{ value: 1, label: '选项一' }`
 - 自定义属性：`{ id: 1, name: '张三' }`
+
+**多选模式**：对象数组形式
+
+- 默认情况：`[{ value: 1, label: '选项一' }, { value: 2, label: '选项二' }]`
+- 自定义属性：`[{ id: 1, name: '张三' }, { id: 2, name: '李四' }]`
 
 ### Q: 如何处理跨页选择的回显？
 
@@ -943,8 +1177,58 @@ A: 虚拟选项是组件内部用于数据回显的机制。当选中的选项�
 A: 通过 `change` 事件的第一个参数即可获取完整信息：
 
 ```typescript
+// 单选模式
 const handleChange = (value, option) => {
   console.log(value) // { id: 1, name: '张三' }
   console.log(option) // 完整的选项对象，包含所有字段
 }
+
+// 多选模式
+const handleMultipleChange = (value, options) => {
+  console.log(value) // [{ id: 1, name: '张三' }, { id: 2, name: '李四' }]
+  console.log(options) // 完整的选项对象数组
+}
+```
+
+### Q: 如何启用多选模式？
+
+A: 通过设置 `multiple` 属性为 `true` 即可启用多选模式：
+
+```vue
+<IipPaginationSelect v-model="selectedUsers" :fetch-data="fetchUserData" multiple />
+
+<script setup>
+// 多选模式下 modelValue 必须是数组
+const selectedUsers = ref([])
+</script>
+```
+
+### Q: 多选模式下如何设置初始值？
+
+A: 直接设置对象数组即可：
+
+```typescript
+// 设置初始选中值
+const selectedUsers = ref([
+  { id: 16, name: '用户16' },
+  { id: 17, name: '用户17' }
+])
+```
+
+组件会自动回显这些值，即使它们不在当前页。
+
+### Q: 多选模式下清空后 modelValue 是什么？
+
+A: 多选模式下清空后 modelValue 是空数组 `[]`，单选模式下是 `null`。
+
+```typescript
+// 多选模式
+watch(selectedUsers, val => {
+  console.log(val) // [] 或 [{ id: 1, name: '用户1' }, ...]
+})
+
+// 单选模式
+watch(selectedUser, val => {
+  console.log(val) // null 或 { id: 1, name: '用户1' }
+})
 ```

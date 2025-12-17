@@ -19,7 +19,7 @@ export type FetchDataResult = {
 
 export type PaginationSelectProps = {
   /** 绑定值，对象形式，属性名由 valueKey 和 labelKey 决定 */
-  modelValue?: Record<string, any> | null
+  modelValue?: Record<string, any> | Record<string, any>[] | null
   /** 占位符 */
   placeholder?: string
   /** 选项值的键名 */
@@ -40,13 +40,18 @@ export type PaginationSelectProps = {
   fetchData: (params: FetchDataParams) => Promise<FetchDataResult>
   /** Style样式 */
   style?: CSSProperties
+  /** 是否多选 */
+  multiple?: boolean
 }
 
 export type PaginationSelectEmits = {
-  /** 更新绑定值，返回对象形式，属性名由 valueKey 和 labelKey 决定 */
-  'update:modelValue': [value: Record<string, any> | null]
-  /** 选择变化 */
-  change: [value: Record<string, any> | null, option?: OptionItem]
+  /** 更新绑定值，返回对象形式，属性名由 valueKey 和 labelKey 决定；多选模式下返回数组 */
+  'update:modelValue': [value: Record<string, any> | Record<string, any>[] | null]
+  /** 选择变化；多选模式下 value 为数组，option 为选中项数组 */
+  change: [
+    value: Record<string, any> | Record<string, any>[] | null,
+    option?: OptionItem | OptionItem[]
+  ]
   /** 清空 */
   clear: []
   /** 下拉框显示/隐藏 */
@@ -56,8 +61,8 @@ export type PaginationSelectEmits = {
   /** 错误 */
   error: [error: any]
 }
-
-export type PaginationSelectInstance = {
+export type ElSelectInstanceType = InstanceType<typeof ElSelect>
+export type PaginationSelectInstance = ElSelectInstanceType & {
   /** 刷新数据 */
   refresh: () => void
   /** 搜索 */
@@ -70,8 +75,6 @@ export type PaginationSelectInstance = {
   total: Readonly<Ref<number>>
   /** 当前页 */
   currentPage: Readonly<Ref<number>>
-  /** 获取Select组件实例 */
-  getSelectInstance: () => InstanceType<typeof ElSelect>
 }
 
-export type PaginationSelectSlots = InstanceType<typeof ElSelect>['$slots']
+export type PaginationSelectSlots = ElSelectInstanceType['$slots']

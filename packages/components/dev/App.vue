@@ -47,6 +47,7 @@
       <div class="demo-section">
         <h3>基础用法</h3>
         <IipPaginationSelect
+          ref="paginationSelect1Ref"
           v-model="paginationSelect1"
           :fetch-data="fetchUserData"
           :loading="false"
@@ -242,7 +243,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { IipDateRange } from '../src/components/date-range'
-import { IipPaginationSelect } from '../src/components/pagination-select'
+import {
+  IipPaginationSelect,
+  type PaginationSelectInstance
+} from '../src/components/pagination-select'
 import { IipDialogSelect, openDialogSelect } from '../src/components/dialog-select'
 import type {
   FetchDataParams,
@@ -274,8 +278,15 @@ const handleChange3 = (value: { startTime: string; endTime: string }) => {
 }
 
 // PaginationSelect 相关
-const paginationSelect1 = ref(null)
-const paginationSelect2 = ref(null)
+const paginationSelect1 = ref([
+  { value: 16, label: '用户16' },
+  { value: 17, label: '用户17' }
+])
+const paginationSelect1Ref = ref<PaginationSelectInstance | null>(null)
+const paginationSelect2 = ref({
+  value: 16,
+  label: '用户16'
+})
 const paginationSelect3 = ref(null)
 const paginationSelect4 = ref(null)
 const paginationSelect5 = ref(null)
@@ -352,6 +363,8 @@ const fetchProductData = async (params: FetchDataParams): Promise<FetchDataResul
 
 const handlePaginationSelectChange1 = (value, option?: OptionItem) => {
   console.log('paginationSelect1 changed:', value, option)
+  console.log('paginationSelect1Ref', paginationSelect1Ref.value.selectedLabel)
+  console.log('paginationSelect1Ref', paginationSelect1Ref.value.options)
 }
 
 const handlePaginationSelectChange2 = (value, option?: OptionItem) => {
