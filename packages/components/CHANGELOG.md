@@ -1,5 +1,11 @@
 # @bingwu/iip-ui-components
 
+## 1.2.22
+
+### Patch Changes
+
+- 新增openDialogSelect 函数式调用和pagination-select多选功能
+
 ## 1.2.21
 
 ### Patch Changes
