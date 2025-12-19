@@ -1,5 +1,11 @@
 # @bingwu/iip-ui-components
 
+## 1.2.23
+
+### Patch Changes
+
+- 修复openDialogSelect函数导出问题，修复openDialogSelect组件gridConfig报错问题
+
 ## 1.2.22
 
 ### Patch Changes
