@@ -282,14 +282,19 @@ const mockUsers = Array.from({ length: 50 }, (_, i) => ({
   label: `用户${i + 1}`,
   email: `user${i + 1}@example.com`,
 }))
-
+type UserOption = {
+  value: number
+  label: string
+  email: string
+}
 // 模拟获取用户数据的函数
-const fetchUserData = async (params: FetchDataParams): Promise<FetchDataResult> => {
+const fetchUserData = async (
+  params: FetchDataParams<UserOption>,
+): Promise<FetchDataResult<UserOption>> => {
   // 模拟网络延迟
   await new Promise((resolve) => setTimeout(resolve, 300))
 
   const { page, pageSize, keyword } = params
-
   // 根据关键词过滤
   let filteredUsers = mockUsers
   if (keyword) {
