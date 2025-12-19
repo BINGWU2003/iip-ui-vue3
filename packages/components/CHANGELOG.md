@@ -1,5 +1,11 @@
 # @bingwu/iip-ui-components
 
+## 1.2.24
+
+### Patch Changes
+
+- vxe打包配置
+
 ## 1.2.23
 
 ### Patch Changes
