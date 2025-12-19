@@ -1,7 +1,8 @@
 import type { CSSProperties, Ref } from 'vue'
 import { ElSelect } from 'element-plus'
-export type OptionItem = {
-  [key: string]: any
+import type { BaseRecord } from '../../utils/types'
+
+export type OptionItem<T extends BaseRecord = BaseRecord> = T & {
   disabled?: boolean
 }
 

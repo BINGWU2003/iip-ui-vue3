@@ -39,18 +39,27 @@ import { openDialogSelect } from '@bingwu/iip-ui-components'
 import type {
   FetchDialogSelectDataParams,
   FetchDialogSelectDataResult,
-  DialogSelectOptions,
-  TableRowItem
+  DialogSelectOptions
 } from '@bingwu/iip-ui-components'
 import { ElMessage } from 'element-plus'
 
+// 定义员工数据类型（使用泛型获得类型推导）
+interface EmployeeRow {
+  id: number
+  name: string
+  department: string
+  email: string
+  phone: string
+  status: string
+}
+
 const tableData = ref([
-  { id: 1, taskName: '开发用户登录功能', owner: '', ownerData: null },
-  { id: 2, taskName: '设计产品首页', owner: '', ownerData: null }
+  { id: 1, taskName: '开发用户登录功能', owner: '', ownerData: null as EmployeeRow | null },
+  { id: 2, taskName: '设计产品首页', owner: '', ownerData: null as EmployeeRow | null }
 ])
 
 // 模拟员工数据
-const mockEmployees = Array.from({ length: 100 }, (_, i) => ({
+const mockEmployees: EmployeeRow[] = Array.from({ length: 100 }, (_, i) => ({
   id: i + 1,
   name: `员工${i + 1}`,
   department: ['技术部', '产品部', '运营部', '市场部', '人事部'][i % 5],
@@ -94,21 +103,24 @@ const employeeDialogSelectOptions: DialogSelectOptions = [
   }
 ]
 
-// 获取员工数据
+// 获取员工数据（使用泛型，获得类型推导）
 const fetchEmployeeData = async (
-  params: FetchDialogSelectDataParams
-): Promise<FetchDialogSelectDataResult> => {
+  params: FetchDialogSelectDataParams<EmployeeRow>
+): Promise<FetchDialogSelectDataResult<EmployeeRow>> => {
   // 模拟网络延迟
   await new Promise(resolve => setTimeout(resolve, 300))
 
+  // ✅ params 类型已推导：{ page: number, pageSize: number, name?: string, department?: string, ... }
   const { page, pageSize, name, department } = params
 
   // 根据筛选条件过滤
   let filteredEmployees = mockEmployees
   if (name) {
-    filteredEmployees = filteredEmployees.filter(employee => employee.name.includes(name as string))
+    // ✅ name 类型为 string，无需类型断言
+    filteredEmployees = filteredEmployees.filter(employee => employee.name.includes(name))
   }
   if (department) {
+    // ✅ department 类型为 string，无需类型断言
     filteredEmployees = filteredEmployees.filter(employee => employee.department === department)
   }
 
@@ -126,16 +138,17 @@ const fetchEmployeeData = async (
 // 点击单元格选择负责人
 const handleOwnerClick = async (row: any) => {
   try {
-    const result = await openDialogSelect({
+    // 使用泛型，result 类型为 EmployeeRow | null
+    const result = await openDialogSelect<EmployeeRow>({
       fetchData: fetchEmployeeData,
       dialogSelectOptions: employeeDialogSelectOptions,
       dialogTitle: '选择负责人',
       initialValue: row.ownerData // 传入当前选中的值
     })
 
-    // result 是选中的对象（单选模式）
-    if (result && typeof result === 'object' && !Array.isArray(result)) {
-      row.owner = result.name as string
+    // ✅ result 类型已推导为 EmployeeRow | null
+    if (result) {
+      row.owner = result.name // ✅ result.name 类型为 string
       row.ownerData = result
       ElMessage.success(`已选择负责人：${result.name}`)
     }
@@ -809,9 +822,30 @@ const handleAssigneeClick = async (row: any) => {
 函数签名：
 
 ```typescript
-function openDialogSelect(
-  options: OpenDialogSelectOptions
-): Promise<TableRowItem | TableRowItem[] | null>
+function openDialogSelect<T extends BaseRecord = BaseRecord>(
+  options: OpenDialogSelectOptions<T>
+): Promise<T | T[] | null>
+```
+
+**泛型参数说明：**
+
+- `T`: 表格行数据类型，默认为 `BaseRecord`（即 `Record<string, any>`）
+- 传入具体类型后，返回值、参数类型都会自动推导
+
+**使用示例：**
+
+```typescript
+// 不传泛型（使用默认类型）
+const result1 = await openDialogSelect({ ... })
+// result1 类型为 Record<string, any> | Record<string, any>[] | null
+
+// 传入具体类型（推荐）
+interface UserRow {
+  id: number
+  name: string
+}
+const result2 = await openDialogSelect<UserRow>({ ... })
+// result2 类型为 UserRow | UserRow[] | null
 ```
 
 ### OpenDialogSelectOptions
@@ -832,10 +866,29 @@ function openDialogSelect(
 
 ### 返回值
 
-函数返回一个 Promise：
+函数返回一个 Promise，类型根据泛型参数推导：
 
-- **单选模式** (`multiple: false`): `Promise<TableRowItem | null>`
-- **多选模式** (`multiple: true`): `Promise<TableRowItem[] | null>`
+- **单选模式** (`multiple: false`): `Promise<T | null>`
+- **多选模式** (`multiple: true`): `Promise<T[] | null>`
+
+其中 `T` 是传入的泛型参数，默认为 `BaseRecord`。
+
+**示例：**
+
+```typescript
+interface EmployeeRow {
+  id: number
+  name: string
+}
+
+// 单选模式
+const result1 = await openDialogSelect<EmployeeRow>({ ... })
+// result1 类型为 EmployeeRow | null
+
+// 多选模式
+const result2 = await openDialogSelect<EmployeeRow>({ multiple: true, ... })
+// result2 类型为 EmployeeRow[] | null
+```
 
 ### 错误处理
 
@@ -859,21 +912,40 @@ try {
 ```typescript
 import type { VxeGridProps, VxeColumnProps } from 'vxe-table'
 
-// 表格行数据
-export type TableRowItem = {
-  [key: string]: any
-}
+/** 基础对象类型，用作泛型约束和默认值 */
+export type BaseRecord = Record<string, any>
 
-// 获取数据参数
-export type FetchDialogSelectDataParams = {
+/** 表格行数据类型（支持泛型，建议传入具体类型） */
+export type TableRowItem<T extends BaseRecord = BaseRecord> = T
+
+/** 基础分页参数 */
+export type PaginationParams = {
   page: number
   pageSize: number
-  [key: string]: any // 支持其他查询参数（如筛选条件）
 }
 
-// 获取数据结果
-export type FetchDialogSelectDataResult = {
-  data: TableRowItem[]
+/**
+ * 查询参数类型（支持泛型推导）
+ * @template T - 表格行数据类型，查询参数会根据此类型推导
+ * @description 包含必填的分页参数 + 表格字段的可选查询参数
+ * @example
+ * interface UserRow {
+ *   id: number
+ *   name: string
+ *   department: string
+ * }
+ * // params 类型为 { page: number, pageSize: number, id?: number, name?: string, department?: string }
+ * const fetchData = (params: FetchDialogSelectDataParams<UserRow>) => { ... }
+ */
+export type FetchDialogSelectDataParams<T extends BaseRecord = BaseRecord> = PaginationParams &
+  Partial<T>
+
+/**
+ * 查询结果类型（支持泛型）
+ * @template T - 表格行数据类型
+ */
+export type FetchDialogSelectDataResult<T extends BaseRecord = BaseRecord> = {
+  data: T[]
   total: number
   [key: string]: any
 }
@@ -905,21 +977,63 @@ export type DialogSelectOption = {
   }
 }
 
-// 函数选项接口
-export interface OpenDialogSelectOptions {
-  fetchData: (params: FetchDialogSelectDataParams) => Promise<FetchDialogSelectDataResult>
+/**
+ * 函数式调用 DialogSelect 的选项（支持泛型）
+ * @template T - 表格行数据类型
+ */
+export type OpenDialogSelectOptions<T extends BaseRecord = BaseRecord> = {
+  fetchData: (params: FetchDialogSelectDataParams<T>) => Promise<FetchDialogSelectDataResult<T>>
   dialogSelectOptions: DialogSelectOptions
   multiple?: boolean
   valueKey?: string
   labelKey?: string
-  keyGetter?: (row: TableRowItem) => string | number
+  keyGetter?: (row: T) => string | number
   dialogTitle?: string
   dialogWidth?: string | number
   gridConfig?: VxeGridProps
-  initialValue?: TableRowItem | TableRowItem[] | null
+  initialValue?: T | T[] | null
   /** 弹窗关闭动画时长（ms），默认 300 */
   animationDuration?: number
 }
+```
+
+### 泛型使用示例
+
+通过泛型，可以获得更精确的类型推导和代码提示：
+
+```typescript
+// 1. 定义表格行数据类型
+interface EmployeeRow {
+  id: number
+  name: string
+  department: string
+  email: string
+  phone: string
+  status: string
+}
+
+// 2. fetchData 参数会自动推导
+const fetchEmployeeData = async (
+  params: FetchDialogSelectDataParams<EmployeeRow>
+): Promise<FetchDialogSelectDataResult<EmployeeRow>> => {
+  // ✅ params.page: number (必填)
+  // ✅ params.pageSize: number (必填)
+  // ✅ params.name?: string (可选)
+  // ✅ params.department?: string (可选)
+  // ❌ params.foo - 类型错误，不存在的字段
+
+  const { page, pageSize, name, department } = params
+  // ... 业务逻辑
+  return { data: [], total: 0 }
+}
+
+// 3. 调用时类型完全推导
+const result = await openDialogSelect<EmployeeRow>({
+  fetchData: fetchEmployeeData,
+  dialogSelectOptions: [...],
+  keyGetter: (row) => row.id  // row 类型为 EmployeeRow
+})
+// result 类型为 EmployeeRow | EmployeeRow[] | null
 ```
 
 ## 使用场景
@@ -1101,8 +1215,40 @@ try {
 
 A:
 
-- **单选** (`multiple: false`): 返回 `TableRowItem | null`
-- **多选** (`multiple: true`): 返回 `TableRowItem[] | null`
+- **单选** (`multiple: false`): 返回 `T | null`（`T` 为泛型参数）
+- **多选** (`multiple: true`): 返回 `T[] | null`
+
+如果不传泛型参数，`T` 默认为 `BaseRecord`（即 `Record<string, any>`）。
+
+### Q: 如何使用泛型获得类型推导？
+
+A: 定义表格行类型，然后在调用时传入泛型参数：
+
+```typescript
+// 1. 定义类型
+interface UserRow {
+  id: number
+  name: string
+  department: string
+}
+
+// 2. fetchData 使用泛型
+const fetchData = async (
+  params: FetchDialogSelectDataParams<UserRow>
+): Promise<FetchDialogSelectDataResult<UserRow>> => {
+  // params.name 类型为 string | undefined
+  // params.department 类型为 string | undefined
+  // params.foo 类型错误（不存在）
+  return { data: [], total: 0 }
+}
+
+// 3. 调用时传入泛型
+const result = await openDialogSelect<UserRow>({
+  fetchData,
+  dialogSelectOptions: [...]
+})
+// result 类型为 UserRow | UserRow[] | null
+```
 
 ### Q: initialValue 的作用是什么？
 
