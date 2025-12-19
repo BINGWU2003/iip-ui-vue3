@@ -1,5 +1,11 @@
 # @bingwu/iip-ui-components
 
+## 1.2.25
+
+### Patch Changes
+
+- vxe版号锁定
+
 ## 1.2.24
 
 ### Patch Changes

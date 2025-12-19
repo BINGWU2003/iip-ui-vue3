@@ -1,6 +1,6 @@
 {
   "name": "@bingwu/iip-ui-components",
-  "version": "1.2.24",
+  "version": "1.2.25",
   "description": "iip-ui-vue3 核心组件库",
   "type": "module",
   "main": "./dist/index.es.js",
