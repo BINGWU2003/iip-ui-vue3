@@ -77,11 +77,11 @@
             :checkbox-config="checkboxConfig"
             :radio-config="radioConfig"
             :row-config="rowConfig"
-            v-bind="gridConfig"
             @page-change="handlePageChange"
             @checkbox-change="handleCheckboxChange"
             @checkbox-all="handleCheckboxAll"
             @radio-change="handleRadioChange"
+            v-bind="gridConfig"
           />
         </div>
 
@@ -355,7 +355,7 @@ const gridConfig = computed(() => {
   // 合并用户传入的配置
   return {
     ...defaultConfig,
-    ...props.gridConfig
+    ...(props.gridConfig || {})
   } as any
 })
 
