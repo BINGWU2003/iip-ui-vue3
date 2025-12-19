@@ -270,11 +270,11 @@ const handleChange3 = (value: { startTime: string; endTime: string }) => {
 }
 
 // PaginationSelect 相关
-const paginationSelect1 = ref(null)
-const paginationSelect2 = ref(null)
-const paginationSelect3 = ref(null)
-const paginationSelect4 = ref(null)
-const paginationSelect5 = ref(null)
+const paginationSelect1 = ref(undefined)
+const paginationSelect2 = ref(undefined)
+const paginationSelect3 = ref(undefined)
+const paginationSelect4 = ref(undefined)
+const paginationSelect5 = ref(undefined)
 
 // 模拟用户数据
 const mockUsers = Array.from({ length: 50 }, (_, i) => ({
@@ -367,7 +367,7 @@ const handlePaginationSelectChange5 = (value: Record<string, any> | null, option
 }
 
 // DialogSelect 相关
-const dialogSelect1 = ref<TableRowItem | null>({
+const dialogSelect1 = ref<TableRowItem | undefined>({
   id: 5,
   name: '员工5',
   department: '人事部',
@@ -375,8 +375,8 @@ const dialogSelect1 = ref<TableRowItem | null>({
   phone: '13800000005',
   status: '离职',
 })
-const dialogSelect2 = ref<TableRowItem[] | null>(null)
-const dialogSelect3 = ref<TableRowItem | null>(null)
+const dialogSelect2 = ref<TableRowItem[] | undefined>(undefined)
+const dialogSelect3 = ref<TableRowItem | undefined>(undefined)
 
 // 模拟员工数据
 const mockEmployees = Array.from({ length: 100 }, (_, i) => ({
