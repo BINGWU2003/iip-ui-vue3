@@ -73,15 +73,15 @@
             :loading="loading"
             :data="tableData"
             :columns="computedColumns"
-            :pager-config="pagerConfig"
-            :checkbox-config="checkboxConfig"
-            :radio-config="radioConfig"
-            :row-config="rowConfig"
+            :pager-config="computedPagerConfig"
+            :checkbox-config="computedCheckboxConfig"
+            :radio-config="computedRadioConfig"
+            :row-config="computedRowConfig"
             @page-change="handlePageChange"
             @checkbox-change="handleCheckboxChange"
             @checkbox-all="handleCheckboxAll"
             @radio-change="handleRadioChange"
-            v-bind="gridConfig"
+            v-bind="computedGridConfig"
           />
         </div>
 
@@ -306,7 +306,7 @@ const computedColumns = computed(() => {
   return [selectColumn, ...baseColumns] as any
 })
 
-const pagerConfig = computed(() => {
+const computedPagerConfig = computed(() => {
   return {
     currentPage: currentPage.value,
     pageSize: currentPageSize.value,
@@ -325,28 +325,28 @@ const pagerConfig = computed(() => {
   } as any
 })
 
-const checkboxConfig = computed(() => {
+const computedCheckboxConfig = computed(() => {
   if (!props.multiple) return undefined
   return {
     trigger: 'row' as const // 点击行触发
   }
 })
 
-const radioConfig = computed(() => {
+const computedRadioConfig = computed(() => {
   if (props.multiple) return undefined
   return {
     trigger: 'row' as const // 点击行触发
   } as any
 })
 
-const rowConfig = computed(() => {
+const computedRowConfig = computed(() => {
   return {
     isCurrent: true, // 启用当前行高亮
     isHover: true // 启用悬停效果
   }
 })
 
-const gridConfig = computed(() => {
+const computedGridConfig = computed(() => {
   // 默认配置
   const defaultConfig = {
     border: true,
