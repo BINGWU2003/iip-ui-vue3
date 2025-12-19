@@ -38,31 +38,43 @@ import { ref } from 'vue'
 import { IipPaginationSelect } from '@bingwu/iip-ui-components'
 import type { FetchDataParams, FetchDataResult } from '@bingwu/iip-ui-components'
 
+// 定义用户数据类型（使用泛型获得类型推导）
+interface UserOption {
+  id: number
+  name: string
+  email: string
+}
+
 // modelValue 是对象形式：{ id: 1, name: '张三' }
-const selectedUser = ref<{ id: number; name: string } | null>(null)
+const selectedUser = ref<UserOption | null>(null)
 
 // 处理选择变化
-const handleChange = value => {
+const handleChange = (value: UserOption | null) => {
+  // ✅ value 类型已推导为 UserOption | null
   console.log('选中的用户：', value) // { id: 1, name: '张三' } 或 null
 }
 
 // 模拟用户数据
-const mockUsers = Array.from({ length: 100 }, (_, i) => ({
+const mockUsers: UserOption[] = Array.from({ length: 100 }, (_, i) => ({
   id: i + 1,
   name: `用户${i + 1}`,
   email: `user${i + 1}@example.com`
 }))
 
-// 模拟数据获取函数
-const fetchUserData = async (params: FetchDataParams): Promise<FetchDataResult> => {
+// 模拟数据获取函数（使用泛型，获得类型推导）
+const fetchUserData = async (
+  params: FetchDataParams<UserOption>
+): Promise<FetchDataResult<UserOption>> => {
   // 模拟网络延迟
   await new Promise(resolve => setTimeout(resolve, 300))
 
+  // ✅ params 类型已推导：{ page: number, pageSize: number, keyword: string, id?: number, name?: string, email?: string }
   const { page, pageSize, keyword } = params
 
   // 根据关键词过滤
   let filteredUsers = mockUsers
   if (keyword) {
+    // ✅ keyword 类型为 string，无需类型断言
     filteredUsers = mockUsers.filter(
       user => user.name.includes(keyword) || user.email.includes(keyword)
     )
@@ -79,15 +91,17 @@ const fetchUserData = async (params: FetchDataParams): Promise<FetchDataResult> 
   }
 }
 
-// 真实 API 调用示例
-const fetchUserDataFromAPI = async (params: FetchDataParams): Promise<FetchDataResult> => {
+// 真实 API 调用示例（使用泛型）
+const fetchUserDataFromAPI = async (
+  params: FetchDataParams<UserOption>
+): Promise<FetchDataResult<UserOption>> => {
   const { page, pageSize, keyword } = params
 
   const response = await fetch(`/api/users?page=${page}&size=${pageSize}&search=${keyword}`)
   const data = await response.json()
 
   return {
-    data: data.list, // 数据列表，格式：[{ id: 1, name: '张三' }, ...]
+    data: data.list, // 数据列表，格式：UserOption[]
     total: data.total // 总数
   }
 }
@@ -123,32 +137,45 @@ const fetchUserDataFromAPI = async (params: FetchDataParams): Promise<FetchDataR
 <script setup lang="ts">
 import { ref } from 'vue'
 import { IipPaginationSelect } from '@bingwu/iip-ui-components'
-import type { FetchDataParams, FetchDataResult } from '@bingwu/iip-ui-components'
+import type { FetchDataParams, FetchDataResult, OptionItem } from '@bingwu/iip-ui-components'
+
+// 定义用户数据类型
+interface UserOption {
+  id: number
+  name: string
+  email: string
+}
 
 // 多选模式下 modelValue 是对象数组
-const selectedUsers = ref<{ id: number; name: string }[]>([])
+const selectedUsers = ref<UserOption[]>([])
 
-// 处理选择变化
-const handleChange = (value, options) => {
+// 处理选择变化（使用泛型，类型已推导）
+const handleChange = (value: UserOption[] | null, options?: OptionItem<UserOption>[]) => {
+  // ✅ value 类型为 UserOption[] | null
+  // ✅ options 类型为 OptionItem<UserOption>[] | undefined
   console.log('选中的用户：', value) // [{ id: 1, name: '用户1' }, { id: 2, name: '用户2' }]
   console.log('完整选项：', options) // 包含所有字段的完整选项数组
 }
 
 // 模拟用户数据
-const mockUsers = Array.from({ length: 100 }, (_, i) => ({
+const mockUsers: UserOption[] = Array.from({ length: 100 }, (_, i) => ({
   id: i + 1,
   name: `用户${i + 1}`,
   email: `user${i + 1}@example.com`
 }))
 
-// 模拟数据获取函数
-const fetchUserData = async (params: FetchDataParams): Promise<FetchDataResult> => {
+// 模拟数据获取函数（使用泛型）
+const fetchUserData = async (
+  params: FetchDataParams<UserOption>
+): Promise<FetchDataResult<UserOption>> => {
   await new Promise(resolve => setTimeout(resolve, 300))
 
+  // ✅ params 类型已推导
   const { page, pageSize, keyword } = params
 
   let filteredUsers = mockUsers
   if (keyword) {
+    // ✅ keyword 类型为 string
     filteredUsers = mockUsers.filter(
       user => user.name.includes(keyword) || user.email.includes(keyword)
     )
@@ -355,13 +382,27 @@ const selection3 = ref(null)
 <script setup lang="ts">
 import { ref } from 'vue'
 import { IipPaginationSelect } from '@bingwu/iip-ui-components'
+import type { FetchDataParams, FetchDataResult } from '@bingwu/iip-ui-components'
+
+// 定义数据类型
+interface UserOption {
+  id: number
+  name: string
+  email: string
+}
+
+interface CategoryOption {
+  id: number
+  name: string
+}
 
 const form = ref({
-  user: null as { id: number; name: string } | null,
-  category: null as { id: number; name: string } | null
+  user: null as UserOption | null,
+  category: null as CategoryOption | null
 })
 
 const handleSubmit = () => {
+  // ✅ form.value.user 类型为 UserOption | null
   console.log('提交数据：', {
     userId: form.value.user?.id,
     userName: form.value.user?.name,
@@ -374,18 +415,23 @@ const handleSubmit = () => {
 }
 
 // 模拟用户数据
-const mockUsers = Array.from({ length: 100 }, (_, i) => ({
+const mockUsers: UserOption[] = Array.from({ length: 100 }, (_, i) => ({
   id: i + 1,
   name: `用户${i + 1}`,
   email: `user${i + 1}@example.com`
 }))
 
-const fetchUsers = async params => {
+// 使用泛型
+const fetchUsers = async (
+  params: FetchDataParams<UserOption>
+): Promise<FetchDataResult<UserOption>> => {
   await new Promise(resolve => setTimeout(resolve, 300))
+  // ✅ params 类型已推导
   const { page, pageSize, keyword } = params
 
   let filtered = mockUsers
   if (keyword) {
+    // ✅ keyword 类型为 string
     filtered = mockUsers.filter(user => user.name.includes(keyword) || user.email.includes(keyword))
   }
 
@@ -396,17 +442,22 @@ const fetchUsers = async params => {
 }
 
 // 模拟分类数据
-const mockCategories = Array.from({ length: 50 }, (_, i) => ({
+const mockCategories: CategoryOption[] = Array.from({ length: 50 }, (_, i) => ({
   id: i + 1,
   name: `分类${i + 1}`
 }))
 
-const fetchCategories = async params => {
+// 使用泛型
+const fetchCategories = async (
+  params: FetchDataParams<CategoryOption>
+): Promise<FetchDataResult<CategoryOption>> => {
   await new Promise(resolve => setTimeout(resolve, 300))
+  // ✅ params 类型已推导
   const { page, pageSize, keyword } = params
 
   let filtered = mockCategories
   if (keyword) {
+    // ✅ keyword 类型为 string
     filtered = mockCategories.filter(cat => cat.name.includes(keyword))
   }
 
@@ -452,10 +503,23 @@ const fetchCategories = async params => {
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { IipPaginationSelect } from '@bingwu/iip-ui-components'
+import type { FetchDataParams, FetchDataResult } from '@bingwu/iip-ui-components'
+
+// 定义数据类型
+interface UserOption {
+  id: number
+  name: string
+  email: string
+}
+
+interface CategoryOption {
+  id: number
+  name: string
+}
 
 const form = ref({
-  user: null as { id: number; name: string } | null,
-  category: null as { id: number; name: string } | null
+  user: null as UserOption | null,
+  category: null as CategoryOption | null
 })
 
 // 加载表单数据
@@ -481,6 +545,7 @@ onMounted(async () => {
 })
 
 const handleUpdate = async () => {
+  // ✅ form.value.user 类型为 UserOption | null
   console.log('更新数据：', {
     userId: form.value.user?.id,
     userName: form.value.user?.name,
@@ -493,18 +558,23 @@ const handleUpdate = async () => {
 }
 
 // 模拟用户数据
-const mockUsers = Array.from({ length: 100 }, (_, i) => ({
+const mockUsers: UserOption[] = Array.from({ length: 100 }, (_, i) => ({
   id: i + 1,
   name: `用户${i + 1}`,
   email: `user${i + 1}@example.com`
 }))
 
-const fetchUsers = async params => {
+// 使用泛型
+const fetchUsers = async (
+  params: FetchDataParams<UserOption>
+): Promise<FetchDataResult<UserOption>> => {
   await new Promise(resolve => setTimeout(resolve, 300))
+  // ✅ params 类型已推导
   const { page, pageSize, keyword } = params
 
   let filtered = mockUsers
   if (keyword) {
+    // ✅ keyword 类型为 string
     filtered = mockUsers.filter(user => user.name.includes(keyword) || user.email.includes(keyword))
   }
 
@@ -515,17 +585,22 @@ const fetchUsers = async params => {
 }
 
 // 模拟分类数据
-const mockCategories = Array.from({ length: 50 }, (_, i) => ({
+const mockCategories: CategoryOption[] = Array.from({ length: 50 }, (_, i) => ({
   id: i + 1,
   name: `分类${i + 1}`
 }))
 
-const fetchCategories = async params => {
+// 使用泛型
+const fetchCategories = async (
+  params: FetchDataParams<CategoryOption>
+): Promise<FetchDataResult<CategoryOption>> => {
   await new Promise(resolve => setTimeout(resolve, 300))
+  // ✅ params 类型已推导
   const { page, pageSize, keyword } = params
 
   let filtered = mockCategories
   if (keyword) {
+    // ✅ keyword 类型为 string
     filtered = mockCategories.filter(cat => cat.name.includes(keyword))
   }
 
@@ -645,27 +720,40 @@ import type {
   PaginationSelectInstance
 } from '@bingwu/iip-ui-components'
 
-const selectedValue = ref<{ id: number; title: string } | null>(null)
-const selectRef = ref<PaginationSelectInstance>()
+// 定义项目数据类型
+interface ItemOption {
+  id: number
+  title: string
+  description: string
+}
+
+const selectedValue = ref<ItemOption | null>(null)
+// ✅ 使用泛型，options 类型为 Readonly<Ref<OptionItem<ItemOption>[]>>
+const selectRef = ref<PaginationSelectInstance<ItemOption>>()
 
 // 模拟数据
-const mockItems = Array.from({ length: 100 }, (_, i) => ({
+const mockItems: ItemOption[] = Array.from({ length: 100 }, (_, i) => ({
   id: i + 1,
   title: `项目${i + 1}`,
   description: `描述${i + 1}`
 }))
 
-const fetchData = async (params: FetchDataParams): Promise<FetchDataResult> => {
+// 使用泛型，获得类型推导
+const fetchData = async (
+  params: FetchDataParams<ItemOption>
+): Promise<FetchDataResult<ItemOption>> => {
   console.log('获取数据参数:', params)
 
   // 模拟网络延迟
   await new Promise(resolve => setTimeout(resolve, 300))
 
+  // ✅ params 类型已推导
   const { page, pageSize, keyword } = params
 
   // 根据关键词过滤
   let filtered = mockItems
   if (keyword) {
+    // ✅ keyword 类型为 string
     filtered = mockItems.filter(
       item => item.title.includes(keyword) || item.description.includes(keyword)
     )
@@ -681,11 +769,13 @@ const fetchData = async (params: FetchDataParams): Promise<FetchDataResult> => {
   }
 }
 
-const handleChange = value => {
+const handleChange = (value: ItemOption | null) => {
+  // ✅ value 类型已推导为 ItemOption | null
   console.log('选择变化:', value) // { id: 1, title: '标题' } 或 null
 }
 
-const handleDataLoaded = (result: FetchDataResult) => {
+const handleDataLoaded = (result: FetchDataResult<ItemOption>) => {
+  // ✅ result.data 类型为 OptionItem<ItemOption>[]
   console.log('数据加载完成:', result)
 }
 
@@ -854,31 +944,49 @@ const fetchUsers = async params => {
 
 ### Props
 
-| 属性名         | 类型                                                   | 默认值     | 说明                                                                   |
-| -------------- | ------------------------------------------------------ | ---------- | ---------------------------------------------------------------------- |
-| modelValue     | `Record<string, any> \| Record<string, any>[] \| null` | `null`     | 绑定值，单选为对象，多选为对象数组，属性名由 valueKey 和 labelKey 决定 |
-| placeholder    | `string`                                               | `'请选择'` | 占位符                                                                 |
-| valueKey       | `string`                                               | `'value'`  | 选项值的键名                                                           |
-| labelKey       | `string`                                               | `'label'`  | 选项标签的键名                                                         |
-| pageSize       | `number`                                               | `10`       | 每页显示条数                                                           |
-| clearable      | `boolean`                                              | `true`     | 是否可清空                                                             |
-| showPagination | `boolean`                                              | `true`     | 是否显示分页器                                                         |
-| popperClass    | `string`                                               | `''`       | 下拉框类名                                                             |
-| debounceTime   | `number`                                               | `300`      | 搜索防抖时间(ms)                                                       |
-| fetchData      | `Function`                                             | **必需**   | 获取数据的方法                                                         |
-| style          | `CSSProperties`                                        | `{}`       | 组件样式对象                                                           |
-| multiple       | `boolean`                                              | `false`    | 是否多选                                                               |
+组件支持泛型参数，传入具体类型后可以获得完整的类型推导：
+
+```typescript
+interface UserOption {
+  id: number
+  name: string
+  email: string
+}
+
+// 使用泛型
+<IipPaginationSelect<UserOption> ... />
+```
+
+| 属性名         | 类型                                                          | 默认值     | 说明                                                                   |
+| -------------- | ------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------- |
+| modelValue     | `T \| T[] \| null`（`T` 为泛型参数，默认为 `BaseRecord`）     | `null`     | 绑定值，单选为对象，多选为对象数组，属性名由 valueKey 和 labelKey 决定 |
+| placeholder    | `string`                                                      | `'请选择'` | 占位符                                                                 |
+| valueKey       | `string`                                                      | `'value'`  | 选项值的键名                                                           |
+| labelKey       | `string`                                                      | `'label'`  | 选项标签的键名                                                         |
+| pageSize       | `number`                                                      | `10`       | 每页显示条数                                                           |
+| clearable      | `boolean`                                                     | `true`     | 是否可清空                                                             |
+| showPagination | `boolean`                                                     | `true`     | 是否显示分页器                                                         |
+| popperClass    | `string`                                                      | `''`       | 下拉框类名                                                             |
+| debounceTime   | `number`                                                      | `300`      | 搜索防抖时间(ms)                                                       |
+| fetchData      | `(params: FetchDataParams<T>) => Promise<FetchDataResult<T>>` | **必需**   | 获取数据的方法                                                         |
+| style          | `CSSProperties`                                               | `{}`       | 组件样式对象                                                           |
+| multiple       | `boolean`                                                     | `false`    | 是否多选                                                               |
+
+**泛型参数说明：**
+
+- `T`: 选项数据类型，默认为 `BaseRecord`（即 `Record<string, any>`）
+- 传入具体类型后，`modelValue`、`fetchData` 等都会自动推导类型
 
 ### Events
 
-| 事件名            | 参数                                                                                                 | 说明                                                      |
-| ----------------- | ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| update:modelValue | `(value: Record<string, any> \| Record<string, any>[] \| null)`                                      | 绑定值更新，单选返回对象或 null，多选返回对象数组或空数组 |
-| change            | `(value: Record<string, any> \| Record<string, any>[] \| null, option?: OptionItem \| OptionItem[])` | 选择变化，多选模式下 value 和 option 均为数组             |
-| clear             | `()`                                                                                                 | 清空选择                                                  |
-| visible-change    | `(visible: boolean)`                                                                                 | 下拉框显示/隐藏                                           |
-| data-loaded       | `(result: FetchDataResult)`                                                                          | 数据加载完成                                              |
-| error             | `(error: any)`                                                                                       | 数据加载错误                                              |
+| 事件名            | 参数                                                                   | 说明                                                      |
+| ----------------- | ---------------------------------------------------------------------- | --------------------------------------------------------- |
+| update:modelValue | `(value: T \| T[] \| null)`（`T` 为泛型参数）                          | 绑定值更新，单选返回对象或 null，多选返回对象数组或空数组 |
+| change            | `(value: T \| T[] \| null, option?: OptionItem<T> \| OptionItem<T>[])` | 选择变化，多选模式下 value 和 option 均为数组             |
+| clear             | `()`                                                                   | 清空选择                                                  |
+| visible-change    | `(visible: boolean)`                                                   | 下拉框显示/隐藏                                           |
+| data-loaded       | `(result: FetchDataResult<T>)`（`T` 为泛型参数）                       | 数据加载完成                                              |
+| error             | `(error: any)`                                                         | 数据加载错误                                              |
 
 ### Methods
 
@@ -893,12 +1001,27 @@ const fetchUsers = async params => {
 
 **自定义属性**
 
-| 属性名      | 类型                          | 说明             |
-| ----------- | ----------------------------- | ---------------- |
-| loading     | `Readonly<Ref<boolean>>`      | 数据加载状态     |
-| options     | `Readonly<Ref<OptionItem[]>>` | 当前页的选项列表 |
-| total       | `Readonly<Ref<number>>`       | 数据总条数       |
-| currentPage | `Readonly<Ref<number>>`       | 当前页码         |
+| 属性名      | 类型                                               | 说明             |
+| ----------- | -------------------------------------------------- | ---------------- |
+| loading     | `Readonly<Ref<boolean>>`                           | 数据加载状态     |
+| options     | `Readonly<Ref<OptionItem<T>[]>>`（`T` 为泛型参数） | 当前页的选项列表 |
+| total       | `Readonly<Ref<number>>`                            | 数据总条数       |
+| currentPage | `Readonly<Ref<number>>`                            | 当前页码         |
+
+**使用示例：**
+
+```typescript
+import type { PaginationSelectInstance } from '@bingwu/iip-ui-components'
+
+interface UserOption {
+  id: number
+  name: string
+}
+
+const selectRef = ref<PaginationSelectInstance<UserOption>>()
+
+// ✅ selectRef.value.options 类型为 Readonly<Ref<OptionItem<UserOption>[]>>
+```
 
 **继承的 ElSelect 方法**
 
@@ -944,31 +1067,60 @@ selectRef.value?.blur()
 
 ### Types
 
-```typescript
-// 选项项接口
-interface OptionItem {
-  [key: string]: any
+````typescript
+import type { CSSProperties, Ref } from 'vue'
+import { ElSelect } from 'element-plus'
+
+/** 基础对象类型，用作泛型约束和默认值 */
+export type BaseRecord = Record<string, any>
+
+/** 选项项类型（支持泛型） */
+export type OptionItem<T extends BaseRecord = BaseRecord> = T & {
   disabled?: boolean
 }
 
-// 获取数据参数接口
-interface FetchDataParams {
+/** 基础分页参数 */
+export type PaginationParams = {
   page: number
   pageSize: number
-  keyword: string
 }
 
-// 获取数据结果接口
-interface FetchDataResult {
-  data: OptionItem[]
+/**
+ * 查询参数类型（支持泛型推导）
+ * @template T - 选项数据类型，查询参数会根据此类型推导
+ * @description 包含必填的分页参数 + keyword + 选项字段的可选查询参数
+ * @example
+ * ```ts
+ * interface UserOption {
+ *   id: number
+ *   name: string
+ *   email: string
+ * }
+ * // params 类型为 { page: number, pageSize: number, keyword: string, id?: number, name?: string, email?: string }
+ * const fetchData = (params: FetchDataParams<UserOption>) => { ... }
+ * ```
+ */
+export type FetchDataParams<T extends BaseRecord = BaseRecord> = PaginationParams & {
+  keyword: string
+} & Partial<T>
+
+/**
+ * 查询结果类型（支持泛型）
+ * @template T - 选项数据类型
+ */
+export type FetchDataResult<T extends BaseRecord = BaseRecord> = {
+  data: OptionItem<T>[]
   total: number
   [key: string]: any
 }
 
-// Props 接口
-interface PaginationSelectProps {
+/**
+ * PaginationSelect 组件 Props（支持泛型）
+ * @template T - 选项数据类型，用于类型推导
+ */
+export type PaginationSelectProps<T extends BaseRecord = BaseRecord> = {
   /** 绑定值，单选为对象，多选为对象数组 */
-  modelValue?: Record<string, any> | Record<string, any>[] | null
+  modelValue?: T | T[] | null
   /** 占位符 */
   placeholder?: string
   /** 选项值的键名 */
@@ -986,37 +1138,40 @@ interface PaginationSelectProps {
   /** 搜索防抖时间(ms) */
   debounceTime?: number
   /** 获取数据的方法 */
-  fetchData: (params: FetchDataParams) => Promise<FetchDataResult>
+  fetchData: (params: FetchDataParams<T>) => Promise<FetchDataResult<T>>
   /** Style样式 */
   style?: CSSProperties
   /** 是否多选 */
   multiple?: boolean
 }
 
-// Emits 接口
-interface PaginationSelectEmits {
+/**
+ * PaginationSelect 组件 Emits（支持泛型）
+ * @template T - 选项数据类型
+ */
+export type PaginationSelectEmits<T extends BaseRecord = BaseRecord> = {
   /** 更新绑定值，单选返回对象或 null，多选返回对象数组 */
-  'update:modelValue': [value: Record<string, any> | Record<string, any>[] | null]
+  'update:modelValue': [value: T | T[] | null]
   /** 选择变化，多选模式下 value 和 option 均为数组 */
-  change: [
-    value: Record<string, any> | Record<string, any>[] | null,
-    option?: OptionItem | OptionItem[]
-  ]
+  change: [value: T | T[] | null, option?: OptionItem<T> | OptionItem<T>[]]
   /** 清空 */
   clear: []
   /** 下拉框显示/隐藏 */
   'visible-change': [visible: boolean]
   /** 数据加载完成 */
-  'data-loaded': [result: FetchDataResult]
+  'data-loaded': [result: FetchDataResult<T>]
   /** 错误 */
   error: [error: any]
 }
 
 // ElSelect 实例类型
-type ElSelectInstanceType = InstanceType<typeof ElSelect>
+export type ElSelectInstanceType = InstanceType<typeof ElSelect>
 
-// 组件实例接口（继承 ElSelect 的所有方法和属性）
-type PaginationSelectInstance = ElSelectInstanceType & {
+/**
+ * PaginationSelect 组件实例（支持泛型）
+ * @template T - 选项数据类型
+ */
+export type PaginationSelectInstance<T extends BaseRecord = BaseRecord> = ElSelectInstanceType & {
   /** 刷新数据 */
   refresh: () => void
   /** 搜索 */
@@ -1024,12 +1179,54 @@ type PaginationSelectInstance = ElSelectInstanceType & {
   /** 加载状态 */
   loading: Readonly<Ref<boolean>>
   /** 选项列表 */
-  options: Readonly<Ref<OptionItem[]>>
+  options: Readonly<Ref<OptionItem<T>[]>>
   /** 总数 */
   total: Readonly<Ref<number>>
   /** 当前页 */
   currentPage: Readonly<Ref<number>>
 }
+````
+
+### 泛型使用示例
+
+通过泛型，可以获得更精确的类型推导和代码提示：
+
+```typescript
+// 1. 定义选项数据类型
+interface UserOption {
+  id: number
+  name: string
+  email: string
+}
+
+// 2. fetchData 参数会自动推导
+const fetchData = async (
+  params: FetchDataParams<UserOption>
+): Promise<FetchDataResult<UserOption>> => {
+  // ✅ params.page: number (必填)
+  // ✅ params.pageSize: number (必填)
+  // ✅ params.keyword: string (必填)
+  // ✅ params.name?: string (可选)
+  // ✅ params.email?: string (可选)
+  // ❌ params.foo - 类型错误，不存在的字段
+
+  const { page, pageSize, keyword, name, email } = params
+  // ... 业务逻辑
+  return { data: [], total: 0 }
+}
+
+// 3. 组件使用时类型完全推导
+const selectedUser = ref<UserOption | null>(null)
+
+// 4. change 事件类型推导
+const handleChange = (value: UserOption | null, option?: OptionItem<UserOption>) => {
+  // ✅ value 和 option 类型已推导
+  console.log(value, option)
+}
+
+// 5. 组件实例类型推导
+const selectRef = ref<PaginationSelectInstance<UserOption>>()
+// ✅ selectRef.value.options 类型为 Readonly<Ref<OptionItem<UserOption>[]>>
 ```
 
 ## 最佳实践
@@ -1127,6 +1324,39 @@ A: modelValue 的格式取决于是否为多选模式：
 - 默认情况：`[{ value: 1, label: '选项一' }, { value: 2, label: '选项二' }]`
 - 自定义属性：`[{ id: 1, name: '张三' }, { id: 2, name: '李四' }]`
 
+### Q: 如何使用泛型获得类型推导？
+
+A: 定义选项类型，然后在调用时传入泛型参数：
+
+```typescript
+// 1. 定义类型
+interface UserOption {
+  id: number
+  name: string
+  email: string
+}
+
+// 2. fetchData 使用泛型
+const fetchData = async (
+  params: FetchDataParams<UserOption>
+): Promise<FetchDataResult<UserOption>> => {
+  // params.keyword 类型为 string
+  // params.name 类型为 string | undefined
+  // params.email 类型为 string | undefined
+  // params.foo 类型错误（不存在）
+  return { data: [], total: 0 }
+}
+
+// 3. 组件使用时传入泛型（Vue 3.3+）
+<IipPaginationSelect<UserOption>
+  v-model="selectedUser"
+  :fetch-data="fetchData"
+/>
+
+// 或者使用 defineComponent 的方式
+const selectRef = ref<PaginationSelectInstance<UserOption>>()
+```
+
 ### Q: 如何处理跨页选择的回显？
 
 A: 组件会自动处理。当你设置 `v-model` 为一个包含 value 和 label 的对象时，即使该选项不在当前页，组件也会创建虚拟选项进行回显。
@@ -1177,14 +1407,25 @@ A: 虚拟选项是组件内部用于数据回显的机制。当选中的选项�
 A: 通过 `change` 事件的第一个参数即可获取完整信息：
 
 ```typescript
-// 单选模式
-const handleChange = (value, option) => {
+// 定义类型
+interface UserOption {
+  id: number
+  name: string
+  email: string
+}
+
+// 单选模式（使用泛型，类型已推导）
+const handleChange = (value: UserOption | null, option?: OptionItem<UserOption>) => {
+  // ✅ value 类型为 UserOption | null
+  // ✅ option 类型为 OptionItem<UserOption> | undefined
   console.log(value) // { id: 1, name: '张三' }
   console.log(option) // 完整的选项对象，包含所有字段
 }
 
-// 多选模式
-const handleMultipleChange = (value, options) => {
+// 多选模式（使用泛型，类型已推导）
+const handleMultipleChange = (value: UserOption[] | null, options?: OptionItem<UserOption>[]) => {
+  // ✅ value 类型为 UserOption[] | null
+  // ✅ options 类型为 OptionItem<UserOption>[] | undefined
   console.log(value) // [{ id: 1, name: '张三' }, { id: 2, name: '李四' }]
   console.log(options) // 完整的选项对象数组
 }
