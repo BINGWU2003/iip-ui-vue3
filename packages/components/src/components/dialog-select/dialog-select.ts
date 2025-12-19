@@ -1,27 +1,6 @@
 import { h, render, type VNode, nextTick } from 'vue'
 import DialogSelect from './dialog-select.vue'
-import type {
-  TableRowItem,
-  FetchDialogSelectDataParams,
-  FetchDialogSelectDataResult,
-  DialogSelectOptions,
-  DialogSelectInstance
-} from './types'
-import type { VxeGridProps } from 'vxe-table'
-export interface OpenDialogSelectOptions {
-  fetchData: (params: FetchDialogSelectDataParams) => Promise<FetchDialogSelectDataResult>
-  dialogSelectOptions: DialogSelectOptions
-  multiple?: boolean
-  valueKey?: string
-  labelKey?: string
-  keyGetter?: (row: TableRowItem) => string | number
-  dialogTitle?: string
-  dialogWidth?: string | number
-  gridConfig?: VxeGridProps
-  initialValue?: TableRowItem | TableRowItem[] | null
-  /** 弹窗关闭动画时长（ms），默认 300 */
-  animationDuration?: number
-}
+import type { TableRowItem, DialogSelectInstance, OpenDialogSelectOptions } from './types'
 
 export function openDialogSelect(
   options: OpenDialogSelectOptions

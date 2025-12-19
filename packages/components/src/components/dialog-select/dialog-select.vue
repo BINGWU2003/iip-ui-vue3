@@ -639,7 +639,7 @@ defineExpose({
 
 .dialog-select-form {
   margin-bottom: 16px;
-  padding-bottom: 16px;
+  padding-top: 16px;
   border-bottom: 1px solid var(--el-border-color-lighter);
 }
 

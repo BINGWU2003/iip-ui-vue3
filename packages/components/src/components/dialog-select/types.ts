@@ -117,3 +117,18 @@ export type DialogSelectInstance = {
   /** 当前页 */
   currentPage: Readonly<Ref<number>>
 }
+
+export type OpenDialogSelectOptions = {
+  fetchData: (params: FetchDialogSelectDataParams) => Promise<FetchDialogSelectDataResult>
+  dialogSelectOptions: DialogSelectOptions
+  multiple?: boolean
+  valueKey?: string
+  labelKey?: string
+  keyGetter?: (row: TableRowItem) => string | number
+  dialogTitle?: string
+  dialogWidth?: string | number
+  gridConfig?: VxeGridProps
+  initialValue?: TableRowItem | TableRowItem[] | null
+  /** 弹窗关闭动画时长（ms），默认 300 */
+  animationDuration?: number
+}
