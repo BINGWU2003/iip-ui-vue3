@@ -116,7 +116,14 @@ import {
   ElConfigProvider
 } from 'element-plus'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
-import { VxeGrid, type VxeGridInstance } from 'vxe-table'
+import { VxeGrid } from 'vxe-table'
+import type {
+  VxeGridInstance,
+  VxeColumnProps,
+  VxeGridPropTypes,
+  VxeTablePropTypes,
+  VxeGridProps
+} from 'vxe-table'
 import type {
   DialogSelectProps,
   DialogSelectEmits,
@@ -125,6 +132,7 @@ import type {
   FormItemOption,
   DialogSelectOption
 } from './types'
+import type { BaseRecord } from '../../utils/types'
 
 defineOptions({
   name: 'IipDialogSelect'
@@ -157,7 +165,7 @@ const tableData = ref<TableRowItem[]>([])
 const total = ref(0)
 const currentPage = ref(1)
 const currentPageSize = ref(DEFAULT_PAGE_SIZE)
-const formData = ref<Record<string, any>>({})
+const formData = ref<BaseRecord>({})
 const selectedRows = ref<TableRowItem[]>([])
 const selectedRowKeys = ref<(string | number)[]>([])
 // 存储每个表单项的选项数据
@@ -192,7 +200,7 @@ const formItems = computed(() => {
 
 // 初始化表单数据
 const initFormData = () => {
-  const data: Record<string, any> = {}
+  const data: BaseRecord = {}
 
   for (const item of formItems.value) {
     const formItemProps = item.formItemProps
@@ -279,7 +287,7 @@ const loadFormItemOptions = async () => {
 }
 
 // 计算列配置，动态添加 radio 或 checkbox 列
-const computedColumns = computed(() => {
+const computedColumns = computed<VxeColumnProps[]>(() => {
   // 从 dialogSelectOptions 中提取列（useForm 不为 true 的项，或者有 columnProps 的项）
   const baseColumns = props.dialogSelectOptions
     .filter(option => option.useForm !== true && option.columnProps)
@@ -295,7 +303,7 @@ const computedColumns = computed(() => {
   )
 
   if (hasRadioOrCheckbox) {
-    return baseColumns as any
+    return baseColumns
   }
 
   // 根据 multiple 添加对应的列
@@ -303,10 +311,10 @@ const computedColumns = computed(() => {
     ? { type: 'checkbox' as const, width: 60, fixed: 'left' as const }
     : { type: 'radio' as const, width: 60, fixed: 'left' as const }
 
-  return [selectColumn, ...baseColumns] as any
+  return [selectColumn, ...baseColumns]
 })
 
-const computedPagerConfig = computed(() => {
+const computedPagerConfig = computed<VxeGridPropTypes.PagerConfig>(() => {
   return {
     currentPage: currentPage.value,
     pageSize: currentPageSize.value,
@@ -322,31 +330,31 @@ const computedPagerConfig = computed(() => {
       'FullJump',
       'Total'
     ]
-  } as any
+  }
 })
 
-const computedCheckboxConfig = computed(() => {
+const computedCheckboxConfig = computed<VxeTablePropTypes.CheckboxConfig>(() => {
   if (!props.multiple) return undefined
   return {
     trigger: 'row' as const // 点击行触发
   }
 })
 
-const computedRadioConfig = computed(() => {
+const computedRadioConfig = computed<VxeTablePropTypes.RadioConfig>(() => {
   if (props.multiple) return undefined
   return {
     trigger: 'row' as const // 点击行触发
-  } as any
+  }
 })
 
-const computedRowConfig = computed(() => {
+const computedRowConfig = computed<VxeTablePropTypes.RowConfig>(() => {
   return {
     isCurrent: true, // 启用当前行高亮
     isHover: true // 启用悬停效果
   }
 })
 
-const computedGridConfig = computed(() => {
+const computedGridConfig = computed<VxeGridProps>(() => {
   // 默认配置
   const defaultConfig = {
     border: true,
@@ -356,7 +364,7 @@ const computedGridConfig = computed(() => {
   return {
     ...defaultConfig,
     ...(props.gridConfig || {})
-  } as any
+  }
 })
 
 // 监听 modelValue 变化，同步选中状态

@@ -405,6 +405,15 @@ const mockEmployees = Array.from({ length: 100 }, (_, i) => ({
   status: i % 3 === 0 ? '在职' : '离职'
 }))
 
+type Employee = {
+  id: number
+  name: string
+  department: string
+  email: string
+  phone: string
+  status: string
+}
+
 // DialogSelect 选项配置（合并 columns 和 formItems）
 const employeeDialogSelectOptions = [
   // 表格列配置（useForm 默认为 false，或显式设置为 false）
@@ -458,8 +467,8 @@ const employeeDialogSelectOptions = [
 
 // 获取员工数据
 const fetchEmployeeData = async (
-  params: FetchDialogSelectDataParams
-): Promise<FetchDialogSelectDataResult> => {
+  params: FetchDialogSelectDataParams<Employee>
+): Promise<FetchDialogSelectDataResult<Employee>> => {
   // 模拟网络延迟
   await new Promise(resolve => setTimeout(resolve, 300))
 
@@ -551,7 +560,7 @@ const fetchProductDataForDialog = async (
 }
 
 // 员工 keyGetter：使用 id 作为 key
-const employeeKeyGetter = (row: TableRowItem) => {
+const employeeKeyGetter = (row: TableRowItem<Employee>) => {
   return row.id
 }
 

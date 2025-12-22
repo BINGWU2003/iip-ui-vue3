@@ -50,19 +50,28 @@ import { IipDialogSelect } from '@bingwu/iip-ui-components'
 import type {
   FetchDialogSelectDataParams,
   FetchDialogSelectDataResult,
-  DialogSelectOptions,
-  TableRowItem
+  DialogSelectOptions
 } from '@bingwu/iip-ui-components'
 
-// 多选时 modelValue 是数组
-const selectedEmployees = ref<TableRowItem[] | null>(null)
+// 定义员工数据类型（使用泛型获得类型推导）
+interface EmployeeRow {
+  id: number
+  name: string
+  department: string
+  email: string
+  phone: string
+  status: string
+}
 
-const handleChange = (value: TableRowItem[] | null, selectedRows: TableRowItem[]) => {
+// 多选时 modelValue 是数组
+const selectedEmployees = ref<EmployeeRow[] | null>(null)
+
+const handleChange = (value: EmployeeRow[] | null, selectedRows: EmployeeRow[]) => {
   console.log('选中的员工：', value)
 }
 
 // 模拟员工数据
-const mockEmployees = Array.from({ length: 100 }, (_, i) => ({
+const mockEmployees: EmployeeRow[] = Array.from({ length: 100 }, (_, i) => ({
   id: i + 1,
   name: `员工${i + 1}`,
   department: ['技术部', '产品部', '运营部', '市场部', '人事部'][i % 5],
@@ -109,21 +118,24 @@ const employeeDialogSelectOptions: DialogSelectOptions = [
   { field: 'status', title: '状态', columnProps: { width: 100 } }
 ]
 
-// 获取员工数据（需要处理筛选参数）
+// 获取员工数据（使用泛型，获得类型推导）
 const fetchEmployeeData = async (
-  params: FetchDialogSelectDataParams
-): Promise<FetchDialogSelectDataResult> => {
+  params: FetchDialogSelectDataParams<EmployeeRow>
+): Promise<FetchDialogSelectDataResult<EmployeeRow>> => {
   // 模拟网络延迟
   await new Promise(resolve => setTimeout(resolve, 300))
 
+  // ✅ params 类型已推导：{ page: number, pageSize: number, name?: string, department?: string, ... }
   const { page, pageSize, name, department } = params
 
   // 根据筛选条件过滤
   let filteredEmployees = mockEmployees
   if (name) {
-    filteredEmployees = filteredEmployees.filter(employee => employee.name.includes(name as string))
+    // ✅ name 类型为 string，无需类型断言
+    filteredEmployees = filteredEmployees.filter(employee => employee.name.includes(name))
   }
   if (department) {
+    // ✅ department 类型为 string，无需类型断言
     filteredEmployees = filteredEmployees.filter(employee => employee.department === department)
   }
 
@@ -522,12 +534,19 @@ import { IipDialogSelect } from '@bingwu/iip-ui-components'
 import type {
   FetchDialogSelectDataParams,
   FetchDialogSelectDataResult,
-  DialogSelectOptions,
-  TableRowItem
+  DialogSelectOptions
 } from '@bingwu/iip-ui-components'
 
+// 定义产品数据类型
+interface ProductRow {
+  id: string
+  name: string
+  price: string
+  category: string
+}
+
 // 模拟产品数据
-const mockProducts = Array.from({ length: 50 }, (_, i) => ({
+const mockProducts: ProductRow[] = Array.from({ length: 50 }, (_, i) => ({
   id: `PROD-${String(i + 1).padStart(3, '0')}`,
   name: `产品${i + 1}`,
   price: (Math.random() * 1000).toFixed(2),
@@ -541,10 +560,10 @@ const productDialogSelectOptions: DialogSelectOptions = [
   { field: 'category', title: '分类', columnProps: { width: 120 } }
 ]
 
-// 获取产品数据
+// 获取产品数据（使用泛型）
 const fetchProductData = async (
-  params: FetchDialogSelectDataParams
-): Promise<FetchDialogSelectDataResult> => {
+  params: FetchDialogSelectDataParams<ProductRow>
+): Promise<FetchDialogSelectDataResult<ProductRow>> => {
   // 模拟网络延迟
   await new Promise(resolve => setTimeout(resolve, 300))
 
@@ -561,12 +580,13 @@ const fetchProductData = async (
   }
 }
 
-// 使用 id 和 category 拼接作为 key
-const productKeyGetter = (row: TableRowItem) => {
+// 使用 id 和 category 拼接作为 key（类型已推导）
+const productKeyGetter = (row: ProductRow) => {
+  // ✅ row 类型为 ProductRow
   return `${row.id}-${row.category}`
 }
 
-const selectedProduct = ref<TableRowItem | null>(null)
+const selectedProduct = ref<ProductRow | null>(null)
 </script>
 ```
 
@@ -672,12 +692,21 @@ import type {
   DialogSelectInstance,
   FetchDialogSelectDataParams,
   FetchDialogSelectDataResult,
-  DialogSelectOptions,
-  TableRowItem
+  DialogSelectOptions
 } from '@bingwu/iip-ui-components'
 
+// 定义员工数据类型
+interface EmployeeRow {
+  id: number
+  name: string
+  department: string
+  email: string
+  phone: string
+  status: string
+}
+
 // 模拟员工数据
-const mockEmployees = Array.from({ length: 100 }, (_, i) => ({
+const mockEmployees: EmployeeRow[] = Array.from({ length: 100 }, (_, i) => ({
   id: i + 1,
   name: `员工${i + 1}`,
   department: ['技术部', '产品部', '运营部', '市场部', '人事部'][i % 5],
@@ -695,10 +724,10 @@ const employeeDialogSelectOptions: DialogSelectOptions = [
   { field: 'status', title: '状态', columnProps: { width: 100 } }
 ]
 
-// 获取员工数据
+// 获取员工数据（使用泛型）
 const fetchEmployeeData = async (
-  params: FetchDialogSelectDataParams
-): Promise<FetchDialogSelectDataResult> => {
+  params: FetchDialogSelectDataParams<EmployeeRow>
+): Promise<FetchDialogSelectDataResult<EmployeeRow>> => {
   // 模拟网络延迟
   await new Promise(resolve => setTimeout(resolve, 300))
 
@@ -715,8 +744,9 @@ const fetchEmployeeData = async (
   }
 }
 
-const selectedEmployee = ref<TableRowItem | null>(null)
-const dialogSelectRef = ref<DialogSelectInstance>()
+const selectedEmployee = ref<EmployeeRow | null>(null)
+// ✅ 使用泛型，tableData 类型为 Readonly<Ref<EmployeeRow[]>>
+const dialogSelectRef = ref<DialogSelectInstance<EmployeeRow>>()
 
 const handleOpen = () => {
   dialogSelectRef.value?.open()
@@ -736,22 +766,40 @@ const handleRefresh = () => {
 
 ### Props
 
-| 参数                | 说明                                                   | 类型                                                                            | 默认值     |
-| ------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------- | ---------- |
-| modelValue          | 绑定值，单选时为对象，多选时为对象数组                 | `TableRowItem \| TableRowItem[] \| null`                                        | `null`     |
-| placeholder         | 占位符                                                 | `string`                                                                        | `'请选择'` |
-| multiple            | 是否多选                                               | `boolean`                                                                       | `false`    |
-| valueKey            | 选项值的键名                                           | `string`                                                                        | `'id'`     |
-| labelKey            | 选项标签的键名（用于显示在输入框中）                   | `string`                                                                        | `'name'`   |
-| keyGetter           | 获取行的唯一标识key的函数，如果不提供则使用valueKey    | `(row: TableRowItem) => string \| number`                                       | -          |
-| clearable           | 是否可清空                                             | `boolean`                                                                       | `true`     |
-| disabled            | 是否禁用                                               | `boolean`                                                                       | `false`    |
-| dialogTitle         | 弹窗标题                                               | `string`                                                                        | `'请选择'` |
-| dialogWidth         | 弹窗宽度                                               | `string \| number`                                                              | `'1100px'` |
-| fetchData           | 获取数据的方法                                         | `(params: FetchDialogSelectDataParams) => Promise<FetchDialogSelectDataResult>` | -          |
-| dialogSelectOptions | DialogSelect 选项配置数组（合并 columns 和 formItems） | `DialogSelectOptions`                                                           | -          |
-| gridConfig          | vxe-grid 配置，支持透传 vxe-grid 的所有 props          | `VxeGridProps`                                                                  | -          |
-| style               | 输入框样式                                             | `CSSProperties`                                                                 | -          |
+组件支持泛型参数，传入具体类型后可以获得完整的类型推导：
+
+```typescript
+interface EmployeeRow {
+  id: number
+  name: string
+  department: string
+}
+
+// 使用泛型
+<IipDialogSelect<EmployeeRow> ... />
+```
+
+| 参数                | 说明                                                   | 类型                                                                                  | 默认值     |
+| ------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------- | ---------- |
+| modelValue          | 绑定值，单选时为对象，多选时为对象数组                 | `T \| T[] \| null`（`T` 为泛型参数，默认为 `BaseRecord`）                             | `null`     |
+| placeholder         | 占位符                                                 | `string`                                                                              | `'请选择'` |
+| multiple            | 是否多选                                               | `boolean`                                                                             | `false`    |
+| valueKey            | 选项值的键名                                           | `string`                                                                              | `'id'`     |
+| labelKey            | 选项标签的键名（用于显示在输入框中）                   | `string`                                                                              | `'name'`   |
+| keyGetter           | 获取行的唯一标识key的函数，如果不提供则使用valueKey    | `(row: T) => string \| number`（`T` 为泛型参数）                                      | -          |
+| clearable           | 是否可清空                                             | `boolean`                                                                             | `true`     |
+| disabled            | 是否禁用                                               | `boolean`                                                                             | `false`    |
+| dialogTitle         | 弹窗标题                                               | `string`                                                                              | `'请选择'` |
+| dialogWidth         | 弹窗宽度                                               | `string \| number`                                                                    | `'1100px'` |
+| fetchData           | 获取数据的方法                                         | `(params: FetchDialogSelectDataParams<T>) => Promise<FetchDialogSelectDataResult<T>>` | -          |
+| dialogSelectOptions | DialogSelect 选项配置数组（合并 columns 和 formItems） | `DialogSelectOptions`                                                                 | -          |
+| gridConfig          | vxe-grid 配置，支持透传 vxe-grid 的所有 props          | `VxeGridProps`                                                                        | -          |
+| style               | 输入框样式                                             | `CSSProperties`                                                                       | -          |
+
+**泛型参数说明：**
+
+- `T`: 表格行数据类型，默认为 `BaseRecord`（即 `Record<string, any>`）
+- 传入具体类型后，`modelValue`、`keyGetter`、`fetchData` 等都会自动推导类型
 
 ### DialogSelectOption
 
@@ -775,15 +823,15 @@ const handleRefresh = () => {
 
 ### Events
 
-| 事件名                | 说明          | 回调参数                                                                        |
-| --------------------- | ------------- | ------------------------------------------------------------------------------- |
-| update:modelValue     | 更新绑定值    | `(value: TableRowItem \| TableRowItem[] \| null)`                               |
-| change                | 选择变化      | `(value: TableRowItem \| TableRowItem[] \| null, selectedRows: TableRowItem[])` |
-| clear                 | 清空          | -                                                                               |
-| dialog-visible-change | 弹窗打开/关闭 | `(visible: boolean)`                                                            |
-| data-loaded           | 数据加载完成  | `(result: FetchDialogSelectDataResult)`                                         |
-| error                 | 错误          | `(error: any)`                                                                  |
-| form-change           | 表单变化      | `(formData: Record<string, any>)`                                               |
+| 事件名                | 说明          | 回调参数                                                         |
+| --------------------- | ------------- | ---------------------------------------------------------------- |
+| update:modelValue     | 更新绑定值    | `(value: T \| T[] \| null)`（`T` 为泛型参数）                    |
+| change                | 选择变化      | `(value: T \| T[] \| null, selectedRows: T[])`（`T` 为泛型参数） |
+| clear                 | 清空          | -                                                                |
+| dialog-visible-change | 弹窗打开/关闭 | `(visible: boolean)`                                             |
+| data-loaded           | 数据加载完成  | `(result: FetchDialogSelectDataResult<T>)`（`T` 为泛型参数）     |
+| error                 | 错误          | `(error: any)`                                                   |
+| form-change           | 表单变化      | `(formData: Record<string, any>)`                                |
 
 ### Methods
 
@@ -799,33 +847,70 @@ const handleRefresh = () => {
 
 通过 ref 可以访问以下只读属性：
 
-| 属性名      | 说明     | 类型                            |
-| ----------- | -------- | ------------------------------- |
-| loading     | 加载状态 | `Readonly<Ref<boolean>>`        |
-| tableData   | 表格数据 | `Readonly<Ref<TableRowItem[]>>` |
-| total       | 总数     | `Readonly<Ref<number>>`         |
-| currentPage | 当前页   | `Readonly<Ref<number>>`         |
+| 属性名      | 说明     | 类型                                   |
+| ----------- | -------- | -------------------------------------- |
+| loading     | 加载状态 | `Readonly<Ref<boolean>>`               |
+| tableData   | 表格数据 | `Readonly<Ref<T[]>>`（`T` 为泛型参数） |
+| total       | 总数     | `Readonly<Ref<number>>`                |
+| currentPage | 当前页   | `Readonly<Ref<number>>`                |
+
+**使用示例：**
+
+```typescript
+import type { DialogSelectInstance } from '@bingwu/iip-ui-components'
+
+interface EmployeeRow {
+  id: number
+  name: string
+}
+
+const dialogRef = ref<DialogSelectInstance<EmployeeRow>>()
+
+// ✅ dialogRef.value.tableData 类型为 Readonly<Ref<EmployeeRow[]>>
+```
 
 ## 类型定义
 
-```typescript
-import type { VxeColumnProps } from 'vxe-table'
+````typescript
+import type { VxeGridProps, VxeColumnProps } from 'vxe-table'
+import type { CSSProperties, Ref } from 'vue'
 
-// 表格行数据
-export type TableRowItem = {
-  [key: string]: any
-}
+/** 基础对象类型，用作泛型约束和默认值 */
+export type BaseRecord = Record<string, any>
 
-// 获取数据参数
-export type FetchDialogSelectDataParams = {
+/** 表格行数据类型（支持泛型，建议传入具体类型） */
+export type TableRowItem<T extends BaseRecord = BaseRecord> = T
+
+/** 基础分页参数 */
+export type PaginationParams = {
   page: number
   pageSize: number
-  [key: string]: any // 支持其他查询参数（如筛选条件）
 }
 
-// 获取数据结果
-export type FetchDialogSelectDataResult = {
-  data: TableRowItem[]
+/**
+ * 查询参数类型（支持泛型推导）
+ * @template T - 表格行数据类型，查询参数会根据此类型推导
+ * @description 包含必填的分页参数 + 表格字段的可选查询参数
+ * @example
+ * ```ts
+ * interface UserRow {
+ *   id: number
+ *   name: string
+ *   department: string
+ * }
+ * // params 类型为 { page: number, pageSize: number, id?: number, name?: string, department?: string }
+ * const fetchData = (params: FetchDialogSelectDataParams<UserRow>) => { ... }
+ * ```
+ */
+export type FetchDialogSelectDataParams<T extends BaseRecord = BaseRecord> = PaginationParams &
+  Partial<T>
+
+/**
+ * 查询结果类型（支持泛型）
+ * @template T - 表格行数据类型
+ */
+export type FetchDialogSelectDataResult<T extends BaseRecord = BaseRecord> = {
+  data: T[]
   total: number
   [key: string]: any
 }
@@ -866,6 +951,108 @@ export type DialogSelectOption = {
 
 // DialogSelect 选项配置数组
 export type DialogSelectOptions = DialogSelectOption[]
+
+/**
+ * DialogSelect 组件 Props（支持泛型）
+ * @template T - 表格行数据类型，用于类型推导
+ */
+export type DialogSelectProps<T extends BaseRecord = BaseRecord> = {
+  /** 绑定值，单选时为对象，多选时为对象数组 */
+  modelValue?: T | T[] | null
+  /** 占位符 */
+  placeholder?: string
+  /** 是否多选 */
+  multiple?: boolean
+  /** 选项值的键名 */
+  valueKey?: string
+  /** 选项标签的键名（用于显示在输入框中） */
+  labelKey?: string
+  /** 获取行的唯一标识key的函数，如果不提供则使用valueKey */
+  keyGetter?: (row: T) => string | number
+  /** 是否可清空 */
+  clearable?: boolean
+  /** 是否禁用 */
+  disabled?: boolean
+  /** 弹窗标题 */
+  dialogTitle?: string
+  /** 弹窗宽度 */
+  dialogWidth?: string | number
+  /** 获取数据的方法 */
+  fetchData: (params: FetchDialogSelectDataParams<T>) => Promise<FetchDialogSelectDataResult<T>>
+  /** DialogSelect 选项配置数组（合并 columns 和 formItems） */
+  dialogSelectOptions: DialogSelectOptions
+  /** vxe-grid 配置，支持透传 vxe-grid 的所有 props */
+  gridConfig?: VxeGridProps
+  /** 输入框样式 */
+  style?: CSSProperties
+}
+
+/**
+ * DialogSelect 组件实例（支持泛型）
+ * @template T - 表格行数据类型
+ */
+export type DialogSelectInstance<T extends BaseRecord = BaseRecord> = {
+  /** 打开弹窗 */
+  open: () => void
+  /** 关闭弹窗 */
+  close: () => void
+  /** 刷新数据 */
+  refresh: () => void
+  /** 加载状态 */
+  loading: Readonly<Ref<boolean>>
+  /** 表格数据 */
+  tableData: Readonly<Ref<T[]>>
+  /** 总数 */
+  total: Readonly<Ref<number>>
+  /** 当前页 */
+  currentPage: Readonly<Ref<number>>
+}
+````
+
+### 泛型使用示例
+
+通过泛型，可以获得更精确的类型推导和代码提示：
+
+```typescript
+// 1. 定义表格行数据类型
+interface EmployeeRow {
+  id: number
+  name: string
+  department: string
+  email: string
+  phone: string
+  status: string
+}
+
+// 2. fetchData 参数会自动推导
+const fetchEmployeeData = async (
+  params: FetchDialogSelectDataParams<EmployeeRow>
+): Promise<FetchDialogSelectDataResult<EmployeeRow>> => {
+  // ✅ params.page: number (必填)
+  // ✅ params.pageSize: number (必填)
+  // ✅ params.name?: string (可选)
+  // ✅ params.department?: string (可选)
+  // ❌ params.foo - 类型错误，不存在的字段
+
+  const { page, pageSize, name, department } = params
+  // ... 业务逻辑
+  return { data: [], total: 0 }
+}
+
+// 3. 组件使用时类型完全推导
+const selectedEmployees = ref<EmployeeRow[] | null>(null)
+
+// 4. keyGetter 函数类型推导
+const keyGetter = (row: EmployeeRow) => {
+  // ✅ row 类型为 EmployeeRow
+  return row.id
+}
+
+// 5. change 事件类型推导
+const handleChange = (value: EmployeeRow[] | null, selectedRows: EmployeeRow[]) => {
+  // ✅ value 和 selectedRows 类型已推导
+  console.log(value, selectedRows)
+}
 ```
 
 ## 最佳实践
@@ -919,12 +1106,21 @@ import { IipDialogSelect } from '@bingwu/iip-ui-components'
 import type {
   FetchDialogSelectDataParams,
   FetchDialogSelectDataResult,
-  DialogSelectOptions,
-  TableRowItem
+  DialogSelectOptions
 } from '@bingwu/iip-ui-components'
 
+// 定义员工数据类型
+interface EmployeeRow {
+  id: number
+  name: string
+  department: string
+  email: string
+  phone: string
+  status: string
+}
+
 // 模拟员工数据
-const mockEmployees = Array.from({ length: 100 }, (_, i) => ({
+const mockEmployees: EmployeeRow[] = Array.from({ length: 100 }, (_, i) => ({
   id: i + 1,
   name: `员工${i + 1}`,
   department: ['技术部', '产品部', '运营部', '市场部', '人事部'][i % 5],
@@ -970,21 +1166,24 @@ const employeeDialogSelectOptions: DialogSelectOptions = [
   }
 ]
 
-// 获取员工数据
+// 获取员工数据（使用泛型）
 const fetchEmployeeData = async (
-  params: FetchDialogSelectDataParams
-): Promise<FetchDialogSelectDataResult> => {
+  params: FetchDialogSelectDataParams<EmployeeRow>
+): Promise<FetchDialogSelectDataResult<EmployeeRow>> => {
   // 模拟网络延迟
   await new Promise(resolve => setTimeout(resolve, 300))
 
+  // ✅ params 类型已推导
   const { page, pageSize, name, department } = params
 
   // 根据筛选条件过滤
   let filteredEmployees = mockEmployees
   if (name) {
-    filteredEmployees = filteredEmployees.filter(employee => employee.name.includes(name as string))
+    // ✅ name 类型为 string，无需类型断言
+    filteredEmployees = filteredEmployees.filter(employee => employee.name.includes(name))
   }
   if (department) {
+    // ✅ department 类型为 string，无需类型断言
     filteredEmployees = filteredEmployees.filter(employee => employee.department === department)
   }
 
@@ -1000,7 +1199,7 @@ const fetchEmployeeData = async (
 }
 
 const form = ref({
-  employee: null as TableRowItem | null
+  employee: null as EmployeeRow | null
 })
 
 const handleSubmit = async () => {
@@ -1009,7 +1208,7 @@ const handleSubmit = async () => {
     return
   }
 
-  // 提交数据
+  // ✅ form.value.employee 类型为 EmployeeRow
   const submitData = {
     employeeId: form.value.employee.id,
     employeeName: form.value.employee.name
@@ -1081,8 +1280,18 @@ import type {
   DialogSelectOptions
 } from '@bingwu/iip-ui-components'
 
+// 定义员工数据类型
+interface EmployeeRow {
+  id: number
+  name: string
+  department: string
+  email: string
+  phone: string
+  status: string
+}
+
 // 模拟员工数据
-const mockEmployees = Array.from({ length: 100 }, (_, i) => ({
+const mockEmployees: EmployeeRow[] = Array.from({ length: 100 }, (_, i) => ({
   id: i + 1,
   name: `员工${i + 1}`,
   department: ['技术部', '产品部', '运营部', '市场部', '人事部'][i % 5],
@@ -1100,29 +1309,32 @@ const employeeDialogSelectOptions: DialogSelectOptions = [
   { field: 'status', title: '状态', columnProps: { width: 100 } }
 ]
 
-// 在 fetchData 中实现数据缓存
-const cache = new Map<string, FetchDialogSelectDataResult>()
+// 在 fetchData 中实现数据缓存（使用泛型）
+const cache = new Map<string, FetchDialogSelectDataResult<EmployeeRow>>()
 
 const fetchEmployeeData = async (
-  params: FetchDialogSelectDataParams
-): Promise<FetchDialogSelectDataResult> => {
+  params: FetchDialogSelectDataParams<EmployeeRow>
+): Promise<FetchDialogSelectDataResult<EmployeeRow>> => {
   const cacheKey = JSON.stringify(params)
 
   if (cache.has(cacheKey)) {
-    return cache.get(cacheKey)
+    return cache.get(cacheKey)!
   }
 
   // 模拟网络延迟
   await new Promise(resolve => setTimeout(resolve, 300))
 
+  // ✅ params 类型已推导
   const { page, pageSize, name, department } = params
 
   // 根据筛选条件过滤
   let filteredEmployees = mockEmployees
   if (name) {
-    filteredEmployees = filteredEmployees.filter(employee => employee.name.includes(name as string))
+    // ✅ name 类型为 string，无需类型断言
+    filteredEmployees = filteredEmployees.filter(employee => employee.name.includes(name))
   }
   if (department) {
+    // ✅ department 类型为 string，无需类型断言
     filteredEmployees = filteredEmployees.filter(employee => employee.department === department)
   }
 
@@ -1131,7 +1343,7 @@ const fetchEmployeeData = async (
   const end = start + pageSize
   const data = filteredEmployees.slice(start, end)
 
-  const result = {
+  const result: FetchDialogSelectDataResult<EmployeeRow> = {
     data,
     total: filteredEmployees.length
   }
@@ -1175,6 +1387,39 @@ A:
 
 - **单选模式**: `modelValue` 是单个对象，例如：`{ id: 1, name: '张三' }`
 - **多选模式**: `modelValue` 是对象数组，例如：`[{ id: 1, name: '张三' }, { id: 2, name: '李四' }]`
+
+### Q: 如何使用泛型获得类型推导？
+
+A: 定义表格行类型，然后在组件使用时传入泛型参数：
+
+```typescript
+// 1. 定义类型
+interface EmployeeRow {
+  id: number
+  name: string
+  department: string
+}
+
+// 2. fetchData 使用泛型
+const fetchData = async (
+  params: FetchDialogSelectDataParams<EmployeeRow>
+): Promise<FetchDialogSelectDataResult<EmployeeRow>> => {
+  // params.name 类型为 string | undefined
+  // params.department 类型为 string | undefined
+  // params.foo 类型错误（不存在）
+  return { data: [], total: 0 }
+}
+
+// 3. 组件使用时传入泛型（Vue 3.3+）
+<IipDialogSelect<EmployeeRow>
+  v-model="selectedEmployees"
+  :fetch-data="fetchData"
+  :dialog-select-options="options"
+/>
+
+// 或者使用 defineComponent 的方式
+const dialogSelectRef = ref<DialogSelectInstance<EmployeeRow>>()
+```
 
 ### Q: 如何处理跨页选择的回显？
 
@@ -1256,11 +1501,18 @@ A: 通过 `change` 事件的第二个参数可以获取所有选中的行：
 <IipDialogSelect :multiple="true" @change="handleChange" />
 
 <script setup lang="ts">
-import type { TableRowItem } from '@bingwu/iip-ui-components'
+// 定义类型
+interface EmployeeRow {
+  id: number
+  name: string
+  department: string
+}
 
-const handleChange = (value: TableRowItem[] | null, selectedRows: TableRowItem[]) => {
-  console.log('选中的值:', value) // 数组
-  console.log('所有选中的行:', selectedRows) // 完整的行数据数组
+// ✅ 使用泛型，类型已推导
+const handleChange = (value: EmployeeRow[] | null, selectedRows: EmployeeRow[]) => {
+  console.log('选中的值:', value) // EmployeeRow[] | null
+  console.log('所有选中的行:', selectedRows) // EmployeeRow[]
+  // ✅ value 和 selectedRows 中的每个元素类型都是 EmployeeRow
 }
 </script>
 ```

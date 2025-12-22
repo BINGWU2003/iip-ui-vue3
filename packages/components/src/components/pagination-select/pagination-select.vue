@@ -101,7 +101,7 @@ const displayOptions = computed(() => {
 
   if (isMultiple.value) {
     // 多选模式：处理多个选中项的回显
-    const selectedItems = props.modelValue as Record<string, any>[] | null
+    const selectedItems = props.modelValue as OptionItem[] | null
     if (selectedItems && Array.isArray(selectedItems)) {
       const virtualOptions: OptionItem[] = []
       selectedItems.forEach(item => {

@@ -1,18 +1,40 @@
 import type { CSSProperties, Ref } from 'vue'
 import type { VxeGridProps, VxeColumnProps } from 'vxe-table'
+import type { BaseRecord } from '../../utils/types'
 
-export type TableRowItem = {
-  [key: string]: any
-}
+/** 表格行数据类型（默认类型，建议使用泛型传入具体类型） */
+export type TableRowItem<T extends BaseRecord = BaseRecord> = T
 
-export type FetchDialogSelectDataParams = {
+/** 基础分页参数 */
+export type PaginationParams = {
   page: number
   pageSize: number
-  [key: string]: any // 支持其他查询参数
 }
 
-export type FetchDialogSelectDataResult = {
-  data: TableRowItem[]
+/**
+ * 查询参数类型
+ * @template T - 表格行数据类型，查询参数会根据此类型推导
+ * @description 包含必填的分页参数 + 表格字段的可选查询参数
+ * @example
+ * ```ts
+ * interface UserRow {
+ *   id: number
+ *   name: string
+ *   age: number
+ * }
+ * // params 类型为 { page: number, pageSize: number, id?: number, name?: string, age?: number }
+ * const fetchData = (params: FetchDialogSelectDataParams<UserRow>) => { ... }
+ * ```
+ */
+export type FetchDialogSelectDataParams<T extends BaseRecord = BaseRecord> = PaginationParams &
+  Partial<T>
+
+/**
+ * 查询结果类型
+ * @template T - 表格行数据类型
+ */
+export type FetchDialogSelectDataResult<T extends BaseRecord = BaseRecord> = {
+  data: T[]
   total: number
   [key: string]: any
 }
@@ -53,9 +75,13 @@ export type DialogSelectOption = {
 /** DialogSelect 选项配置数组 */
 export type DialogSelectOptions = DialogSelectOption[]
 
-export type DialogSelectProps = {
+/**
+ * DialogSelect 组件 Props
+ * @template T - 表格行数据类型，用于类型推导
+ */
+export type DialogSelectProps<T extends BaseRecord = BaseRecord> = {
   /** 绑定值，单选时为对象，多选时为对象数组 */
-  modelValue?: TableRowItem | TableRowItem[] | null
+  modelValue?: T | T[] | null
   /** 占位符 */
   placeholder?: string
   /** 是否多选 */
@@ -65,7 +91,7 @@ export type DialogSelectProps = {
   /** 选项标签的键名（用于显示在输入框中） */
   labelKey?: string
   /** 获取行的唯一标识key的函数，如果不提供则使用valueKey */
-  keyGetter?: (row: TableRowItem) => string | number
+  keyGetter?: (row: T) => string | number
   /** 是否可清空 */
   clearable?: boolean
   /** 是否禁用 */
@@ -75,7 +101,7 @@ export type DialogSelectProps = {
   /** 弹窗宽度 */
   dialogWidth?: string | number
   /** 获取数据的方法 */
-  fetchData: (params: FetchDialogSelectDataParams) => Promise<FetchDialogSelectDataResult>
+  fetchData: (params: FetchDialogSelectDataParams<T>) => Promise<FetchDialogSelectDataResult<T>>
   /** DialogSelect 选项配置数组（合并 columns 和 formItems） */
   dialogSelectOptions: DialogSelectOptions
   /** vxe-grid 配置，支持透传 vxe-grid 的所有 props */
@@ -84,24 +110,32 @@ export type DialogSelectProps = {
   style?: CSSProperties
 }
 
-export type DialogSelectEmits = {
+/**
+ * DialogSelect 组件 Emits
+ * @template T - 表格行数据类型
+ */
+export type DialogSelectEmits<T extends BaseRecord = BaseRecord> = {
   /** 更新绑定值 */
-  'update:modelValue': [value: TableRowItem | TableRowItem[] | null]
+  'update:modelValue': [value: T | T[] | null]
   /** 选择变化 */
-  change: [value: TableRowItem | TableRowItem[] | null, selectedRows: TableRowItem[]]
+  change: [value: T | T[] | null, selectedRows: T[]]
   /** 清空 */
   clear: []
   /** 弹窗打开/关闭 */
   'dialog-visible-change': [visible: boolean]
   /** 数据加载完成 */
-  'data-loaded': [result: FetchDialogSelectDataResult]
+  'data-loaded': [result: FetchDialogSelectDataResult<T>]
   /** 错误 */
   error: [error: any]
   /** 表单变化 */
   'form-change': [formData: Record<string, any>]
 }
 
-export type DialogSelectInstance = {
+/**
+ * DialogSelect 组件实例
+ * @template T - 表格行数据类型
+ */
+export type DialogSelectInstance<T extends BaseRecord = BaseRecord> = {
   /** 打开弹窗 */
   open: () => void
   /** 关闭弹窗 */
@@ -111,24 +145,28 @@ export type DialogSelectInstance = {
   /** 加载状态 */
   loading: Readonly<Ref<boolean>>
   /** 表格数据 */
-  tableData: Readonly<Ref<TableRowItem[]>>
+  tableData: Readonly<Ref<T[]>>
   /** 总数 */
   total: Readonly<Ref<number>>
   /** 当前页 */
   currentPage: Readonly<Ref<number>>
 }
 
-export type OpenDialogSelectOptions = {
-  fetchData: (params: FetchDialogSelectDataParams) => Promise<FetchDialogSelectDataResult>
+/**
+ * 函数式调用 DialogSelect 的选项
+ * @template T - 表格行数据类型
+ */
+export type OpenDialogSelectOptions<T extends BaseRecord = BaseRecord> = {
+  fetchData: (params: FetchDialogSelectDataParams<T>) => Promise<FetchDialogSelectDataResult<T>>
   dialogSelectOptions: DialogSelectOptions
   multiple?: boolean
   valueKey?: string
   labelKey?: string
-  keyGetter?: (row: TableRowItem) => string | number
+  keyGetter?: (row: T) => string | number
   dialogTitle?: string
   dialogWidth?: string | number
   gridConfig?: VxeGridProps
-  initialValue?: TableRowItem | TableRowItem[] | null
+  initialValue?: T | T[] | null
   /** 弹窗关闭动画时长（ms），默认 300 */
   animationDuration?: number
 }
