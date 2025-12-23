@@ -1,10 +1,21 @@
 import type { App, Component } from 'vue'
 
 // 导入所有组件和函数
-import { IipDateRange, IipPaginationSelect, IipDialogSelect, openDialogSelect } from './components'
+import {
+  IipDateRange,
+  IipPaginationSelect,
+  IipDialogSelect,
+  openDialogSelect,
+  IipDropdownList
+} from './components'
 
 // 所有组件列表
-const components: Component[] = [IipDateRange, IipPaginationSelect, IipDialogSelect]
+const components: Component[] = [
+  IipDateRange,
+  IipPaginationSelect,
+  IipDialogSelect,
+  IipDropdownList
+]
 
 // 定义 install 方法
 const install = (app: App): void => {
@@ -21,6 +32,7 @@ export {
   IipDateRange,
   IipPaginationSelect,
   IipDialogSelect,
+  IipDropdownList,
   // 导出 openDialogSelect 函数
   openDialogSelect,
   // 导出 install 方法和版本号
