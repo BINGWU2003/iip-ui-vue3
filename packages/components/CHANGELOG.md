@@ -1,5 +1,11 @@
 # @bingwu/iip-ui-components
 
+## 1.2.26
+
+### Patch Changes
+
+- 新增dropdown-list组件，重构dialog-select的类型
+
 ## 1.2.25
 
 ### Patch Changes
