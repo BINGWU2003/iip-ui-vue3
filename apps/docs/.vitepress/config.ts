@@ -61,7 +61,8 @@ export default defineConfig({
             {
               text: 'DialogSelect 弹窗选择器(函数式调用)',
               link: '/components/dialog-select-function'
-            }
+            },
+            { text: 'DropdownList 下拉列表', link: '/components/dropdown-list' }
           ]
         }
       ]

@@ -182,6 +182,76 @@
       </div>
     </div>
 
+    <!-- DropdownList 示例 -->
+    <div class="component-group">
+      <h2 class="component-title">DropdownList 组件</h2>
+
+      <div class="demo-section">
+        <h3>表格操作列中使用下拉列表</h3>
+        <p style="margin-bottom: 15px; color: #666">
+          在表格的操作列中，可以使用下拉列表提供更多操作选项
+        </p>
+        <el-table :data="orderTableData" border stripe style="width: 100%">
+          <el-table-column prop="id" label="订单ID" width="100" />
+          <el-table-column prop="orderNo" label="订单号" width="150" />
+          <el-table-column prop="customerName" label="客户名称" min-width="120" />
+          <el-table-column prop="amount" label="金额" width="120" />
+          <el-table-column prop="status" label="状态" width="100">
+            <template #default="{ row }">
+              <el-tag :type="getStatusType(row.status)">{{ row.status }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="150" fixed="right">
+            <template #default="{ row }">
+              <IipDropdownList
+                :dropdown-list="getOrderDropdownList(row)"
+                :dropdown-props="{
+                  trigger: 'click',
+                  onCommand: command => handleOrderCommand(command, row)
+                }"
+              >
+                <el-button type="primary" size="small">
+                  操作 <el-icon class="el-icon--right"><arrow-down /></el-icon>
+                </el-button>
+              </IipDropdownList>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+
+      <div class="demo-section">
+        <h3>动态控制下拉项显示</h3>
+        <p style="margin-bottom: 15px; color: #666">根据数据状态动态控制下拉项的显示和禁用状态</p>
+        <el-table :data="taskTableDataForDropdown" border stripe style="width: 100%">
+          <el-table-column prop="id" label="ID" width="80" />
+          <el-table-column prop="taskName" label="任务名称" min-width="200" />
+          <el-table-column prop="assignee" label="指派人" width="120" />
+          <el-table-column prop="status" label="状态" width="100">
+            <template #default="{ row }">
+              <el-tag :type="getTaskStatusType(row.status)">{{ row.status }}</el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" width="150" fixed="right">
+            <template #default="{ row }">
+              <IipDropdownList
+                :dropdown-list="getTaskDropdownList(row)"
+                ref="taskDropdownListRef"
+                :dropdown-props="{
+                  trigger: 'click',
+                  size: 'small',
+                  onCommand: command => handleTaskCommand(command, row)
+                }"
+              >
+                <el-button type="primary" link size="small"
+                  >更多操作 <el-icon><arrow-down /></el-icon
+                ></el-button>
+              </IipDropdownList>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </div>
+
     <!-- openDialogSelect 函数式调用示例 -->
     <div class="component-group">
       <h2 class="component-title">openDialogSelect 函数式调用</h2>
@@ -242,12 +312,14 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { ArrowDown } from '@element-plus/icons-vue'
 import { IipDateRange } from '../src/components/date-range'
 import {
   IipPaginationSelect,
   type PaginationSelectInstance
 } from '../src/components/pagination-select'
 import { IipDialogSelect, openDialogSelect } from '../src/components/dialog-select'
+import { IipDropdownList } from '../src/components/dropdown-list'
 import type {
   FetchDataParams,
   FetchDataResult,
@@ -259,7 +331,8 @@ import type {
   TableRowItem
 } from '../src/components/dialog-select/types'
 import { ElMessage } from 'element-plus'
-
+import type { DropdownListItemType } from '../src/components/dropdown-list/type'
+import type { DropdownListInstance } from '../src/components/dropdown-list/type'
 // DateRange 相关
 const dateRange1 = ref({ startTime: '', endTime: '' })
 const dateRange2 = ref({ startTime: '', endTime: '' })
@@ -694,6 +767,214 @@ const handleAssigneeClick = async (row: any) => {
     }
   } catch (error: any) {
     console.log('取消选择:', error.message)
+  }
+}
+
+// DropdownList 相关
+// 订单表格数据
+const orderTableData = ref([
+  { id: 1, orderNo: 'ORD-2024-001', customerName: '张三', amount: '¥1,280.00', status: '待支付' },
+  { id: 2, orderNo: 'ORD-2024-002', customerName: '李四', amount: '¥2,560.00', status: '已支付' },
+  { id: 3, orderNo: 'ORD-2024-003', customerName: '王五', amount: '¥3,840.00', status: '已发货' },
+  { id: 4, orderNo: 'ORD-2024-004', customerName: '赵六', amount: '¥5,120.00', status: '已完成' },
+  { id: 5, orderNo: 'ORD-2024-005', customerName: '钱七', amount: '¥890.00', status: '已取消' }
+])
+type Order = {
+  id: number
+  orderNo: string
+  customerName: string
+  amount: string
+  status: string
+}
+// 获取订单下拉列表配置
+const getOrderDropdownList = (row: Order): DropdownListItemType[] => {
+  return [
+    {
+      content: `查看详情：${row.orderNo}`,
+      command: 'view',
+      show: true
+    },
+    {
+      content: '编辑订单',
+      command: 'edit',
+      show: row.status === '待支付' || row.status === '已支付'
+    },
+    {
+      content: '确认支付',
+      command: 'pay',
+      show: row.status === '待支付',
+      divided: true
+    },
+    {
+      content: '发货',
+      command: 'ship',
+      show: row.status === '已支付'
+    },
+    {
+      content: '完成订单',
+      command: 'complete',
+      show: row.status === '已发货'
+    },
+    {
+      content: '取消订单',
+      command: 'cancel',
+      show: row.status === '待支付' || row.status === '已支付',
+      divided: true
+    },
+    {
+      content: '删除订单',
+      command: 'delete',
+      show: row.status === '已取消'
+    }
+  ]
+}
+
+// 获取状态标签类型
+const getStatusType = (status: string) => {
+  const typeMap: Record<string, any> = {
+    待支付: 'warning',
+    已支付: 'success',
+    已发货: 'primary',
+    已完成: 'info',
+    已取消: 'danger'
+  }
+  return typeMap[status] || 'info'
+}
+
+const taskDropdownListRef = ref<DropdownListInstance>()
+
+// 任务表格数据（用于下拉列表）
+const taskTableDataForDropdown = ref([
+  { id: 1, taskName: '开发登录功能', assignee: '张三', status: '进行中' },
+  { id: 2, taskName: '设计首页', assignee: '李四', status: '未开始' },
+  { id: 3, taskName: '编写文档', assignee: '王五', status: '已完成' },
+  { id: 4, taskName: '测试功能', assignee: '赵六', status: '进行中' }
+])
+type Task = {
+  id: number
+  taskName: string
+  assignee: string
+  status: string
+}
+// 获取任务下拉列表配置
+const getTaskDropdownList = (row: Task): DropdownListItemType[] => {
+  return [
+    {
+      content: '查看详情',
+      command: 'view',
+      show: true
+    },
+    {
+      content: '开始任务',
+      command: 'start',
+      show: row.status === '未开始'
+    },
+    {
+      content: '暂停任务',
+      command: 'pause',
+      show: row.status === '进行中'
+    },
+    {
+      content: '完成任务',
+      command: 'complete',
+      show: row.status === '进行中',
+      divided: true
+    },
+    {
+      content: '重新开始',
+      command: 'restart',
+      show: row.status === '已完成'
+    },
+    {
+      content: '编辑',
+      command: 'edit',
+      show: row.status !== '已完成',
+      divided: true
+    },
+    {
+      content: '删除',
+      command: 'delete',
+      show: true,
+      disabled: row.status === '进行中'
+    }
+  ]
+}
+
+// 获取任务状态标签类型
+const getTaskStatusType = (status: string) => {
+  const typeMap: Record<string, any> = {
+    未开始: 'info',
+    进行中: 'warning',
+    已完成: 'success'
+  }
+  return typeMap[status] || 'info'
+}
+
+// 处理订单下拉菜单命令
+const handleOrderCommand = (command: string | number | object, row: Order) => {
+  console.log('执行订单操作:', command, row)
+  console.log('taskDropdownListRef', taskDropdownListRef.value)
+  const commandStr = String(command)
+  const messages: Record<string, string> = {
+    view: `查看订单详情：${row.orderNo}`,
+    edit: `编辑订单：${row.orderNo}`,
+    pay: `确认支付订单：${row.orderNo}`,
+    ship: `发货订单：${row.orderNo}`,
+    complete: `完成订单：${row.orderNo}`,
+    cancel: `取消订单：${row.orderNo}`,
+    delete: `删除订单：${row.orderNo}`
+  }
+
+  ElMessage.success(messages[commandStr] || '执行操作')
+
+  // 更新订单状态（模拟）
+  if (commandStr === 'pay') {
+    row.status = '已支付'
+  } else if (commandStr === 'ship') {
+    row.status = '已发货'
+  } else if (commandStr === 'complete') {
+    row.status = '已完成'
+  } else if (commandStr === 'cancel') {
+    row.status = '已取消'
+  } else if (commandStr === 'delete') {
+    const index = orderTableData.value.findIndex(item => item.id === row.id)
+    if (index > -1) {
+      orderTableData.value.splice(index, 1)
+    }
+  }
+}
+
+// 处理任务下拉菜单命令
+const handleTaskCommand = (command: string | number | object, row: Task) => {
+  console.log('执行任务操作:', command, row)
+
+  const commandStr = String(command)
+  const messages: Record<string, string> = {
+    view: `查看任务详情：${row.taskName}`,
+    start: `开始任务：${row.taskName}`,
+    pause: `暂停任务：${row.taskName}`,
+    complete: `完成任务：${row.taskName}`,
+    restart: `重新开始任务：${row.taskName}`,
+    edit: `编辑任务：${row.taskName}`,
+    delete: `删除任务：${row.taskName}`
+  }
+
+  ElMessage.success(messages[commandStr] || '执行操作')
+
+  // 更新任务状态（模拟）
+  if (commandStr === 'start') {
+    row.status = '进行中'
+  } else if (commandStr === 'pause') {
+    row.status = '未开始'
+  } else if (commandStr === 'complete') {
+    row.status = '已完成'
+  } else if (commandStr === 'restart') {
+    row.status = '进行中'
+  } else if (commandStr === 'delete') {
+    const index = taskTableDataForDropdown.value.findIndex(item => item.id === row.id)
+    if (index > -1) {
+      taskTableDataForDropdown.value.splice(index, 1)
+    }
   }
 }
 </script>

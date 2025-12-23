@@ -93,6 +93,9 @@ importers:
       '@bingwu/iip-ui-utils':
         specifier: workspace:*
         version: link:../../packages/utils
+      '@element-plus/icons-vue':
+        specifier: ^2.1.0
+        version: 2.3.2(vue@3.5.21)
       element-plus:
         specifier: 2.11.2
         version: 2.11.2(vue@3.5.21)

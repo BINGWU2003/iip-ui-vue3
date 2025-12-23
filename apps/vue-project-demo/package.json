@@ -16,6 +16,7 @@
     "@bingwu/iip-ui-components": "workspace:*",
     "@bingwu/iip-ui-theme": "workspace:*",
     "@bingwu/iip-ui-utils": "workspace:*",
+    "@element-plus/icons-vue": "^2.1.0",
     "element-plus": "2.11.2",
     "pinia": "^3.0.3",
     "vue": "^3.5.18",

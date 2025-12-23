@@ -6,7 +6,7 @@ import type { BaseRecord } from '../../utils/types'
 export type TableRowItem<T extends BaseRecord = BaseRecord> = T
 
 /** 基础分页参数 */
-export type PaginationParams = {
+type PaginationParams = {
   page: number
   pageSize: number
 }
