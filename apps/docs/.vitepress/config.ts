@@ -1,4 +1,10 @@
 import { defineConfig } from 'vitepress'
+import { genComponentsSidebar, getComponentsDir } from './utils/genComponentsSidebar'
+
+// 自动生成组件文档侧边栏
+const componentsDir = getComponentsDir()
+
+const componentItems = genComponentsSidebar(componentsDir)
 
 export default defineConfig({
   title: 'IIP UI Vue3',
@@ -54,16 +60,7 @@ export default defineConfig({
       '/components/': [
         {
           text: '数据录入',
-          items: [
-            { text: 'PaginationSelect 分页选择器', link: '/components/pagination-select' },
-            { text: 'DateRange 日期范围', link: '/components/date-range' },
-            { text: 'DialogSelect 弹窗选择器', link: '/components/dialog-select' },
-            {
-              text: 'DialogSelect 弹窗选择器(函数式调用)',
-              link: '/components/dialog-select-function'
-            },
-            { text: 'DropdownList 下拉列表', link: '/components/dropdown-list' }
-          ]
+          items: componentItems
         }
       ]
     },
