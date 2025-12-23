@@ -81,7 +81,7 @@ const employeeDialogSelectOptions: DialogSelectOptions = [
     title: '姓名',
     useForm: true,
     formItemProps: {
-      type: 'input',
+      formType: 'input',
       placeholder: '请输入姓名'
     }
   },
@@ -90,7 +90,7 @@ const employeeDialogSelectOptions: DialogSelectOptions = [
     title: '部门',
     useForm: true,
     formItemProps: {
-      type: 'select',
+      formType: 'select',
       placeholder: '请选择部门',
       options: [
         { label: '技术部', value: '技术部' },
@@ -226,7 +226,7 @@ const productDialogSelectOptions: DialogSelectOptions = [
     title: '产品名称',
     useForm: true,
     formItemProps: {
-      type: 'input',
+      formType: 'input',
       placeholder: '请输入产品名称'
     }
   },
@@ -235,7 +235,7 @@ const productDialogSelectOptions: DialogSelectOptions = [
     title: '分类',
     useForm: true,
     formItemProps: {
-      type: 'select',
+      formType: 'select',
       placeholder: '请选择分类',
       options: [
         { label: '电子产品', value: '电子产品' },
@@ -377,7 +377,7 @@ const employeeDialogSelectOptions: DialogSelectOptions = [
     title: '姓名',
     useForm: true,
     formItemProps: {
-      type: 'input',
+      formType: 'input',
       placeholder: '请输入姓名'
     }
   },
@@ -386,7 +386,7 @@ const employeeDialogSelectOptions: DialogSelectOptions = [
     title: '部门',
     useForm: true,
     formItemProps: {
-      type: 'select',
+      formType: 'select',
       placeholder: '请选择部门',
       options: [
         { label: '技术部', value: '技术部' },
@@ -591,7 +591,7 @@ const employeeDialogSelectOptions: DialogSelectOptions = [
     title: '姓名',
     useForm: true,
     formItemProps: {
-      type: 'input',
+      formType: 'input',
       placeholder: '请输入姓名'
     }
   },
@@ -600,7 +600,7 @@ const employeeDialogSelectOptions: DialogSelectOptions = [
     title: '部门',
     useForm: true,
     formItemProps: {
-      type: 'select',
+      formType: 'select',
       placeholder: '请选择部门',
       options: async () => {
         await new Promise(resolve => setTimeout(resolve, 200))
@@ -687,7 +687,7 @@ const productDialogSelectOptions: DialogSelectOptions = [
     title: '产品名称',
     useForm: true,
     formItemProps: {
-      type: 'input',
+      formType: 'input',
       placeholder: '请输入产品名称',
       defaultValue: '产品'
     }
@@ -697,7 +697,7 @@ const productDialogSelectOptions: DialogSelectOptions = [
     title: '分类',
     useForm: true,
     formItemProps: {
-      type: 'select',
+      formType: 'select',
       placeholder: '请选择分类',
       defaultValue: '电子产品',
       options: [
@@ -965,10 +965,10 @@ export type DialogSelectOption = {
   /** 表单项配置属性（当作为表单项时使用） */
   formItemProps?: {
     /** 表单项类型：input（输入框）、select（下拉框）或 date（日期选择） */
-    type?: 'input' | 'select' | 'date'
+    formType?: 'input' | 'select' | 'date'
     /** 占位符 */
     placeholder?: string
-    /** 下拉选项（当type为select时使用），可以是数组或返回数组的函数 */
+    /** 下拉选项（当formType为select时使用），可以是数组或返回数组的函数 */
     options?: FormItemOption[] | (() => FormItemOption[] | Promise<FormItemOption[]>)
     /** 默认值，可以是值或返回值的同步函数 */
     defaultValue?: any | (() => any)
@@ -1325,7 +1325,7 @@ const options: DialogSelectOptions = [
     title: '姓名',
     useForm: true,
     formItemProps: {
-      type: 'input',
+      formType: 'input',
       placeholder: '请输入姓名'
     }
   }

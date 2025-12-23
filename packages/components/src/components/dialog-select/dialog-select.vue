@@ -25,7 +25,7 @@
           <el-form :model="formData" inline>
             <el-form-item v-for="item in formItems" :key="item.field" :label="item.title">
               <el-input
-                v-if="item.formItemProps?.type === 'input'"
+                v-if="item.formItemProps?.formType === 'input'"
                 v-model="formData[item.field]"
                 :placeholder="item.formItemProps?.placeholder || `请输入${item.title}`"
                 clearable
@@ -34,7 +34,7 @@
                 @change="handleFormChange"
               />
               <el-select
-                v-else-if="item.formItemProps?.type === 'select'"
+                v-else-if="item.formItemProps?.formType === 'select'"
                 v-model="formData[item.field]"
                 :placeholder="item.formItemProps?.placeholder || `请选择${item.title}`"
                 clearable
@@ -50,7 +50,7 @@
                 />
               </el-select>
               <el-date-picker
-                v-else-if="item.formItemProps?.type === 'date'"
+                v-else-if="item.formItemProps?.formType === 'date'"
                 v-model="formData[item.field]"
                 :placeholder="item.formItemProps?.placeholder || `请选择${item.title}`"
                 clearable
@@ -220,7 +220,7 @@ const initFormData = () => {
         data[item.field] = formItemProps.defaultValue
       }
     } else {
-      if (formItemProps.type === 'select' || formItemProps.type === 'date') {
+      if (formItemProps.formType === 'select' || formItemProps.formType === 'date') {
         data[item.field] = undefined
       } else {
         data[item.field] = ''
@@ -238,7 +238,7 @@ const getFormItemProps = (item: DialogSelectOption): Record<string, any> => {
 
   // 排除不应该透传的属性
   const {
-    type: _type,
+    formType: _formType,
     options: _options,
     defaultValue: _defaultValue,
     ...restProps
@@ -274,7 +274,7 @@ const loadFormItemOptions = async () => {
 
   for (const item of formItems.value) {
     const formItemProps = item.formItemProps
-    if (formItemProps?.type === 'select' && typeof formItemProps.options === 'function') {
+    if (formItemProps?.formType === 'select' && typeof formItemProps.options === 'function') {
       try {
         const result = await formItemProps.options()
         formItemOptions.value[item.field] = Array.isArray(result) ? result : []

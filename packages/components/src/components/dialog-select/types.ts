@@ -60,10 +60,10 @@ export type DialogSelectOption = {
   /** 表单项配置属性（当作为表单项时使用） */
   formItemProps?: {
     /** 表单项类型：input（输入框）、select（下拉框）或 date（日期选择） */
-    type?: 'input' | 'select' | 'date'
+    formType?: 'input' | 'select' | 'date'
     /** 占位符 */
     placeholder?: string
-    /** 下拉选项（当type为select时使用），可以是数组或返回数组的函数 */
+    /** 下拉选项（当formType为select时使用），可以是数组或返回数组的函数 */
     options?: FormItemOption[] | (() => FormItemOption[] | Promise<FormItemOption[]>)
     /** 默认值，可以是值或返回值的同步函数 */
     defaultValue?: any | (() => any)

@@ -502,7 +502,7 @@ const employeeDialogSelectOptions = [
     title: '姓名',
     useForm: true,
     formItemProps: {
-      type: 'input' as const,
+      formType: 'input' as const,
       placeholder: '请输入姓名'
     }
   },
@@ -511,7 +511,7 @@ const employeeDialogSelectOptions = [
     title: '部门',
     useForm: true,
     formItemProps: {
-      type: 'select' as const,
+      formType: 'select' as const,
       placeholder: '请选择部门',
       // 使用函数返回选项，支持从接口获取
       options: async () => {
@@ -532,8 +532,9 @@ const employeeDialogSelectOptions = [
     title: '创建日期',
     useForm: true,
     formItemProps: {
-      type: 'date' as const,
-      placeholder: '请选择创建日期'
+      formType: 'date' as const,
+      placeholder: '请选择创建日期',
+      type: 'daterange'
     }
   }
 ]
@@ -580,7 +581,7 @@ const productDialogSelectOptions = [
     title: '产品名称',
     useForm: true,
     formItemProps: {
-      type: 'input' as const,
+      formType: 'input' as const,
       placeholder: '请输入产品名称',
       defaultValue: '产品'
     }
@@ -590,7 +591,7 @@ const productDialogSelectOptions = [
     title: '分类',
     useForm: true,
     formItemProps: {
-      type: 'select' as const,
+      formType: 'select' as const,
       placeholder: '请选择分类',
       defaultValue: '电子产品',
       options: [
