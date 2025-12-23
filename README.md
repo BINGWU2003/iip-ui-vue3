@@ -151,6 +151,83 @@ pnpm release
 - ✅ 更新了 CHANGELOG.md
 - ✅ 文档已同步更新
 - ✅ 工作区干净（无未提交的更改）
+- ✅ NPM 认证已正确配置（见下方说明）
+
+### NPM 认证配置
+
+如果发布时遇到 `403 Forbidden - Two-factor authentication or granular access token with bypass 2fa enabled is required` 错误，说明需要使用细粒度访问令牌（Granular Access Token）。
+
+#### 解决方案
+
+1. **创建细粒度访问令牌**
+   - 访问 [npm 访问令牌页面](https://www.npmjs.com/settings/bingwu/tokens)
+   - 点击 "Generate New Token" → "Granular Access Token"
+   - 配置权限：
+     - **Package Access**: 选择 `@bingwu/iip-ui-components`、`@bingwu/iip-ui-utils`、`@bingwu/iip-ui-theme`
+     - **Permissions**: 选择 `Read and Publish`
+     - **Expiration**: 根据需要设置（建议至少 1 年）
+   - **重要**: 确保启用 "Automatically revoke this token when 2FA is disabled" 选项（这相当于 bypass 2FA）
+
+2. **配置认证方式（三种方式任选其一）**
+
+   **方式一：使用 npm login（推荐）**
+
+   ```bash
+   # 使用创建的令牌登录 npm
+   npm login --auth-type=legacy
+   # 输入用户名、密码和邮箱，然后输入令牌作为密码
+   ```
+
+   **方式二：配置 .npmrc 文件（项目级别）**
+
+   ```bash
+   # 在项目根目录的 .npmrc 文件中添加（已预配置，取消注释即可）
+   # //registry.npmjs.org/:_authToken=YOUR_TOKEN_HERE
+   ```
+
+   **方式三：使用环境变量（CI/CD 推荐）**
+
+   ```bash
+   # Windows PowerShell
+   $env:NPM_TOKEN="YOUR_TOKEN_HERE"
+
+   # Windows CMD
+   set NPM_TOKEN=YOUR_TOKEN_HERE
+
+   # Linux/Mac
+   export NPM_TOKEN=YOUR_TOKEN_HERE
+
+   # 然后在 .npmrc 中使用（已预配置）
+   # //registry.npmjs.org/:_authToken=${NPM_TOKEN}
+   ```
+
+   **方式四：使用 npm config（用户级别）**
+
+   ```bash
+   # 配置到用户级别的 .npmrc（~/.npmrc）
+   npm config set //registry.npmjs.org/:_authToken YOUR_TOKEN_HERE
+   ```
+
+3. **验证登录状态**
+
+   ```bash
+   npm whoami
+   # 应该显示：bingwu
+   ```
+
+4. **重新发布**
+   ```bash
+   pnpm release
+   ```
+
+#### 注意事项
+
+- 细粒度访问令牌比传统令牌更安全，建议使用
+- 令牌创建后请妥善保管，不要泄露
+- 如果令牌泄露，请立即在 npm 网站上撤销并重新创建
+- **重要**：不要将包含真实 token 的 `.npmrc` 文件提交到 Git 仓库
+- 项目根目录的 `.npmrc` 已预配置，包含注释说明，可根据需要取消注释
+- 推荐使用 `npm login` 或环境变量的方式，token 会自动保存到用户目录的 `.npmrc`
 
 ### 手动发布
 
