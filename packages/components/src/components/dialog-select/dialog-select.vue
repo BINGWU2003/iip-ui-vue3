@@ -8,7 +8,6 @@
         :clearable="clearable"
         :disabled="disabled"
         :style="style"
-        readonly
         @click="handleInputClick"
         @clear="handleClear"
       />
