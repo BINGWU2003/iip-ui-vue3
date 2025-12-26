@@ -1,5 +1,11 @@
 # @bingwu/iip-ui-components
 
+## 1.2.27
+
+### Patch Changes
+
+- dialog-select优化，默认append-to-body。openDialogSelect的类型推导完善
+
 ## 1.2.26
 
 ### Patch Changes
