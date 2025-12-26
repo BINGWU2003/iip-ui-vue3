@@ -16,97 +16,15 @@
 
 ## 基础用法
 
-```vue
-<template>
-  <div>
-    <IipPaginationSelect
-      v-model="selectedUser"
-      :fetch-data="fetchUserData"
-      placeholder="请选择用户"
-      value-key="id"
-      label-key="name"
-      :page-size="20"
-      @change="handleChange"
-    />
-
-    <div v-if="selectedUser">已选择：{{ selectedUser.name }} (ID: {{ selectedUser.id }})</div>
-  </div>
-</template>
-
-<script setup lang="ts">
-import { ref } from 'vue'
-import { IipPaginationSelect } from '@bingwu/iip-ui-components'
-import type { FetchDataParams, FetchDataResult } from '@bingwu/iip-ui-components'
-
-// 定义用户数据类型（使用泛型获得类型推导）
-interface UserOption {
-  id: number
-  name: string
-  email: string
-}
-
-// modelValue 是对象形式：{ id: 1, name: '张三' }
-const selectedUser = ref<UserOption | null>(null)
-
-// 处理选择变化
-const handleChange = (value: UserOption | null) => {
-  // ✅ value 类型已推导为 UserOption | null
-  console.log('选中的用户：', value) // { id: 1, name: '张三' } 或 null
-}
-
-// 模拟用户数据
-const mockUsers: UserOption[] = Array.from({ length: 100 }, (_, i) => ({
-  id: i + 1,
-  name: `用户${i + 1}`,
-  email: `user${i + 1}@example.com`
-}))
-
-// 模拟数据获取函数（使用泛型，获得类型推导）
-const fetchUserData = async (
-  params: FetchDataParams<UserOption>
-): Promise<FetchDataResult<UserOption>> => {
-  // 模拟网络延迟
-  await new Promise(resolve => setTimeout(resolve, 300))
-
-  // ✅ params 类型已推导：{ page: number, pageSize: number, keyword: string, id?: number, name?: string, email?: string }
-  const { page, pageSize, keyword } = params
-
-  // 根据关键词过滤
-  let filteredUsers = mockUsers
-  if (keyword) {
-    // ✅ keyword 类型为 string，无需类型断言
-    filteredUsers = mockUsers.filter(
-      user => user.name.includes(keyword) || user.email.includes(keyword)
-    )
-  }
-
-  // 分页处理
-  const start = (page - 1) * pageSize
-  const end = start + pageSize
-  const data = filteredUsers.slice(start, end)
-
-  return {
-    data,
-    total: filteredUsers.length
-  }
-}
-
-// 真实 API 调用示例（使用泛型）
-const fetchUserDataFromAPI = async (
-  params: FetchDataParams<UserOption>
-): Promise<FetchDataResult<UserOption>> => {
-  const { page, pageSize, keyword } = params
-
-  const response = await fetch(`/api/users?page=${page}&size=${pageSize}&search=${keyword}`)
-  const data = await response.json()
-
-  return {
-    data: data.list, // 数据列表，格式：UserOption[]
-    total: data.total // 总数
-  }
-}
+<script setup>
+import Basic from '../examples/pagination-select/basic.vue'
 </script>
-```
+
+<Basic />
+
+::: details 查看代码
+<<< @/examples/pagination-select/basic.vue
+:::
 
 ## 多选用法
 
