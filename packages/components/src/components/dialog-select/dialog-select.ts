@@ -1,10 +1,10 @@
 import { h, render, type VNode, nextTick } from 'vue'
 import DialogSelect from './dialog-select.vue'
-import type { TableRowItem, DialogSelectInstance, OpenDialogSelectOptions } from './types'
-
-export function openDialogSelect(
-  options: OpenDialogSelectOptions
-): Promise<TableRowItem | TableRowItem[] | null> {
+import type { DialogSelectInstance, OpenDialogSelectOptions } from './types'
+import type { BaseRecord } from '../../utils/types'
+export function openDialogSelect<T extends BaseRecord = BaseRecord>(
+  options: OpenDialogSelectOptions<T>
+): Promise<T | T[] | null> {
   return new Promise((resolve, reject) => {
     const container = document.createElement('div')
     document.body.appendChild(container)
@@ -28,7 +28,7 @@ export function openDialogSelect(
       }, animationDuration)
     }
 
-    const handleChange = (value: TableRowItem | TableRowItem[] | null) => {
+    const handleChange = (value: T | T[] | null) => {
       currentValue = value
     }
 
@@ -40,7 +40,7 @@ export function openDialogSelect(
       }
     }
 
-    const handleConfirm = (value: TableRowItem | TableRowItem[] | null) => {
+    const handleConfirm = (value: T | T[] | null) => {
       isConfirmed = true
       currentValue = value
 

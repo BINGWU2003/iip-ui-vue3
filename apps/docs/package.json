@@ -12,14 +12,19 @@
   },
   "dependencies": {
     "@bingwu/iip-ui-components": "workspace:*",
-    "element-plus": "^2.5.0",
-    "vue": "^3.3.8"
+    "@element-plus/icons-vue": "^2.1.0",
+    "element-plus": "2.11.2",
+    "vue": "^3.3.8",
+    "typescript": "^5.3.2",
+    "vitepress": "^1.0.0-rc.31",
+    "vxe-pc-ui": "~4.8.15",
+    "vxe-table": "^4.15.6",
+    "xe-utils": "^3.7.8",
+    "@bingwu/iip-ui-utils": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^20.9.0",
-    "sass": "^1.90.0",
-    "typescript": "^5.3.2",
-    "vitepress": "^1.0.0-rc.31"
+    "sass": "^1.90.0"
   },
   "keywords": [
     "docs",
