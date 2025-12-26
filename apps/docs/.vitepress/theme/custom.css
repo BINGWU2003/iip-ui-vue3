@@ -1,0 +1,33 @@
+/**
+ * 自定义样式文件
+ * 修复 VitePress 文档主题与 UI 组件的样式冲突
+ */
+
+/* 修复 el-table 表头与表体之间的间隙问题 */
+/* VitePress 的 .vp-doc table 样式会给所有 table 元素添加 margin: 20px 0 */
+/* 这会导致 el-table 内部的表头和表体 table 元素都有 margin，产生间隙 */
+.vp-doc .el-table table {
+  margin: 0;
+  display: table;
+  border-collapse: separate;
+}
+
+.vp-doc .el-table .el-table__header-wrapper table,
+.vp-doc .el-table .el-table__body-wrapper table {
+  margin: 0;
+}
+
+/* 修复 vxe-table 布局错乱问题 */
+/* VitePress 的 .vp-doc table 样式会将 display 设置为 block，破坏 vxe-table 的布局 */
+/* vxe-table 需要保持 display: table 才能正确计算行高和列宽 */
+.vp-doc .vxe-table table {
+  display: table !important;
+  margin: 0 !important;
+}
+
+.vp-doc .vxe-table .vxe-table--header-wrapper table,
+.vp-doc .vxe-table .vxe-table--body-wrapper table,
+.vp-doc .vxe-table .vxe-table--footer-wrapper table {
+  display: table !important;
+  margin: 0 !important;
+}

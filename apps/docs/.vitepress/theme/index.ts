@@ -2,6 +2,7 @@ import DefaultTheme from 'vitepress/theme'
 import type { Theme } from 'vitepress'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
+import './custom.css'
 
 // 导入组件库 - 使用 install 方法一次性注册所有组件
 import IipUI from '@bingwu/iip-ui-components'
