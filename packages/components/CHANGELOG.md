@@ -1,5 +1,11 @@
 # @bingwu/iip-ui-components
 
+## 1.2.28
+
+### Patch Changes
+
+- 去除dialog-select只读模式
+
 ## 1.2.27
 
 ### Patch Changes
