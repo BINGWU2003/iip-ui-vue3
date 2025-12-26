@@ -18,6 +18,7 @@
         :title="dialogTitle"
         :width="dialogWidth"
         :close-on-click-modal="false"
+        append-to-body
         @close="handleDialogClose"
       >
         <!-- 表单筛选区域 -->
