@@ -1,5 +1,6 @@
 import { defineConfig } from 'vitepress'
 import { genComponentsSidebar, getComponentsDir } from './utils/genComponentsSidebar'
+import { fileURLToPath, URL } from 'node:url'
 
 // 自动生成组件文档侧边栏
 const componentsDir = getComponentsDir()
@@ -100,6 +101,15 @@ export default defineConfig({
 
   // 构建配置
   vite: {
-    // 可以在这里添加其他 Vite 配置
+    resolve: {
+      alias: {
+        '@bingwu/iip-ui-components': fileURLToPath(
+          new URL('../../../packages/components/src/index.ts', import.meta.url)
+        )
+      }
+    },
+    ssr: {
+      noExternal: ['element-plus', '@bingwu/iip-ui-components']
+    }
   }
 })

@@ -10,6 +10,11 @@
     "preview": "vitepress preview",
     "clean": "rimraf .vitepress/dist"
   },
+  "dependencies": {
+    "@bingwu/iip-ui-components": "workspace:*",
+    "element-plus": "^2.5.0",
+    "vue": "^3.3.8"
+  },
   "devDependencies": {
     "@types/node": "^20.9.0",
     "sass": "^1.90.0",

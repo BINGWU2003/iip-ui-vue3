@@ -68,6 +68,16 @@ importers:
         version: 3.2.4(@types/node@22.18.5)(terser@5.44.0)
 
   apps/docs:
+    dependencies:
+      '@bingwu/iip-ui-components':
+        specifier: workspace:*
+        version: link:../../packages/components
+      element-plus:
+        specifier: ^2.5.0
+        version: 2.11.2(vue@3.5.21)
+      vue:
+        specifier: ^3.3.8
+        version: 3.5.21(typescript@5.8.3)
     devDependencies:
       '@types/node':
         specifier: ^20.9.0

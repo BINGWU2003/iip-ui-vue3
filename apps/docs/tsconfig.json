@@ -1,12 +1,13 @@
 {
-  "compilerOptions": {
-    "types": ["node"],
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "target": "ES2020",
-    "lib": ["ES2020"],
-    "skipLibCheck": true,
-    "strict": false
-  },
-  "include": [".vitepress/**/*.ts", ".vitepress/**/*.vue"]
+  "extends": "../../tsconfig.json",
+  "include": [
+    ".vitepress/**/*.ts",
+    ".vitepress/**/*.vue",
+    "components/**/*.md",
+    "examples/**/*.vue",
+    "guide/**/*.md",
+    "utils/**/*.md",
+    "theme/**/*.md"
+  ],
+  "exclude": ["node_modules", ".vitepress/dist", ".vitepress/cache"]
 }

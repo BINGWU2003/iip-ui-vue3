@@ -11,31 +11,46 @@
 - 🔧 **灵活配置**: 支持透传 Element Plus DatePicker 的所有属性
 - 🎯 **插槽支持**: 支持透传 Element Plus DatePicker 的所有插槽，可分别自定义开始和结束日期选择器
 
-## 基础用法
+## ⚠️ 重要提示
 
-最简单的日期范围选择：
+**使用 `ref` 而不是 `reactive`**
 
-```vue
-<template>
-  <div>
-    <iip-date-range v-model="dateRange" @change="handleDateChange" />
-    <p>选择的日期范围：{{ dateRange.startTime }} ~ {{ dateRange.endTime }}</p>
-  </div>
-</template>
+由于组件使用 `v-model` 进行双向绑定，并且内部会替换整个对象，因此**必须使用 `ref` 来定义 `dateRange`**，而不能使用 `reactive`。
 
-<script setup lang="ts">
-import { reactive } from 'vue'
-
-const dateRange = reactive({
+```typescript
+// ✅ 正确：使用 ref
+const dateRange = ref({
   startTime: '',
   endTime: ''
 })
 
-const handleDateChange = (value: { startTime: string; endTime: string }) => {
-  console.log('日期范围变化:', value)
-}
-</script>
+// ❌ 错误：使用 reactive 会导致响应式丢失
+const dateRange = reactive({
+  startTime: '',
+  endTime: ''
+})
 ```
+
+**原因说明：**
+
+- `reactive` 返回的是 Proxy 对象，不能被重新赋值，否则会失去响应式
+- 组件内部通过 `emit('update:modelValue', { ...formData })` 发出新对象
+- `v-model` 会尝试整体替换对象，这与 `reactive` 的特性冲突
+- 使用 `ref` 时，`v-model` 会修改 `.value` 属性，可以正常工作
+
+## 基础用法
+
+最简单的日期范围选择：
+
+<script setup>
+import Basic from '../examples/date-range/basic.vue'
+</script>
+
+<Basic />
+
+::: details 查看代码
+<<< @/examples/date-range/basic.vue
+:::
 
 ## 允许选择未来日期
 
@@ -47,9 +62,9 @@ const handleDateChange = (value: { startTime: string; endTime: string }) => {
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { ref } from 'vue'
 
-const dateRange = reactive({
+const dateRange = ref({
   startTime: '',
   endTime: ''
 })
@@ -76,9 +91,9 @@ const handleDateChange = (value: { startTime: string; endTime: string }) => {
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { ref } from 'vue'
 
-const dateRange = reactive({
+const dateRange = ref({
   startTime: '',
   endTime: ''
 })
@@ -112,9 +127,9 @@ const handleDateChange = (value: { startTime: string; endTime: string }) => {
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { ref } from 'vue'
 
-const dateRange = reactive({
+const dateRange = ref({
   startTime: '',
   endTime: ''
 })
@@ -150,9 +165,9 @@ const handleDateChange = (value: { startTime: string; endTime: string }) => {
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { ref } from 'vue'
 
-const form = reactive({
+const form = ref({
   dateRange: {
     startTime: '',
     endTime: ''
@@ -165,13 +180,13 @@ const handleDateChange = (value: { startTime: string; endTime: string }) => {
 }
 
 const handleSubmit = () => {
-  console.log('表单数据:', form)
+  console.log('表单数据:', form.value)
 }
 
 const handleReset = () => {
-  form.dateRange.startTime = ''
-  form.dateRange.endTime = ''
-  form.projectName = ''
+  form.value.dateRange.startTime = ''
+  form.value.dateRange.endTime = ''
+  form.value.projectName = ''
 }
 </script>
 ```
@@ -208,10 +223,10 @@ const handleReset = () => {
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { ref } from 'vue'
 import { Calendar, Clock } from '@element-plus/icons-vue'
 
-const dateRange = reactive({
+const dateRange = ref({
   startTime: '',
   endTime: ''
 })
@@ -251,10 +266,10 @@ const handleDateChange = (value: { startTime: string; endTime: string }) => {
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { ref } from 'vue'
 import { Calendar } from '@element-plus/icons-vue'
 
-const dateRange = reactive({
+const dateRange = ref({
   startTime: '',
   endTime: ''
 })
@@ -303,9 +318,9 @@ const handleDateChange = (value: { startTime: string; endTime: string }) => {
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { ref } from 'vue'
 
-const dateRange = reactive({
+const dateRange = ref({
   startTime: '',
   endTime: ''
 })
@@ -341,9 +356,9 @@ const handleDateChange = (value: { startTime: string; endTime: string }) => {
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { ref } from 'vue'
 
-const dateRange = reactive({
+const dateRange = ref({
   startTime: '',
   endTime: ''
 })
@@ -453,10 +468,10 @@ const handleDateChange = (value: { startTime: string; endTime: string }) => {
 </template>
 
 <script setup lang="ts">
-import { reactive, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import dayjs from 'dayjs'
 
-const searchForm = reactive({
+const searchForm = ref({
   dateRange: {
     startTime: '',
     endTime: ''
@@ -465,12 +480,12 @@ const searchForm = reactive({
 
 // 页面加载时设置默认的查询时间范围（最近30天）
 onMounted(() => {
-  searchForm.dateRange.startTime = dayjs().subtract(30, 'day').format('YYYY-MM-DD')
-  searchForm.dateRange.endTime = dayjs().format('YYYY-MM-DD')
+  searchForm.value.dateRange.startTime = dayjs().subtract(30, 'day').format('YYYY-MM-DD')
+  searchForm.value.dateRange.endTime = dayjs().format('YYYY-MM-DD')
 })
 
 const handleSearch = () => {
-  console.log('搜索条件:', searchForm.dateRange)
+  console.log('搜索条件:', searchForm.value.dateRange)
   // 执行搜索逻辑
 }
 </script>
@@ -498,9 +513,9 @@ const handleSearch = () => {
 </template>
 
 <script setup lang="ts">
-import { reactive, watch } from 'vue'
+import { ref, watch } from 'vue'
 
-const statisticsForm = reactive({
+const statisticsForm = ref({
   dateRange: {
     startTime: '',
     endTime: ''
@@ -508,13 +523,13 @@ const statisticsForm = reactive({
 })
 
 const updateStatistics = () => {
-  console.log('更新统计数据:', statisticsForm.dateRange)
+  console.log('更新统计数据:', statisticsForm.value.dateRange)
   // 根据日期范围更新统计数据
 }
 
 // 监听日期变化，自动更新统计
 watch(
-  () => statisticsForm.dateRange,
+  () => statisticsForm.value.dateRange,
   newValue => {
     if (newValue.startTime && newValue.endTime) {
       updateStatistics()
@@ -560,13 +575,13 @@ watch(
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 import type { FormInstance } from 'element-plus'
 import dayjs from 'dayjs'
 
 const formRef = ref<FormInstance>()
 
-const form = reactive({
+const form = ref({
   dateRange: {
     startTime: '',
     endTime: ''
@@ -604,7 +619,7 @@ const validateDateRange = () => {
 const handleSubmit = async () => {
   const valid = await formRef.value?.validate()
   if (valid) {
-    console.log('表单验证通过:', form)
+    console.log('表单验证通过:', form.value)
   }
 }
 </script>
@@ -657,11 +672,11 @@ const handleSubmit = async () => {
 </template>
 
 <script setup lang="ts">
-import { reactive, computed } from 'vue'
+import { ref, computed } from 'vue'
 import { Calendar } from '@element-plus/icons-vue'
 import dayjs from 'dayjs'
 
-const advancedForm = reactive({
+const advancedForm = ref({
   dateRange: {
     startTime: '',
     endTime: ''
@@ -670,11 +685,11 @@ const advancedForm = reactive({
 
 // 计算选择的天数
 const daysDiff = computed(() => {
-  if (!advancedForm.dateRange.startTime || !advancedForm.dateRange.endTime) {
+  if (!advancedForm.value.dateRange.startTime || !advancedForm.value.dateRange.endTime) {
     return 0
   }
-  const start = dayjs(advancedForm.dateRange.startTime)
-  const end = dayjs(advancedForm.dateRange.endTime)
+  const start = dayjs(advancedForm.value.dateRange.startTime)
+  const end = dayjs(advancedForm.value.dateRange.endTime)
   return end.diff(start, 'day') + 1
 })
 
@@ -683,18 +698,18 @@ const handleAdvancedChange = (value: { startTime: string; endTime: string }) => 
 }
 
 const setLastWeek = () => {
-  advancedForm.dateRange.startTime = dayjs().subtract(6, 'day').format('YYYY-MM-DD')
-  advancedForm.dateRange.endTime = dayjs().format('YYYY-MM-DD')
+  advancedForm.value.dateRange.startTime = dayjs().subtract(6, 'day').format('YYYY-MM-DD')
+  advancedForm.value.dateRange.endTime = dayjs().format('YYYY-MM-DD')
 }
 
 const setLastMonth = () => {
-  advancedForm.dateRange.startTime = dayjs().subtract(29, 'day').format('YYYY-MM-DD')
-  advancedForm.dateRange.endTime = dayjs().format('YYYY-MM-DD')
+  advancedForm.value.dateRange.startTime = dayjs().subtract(29, 'day').format('YYYY-MM-DD')
+  advancedForm.value.dateRange.endTime = dayjs().format('YYYY-MM-DD')
 }
 
 const clearDates = () => {
-  advancedForm.dateRange.startTime = ''
-  advancedForm.dateRange.endTime = ''
+  advancedForm.value.dateRange.startTime = ''
+  advancedForm.value.dateRange.endTime = ''
 }
 </script>
 
