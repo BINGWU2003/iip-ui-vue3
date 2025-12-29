@@ -1,5 +1,11 @@
 # @bingwu/iip-ui-components
 
+## 1.2.29
+
+### Patch Changes
+
+- refactor: 优化 dialog-select 组件的列配置逻辑
+
 ## 1.2.28
 
 ### Patch Changes
