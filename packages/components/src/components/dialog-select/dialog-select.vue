@@ -288,14 +288,12 @@ const loadFormItemOptions = async () => {
 
 // 计算列配置，动态添加 radio 或 checkbox 列
 const computedColumns = computed<VxeColumnProps[]>(() => {
-  // 从 dialogSelectOptions 中提取列（useForm 不为 true 的项，或者有 columnProps 的项）
-  const baseColumns = props.dialogSelectOptions
-    .filter(option => option.useForm !== true && option.columnProps)
-    .map(option => ({
-      field: option.field,
-      title: option.title,
-      ...option.columnProps
-    }))
+  // 从 dialogSelectOptions 中提取列
+  const baseColumns = props.dialogSelectOptions.map(option => ({
+    field: option.field,
+    title: option.title,
+    ...option.columnProps
+  }))
 
   // 检查是否已经有 radio 或 checkbox 列
   const hasRadioOrCheckbox = baseColumns.some(
