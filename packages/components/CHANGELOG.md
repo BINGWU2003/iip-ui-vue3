@@ -1,5 +1,11 @@
 # @bingwu/iip-ui-components
 
+## 1.2.30
+
+### Patch Changes
+
+- style: 移除 dialog-select 组件的宽度样式，简化样式定义
+
 ## 1.2.29
 
 ### Patch Changes
