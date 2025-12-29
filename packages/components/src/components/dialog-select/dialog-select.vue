@@ -639,10 +639,6 @@ defineExpose({
 </script>
 
 <style scoped lang="scss">
-.dialog-select {
-  width: 100%;
-}
-
 .dialog-select-form {
   margin-bottom: 16px;
   padding-top: 16px;
