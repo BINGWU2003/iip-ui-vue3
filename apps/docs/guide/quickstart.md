@@ -28,10 +28,10 @@ IIP UI Vue3 采用 Monorepo 架构，包含以下核心包：
 pnpm add @bingwu/iip-ui-components @bingwu/iip-ui-utils
 
 # 安装必要的第三方依赖
-pnpm add vxe-table@^4.15.6 vxe-pc-ui@^4.8.15 xe-utils@^3.7.8
+pnpm add vxe-table@^4.15.6 vxe-pc-ui@~4.8.15 xe-utils@^3.7.8
 
 # 安装 Element Plus (提供基础 UI 组件)
-pnpm add element-plus@^2.4.4 @element-plus/icons-vue@^2.1.0
+pnpm add element-plus@^2.11.2 @element-plus/icons-vue@^2.1.0
 ```
 
 ```bash [npm]
@@ -39,7 +39,7 @@ pnpm add element-plus@^2.4.4 @element-plus/icons-vue@^2.1.0
 npm install @bingwu/iip-ui-components @bingwu/iip-ui-utils
 
 # 安装必要的第三方依赖
-npm install vxe-table@^4.15.6 vxe-pc-ui@^4.8.15 xe-utils@^3.7.8
+npm install vxe-table@^4.15.6 vxe-pc-ui@~4.8.15 xe-utils@^3.7.8
 
 # 安装 Element Plus (提供基础 UI 组件)
 npm install element-plus@^2.11.2 @element-plus/icons-vue@^2.1.0
@@ -50,7 +50,7 @@ npm install element-plus@^2.11.2 @element-plus/icons-vue@^2.1.0
 yarn add @bingwu/iip-ui-components @bingwu/iip-ui-utils
 
 # 安装必要的第三方依赖
-yarn add vxe-table@^4.15.6 vxe-pc-ui@^4.8.15 xe-utils@^3.7.8
+yarn add vxe-table@^4.15.6 vxe-pc-ui@~4.8.15 xe-utils@^3.7.8
 
 # 安装 Element Plus (提供基础 UI 组件)
 yarn add element-plus@^2.11.2 @element-plus/icons-vue@^2.1.0
@@ -113,7 +113,7 @@ app.mount('#app')
 
 ## 手动引入
 
-如果您不想使用完整引入，也可以手动引入组件和工具函数：
+mr
 
 ```vue
 <template>
@@ -527,53 +527,50 @@ const debouncedSave: DebouncedFunction<(data: any) => void> = debounce((data: an
 }, 500)
 ```
 
-### 3. 组合式 API 类型支持
-
-```typescript
-import { ref, computed, type Ref, type ComputedRef } from 'vue'
-import { type FormConfig } from '@bingwu/iip-ui-components'
-
-// 带类型的响应式数据
-const formData: Ref<Record<string, any>> = ref({})
-const loading: Ref<boolean> = ref(false)
-
-// 带类型的计算属性
-const formConfig: ComputedRef<FormConfig> = computed(() => ({
-  model: formData.value,
-  items: [
-    // 表单项配置
-  ]
-}))
-```
-
 ## 常见问题
 
 ### Q: 为什么 Table 组件不显示或报错？
 
-**A:** Table 组件依赖 vxe-table，请确保正确安装和注册：
+**A:** Table 组件依赖 vxe-table，请确保正确安装和注册所有必需的插件：
 
 ```typescript
-// ❌ 错误：缺少 vxe-table 插件或注册顺序错误
-app.use(IipUI)
-app.use(VxeUITable) // 顺序错误
+// 确保已安装依赖
+// pnpm add vxe-table@^4.15.6 vxe-pc-ui@~4.8.15 xe-utils@^3.7.8
 
-// ✅ 正确：先注册 vxe-table 相关插件
-app.use(VxeUITable) // 必须在 IipUI 之前
-app.use(VxePCUI) // 必须在 IipUI 之前
-app.use(IipUI) // 最后注册
+// 正确注册插件（顺序不影响）
+import VxeUITable from 'vxe-table'
+import VxePCUI from 'vxe-pc-ui'
+import IipUI from '@bingwu/iip-ui-components'
+
+app.use(VxeUITable)
+app.use(VxePCUI)
+app.use(IipUI)
 ```
+
+**检查清单：**
+
+- ✅ 已安装 `vxe-table`、`vxe-pc-ui`、`xe-utils`
+- ✅ 已正确导入并注册 `VxeUITable` 和 `VxePCUI` 插件
+- ✅ 已引入 vxe-table 相关样式文件
 
 ### Q: 样式显示异常或组件样式不正确？
 
-**A:** 检查样式文件引入顺序和完整性：
+**A:** 检查是否引入了所有必要的样式文件：
 
 ```typescript
-// 确保按正确顺序引入所有必要的样式文件
+// 确保引入所有必需的样式文件
 import 'vxe-table/lib/style.css' // vxe-table 样式
 import 'vxe-pc-ui/lib/style.css' // vxe-pc-ui 样式
 import 'element-plus/dist/index.css' // Element Plus 样式
-import '@bingwu/iip-ui-components/dist/style.css' // IIP UI 主题样式（最后引入）
+import '@bingwu/iip-ui-components/dist/style.css' // IIP UI 主题样式
 ```
+
+**检查清单：**
+
+- ✅ 已引入 `vxe-table/lib/style.css`
+- ✅ 已引入 `vxe-pc-ui/lib/style.css`
+- ✅ 已引入 `element-plus/dist/index.css`
+- ✅ 已引入 `@bingwu/iip-ui-components/dist/style.css`
 
 ### Q: 工具函数如何使用？
 
