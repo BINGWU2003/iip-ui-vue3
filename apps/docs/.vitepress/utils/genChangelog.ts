@@ -155,6 +155,15 @@ export function genChangelog(changelogDir: string, outputPath: string): void {
     }
   }
 
+  // 检查文件是否存在且内容相同
+  if (fs.existsSync(outputPath)) {
+    const existingContent = fs.readFileSync(outputPath, 'utf-8')
+    if (existingContent === markdown) {
+      console.log(`ℹ️  CHANGELOG 无变化，跳过生成: ${outputPath}`)
+      return
+    }
+  }
+
   // 写入文件
   fs.writeFileSync(outputPath, markdown, 'utf-8')
   console.log(`✅ CHANGELOG 已生成: ${outputPath}`)
