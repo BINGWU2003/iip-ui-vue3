@@ -26,13 +26,6 @@ export default defineConfig({
       { text: '主题', link: '/theme/theme' },
       { text: '更新日志', link: '/guide/changelog' },
       {
-        text: 'v1.2.1',
-        items: [
-          { text: '更新日志', link: '/guide/changelog' },
-          { text: '发布说明', link: '/guide/releases' }
-        ]
-      },
-      {
         text: '相关链接',
         items: [
           { text: 'vxe-table', link: 'https://vxetable.cn/' },

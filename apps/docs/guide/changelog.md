@@ -5,223 +5,108 @@
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.0.0/)，
 并且本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
-## [1.2.1]
+## components
 
-### 🔧 修复
+### 1.2.30
 
-#### 🛠️ Utils 工具优化
+- style: 移除 dialog-select 组件的宽度样式，简化样式定义
 
-- **工具函数优化**：
-  - 改进代码结构和可读性
-  - 添加完整的 JSDoc 注释
-  - 使用更安全的属性访问
-  - 提升函数式编程风格
+### 1.2.29
 
-### 📚 文档更新
+- refactor: 优化 dialog-select 组件的列配置逻辑
 
-- 完善组件库整体文档结构
-- 更新安装指南和快速开始
-- 优化 VitePress 配置和主题
+### 1.2.28
 
-## [1.2.0]
+- 去除dialog-select只读模式
 
-### ✨ 新增
+### 1.2.27
 
-#### 🚀 Table 组件性能优化
+- dialog-select优化，默认append-to-body。openDialogSelect的类型推导完善
 
-- **智能插槽渲染**：只有在列确实定义了插槽时才渲染对应的template
-- **新增插槽类型**：支持 `edit`、`filter`、`footer`、`valid` 插槽
-- **精确插槽检测**：基于 `hasColumnSlot` 函数精确判断插槽是否存在
-- **性能提升**：减少不必要的DOM节点生成，提升渲染性能
+### 1.2.26
 
-#### 📚 文档完善
+- 新增dropdown-list组件，重构dialog-select的类型
 
-- 新增插槽优化说明和使用示例
-- 完善高级插槽使用指南
-- 添加特性介绍和性能优化说明
-- 更新插槽命名规则和类型说明
+### 1.2.25
 
-### 🔄 优化
+- vxe版号锁定
 
-#### ⚡ 渲染性能
+### 1.2.24
 
-- 移除了循环渲染所有插槽类型的逻辑
-- 采用条件渲染，只在需要时创建插槽模板
-- 优化了特殊列（复选框、序号、展开、单选框）的插槽渲染
+- vxe打包配置
 
-#### 🔧 代码质量
+### 1.2.23
 
-- 简化了插槽相关的辅助函数
-- 提升了代码可读性和维护性
-- 移除了不必要的 `getColumnSlot` 函数
+- 修复openDialogSelect函数导出问题，修复openDialogSelect组件gridConfig报错问题
 
-## [1.1.2]
+### 1.2.22
 
-### 🔄 回退
+- 新增openDialogSelect 函数式调用和pagination-select多选功能
 
-#### 🔄 版本回退
+### 1.2.21
 
-- 回退 vxe-table 版本从 4.7.0 到 4.15.6
-- 恢复使用 `resizable` 属性而非 `column-config`
-- 确保与现有项目的兼容性
+- 新增类型导出
 
-#### 📝 说明
+### 1.2.20
 
-- 此版本是对 v1.1.1 的回退，恢复到 v1.1.0 的功能状态
-- 如果你已经使用了 v1.1.1，建议升级到此版本以获得更好的稳定性
+- 新增弹窗下拉组件
 
-## [1.1.0]
+### 1.2.19
 
-### ✨ 新增
+- 优化分页组件，删除无用函数和组件
+- Updated dependencies
+  - @bingwu/iip-ui-utils@1.2.14
 
-#### 📋 Table 组件
+### 1.2.18
 
-- 新增 `IipTable` 基于 vxe-table 的表格组件
-- 支持基础数据展示、边框、斑马纹
-- 支持复选框、序号、展开、单选框列
-- 支持自定义列内容和表头
-- 支持分页功能
-- 支持编辑功能
-- 完整的 TypeScript 类型定义
+- 中文化支持
 
-#### 🎨 特殊列功能
+### 1.2.17
 
-- **复选框列**：支持全选、反选，自定义复选框内容
-- **序号列**：自动序号，支持自定义序号格式
-- **展开列**：行展开功能，自定义展开内容
-- **单选框列**：单选模式，支持自定义单选框内容
+- test
+- Updated dependencies
+  - @bingwu/iip-ui-utils@1.2.13
 
-#### 🔧 高级功能
+### 1.2.16
 
-- **插槽系统**：支持列内容、列头、编辑、筛选等插槽
-- **分页器**：基于 vxe-pc-ui 的分页组件
-- **事件系统**：完整的表格事件支持
-- **实例方法**：提供表格实例访问和操作方法
+- 构建工具升级
+- Updated dependencies
+  - @bingwu/iip-ui-utils@1.2.12
 
-### 📚 文档
+### 1.2.15
 
-- 完善的 Table 组件文档
-- 详细的使用示例和 API 说明
-- 插槽使用指南
+- 优化发包
+- Updated dependencies
+  - @bingwu/iip-ui-utils@1.2.11
 
-## [1.0.0] - 2024-12-15
+## utils
 
-### ✨ 新增
+### 1.2.14
 
-#### 🎉 首个正式版本
+- 优化分页组件，删除无用函数和组件
 
-- 项目初始化，建立基础架构
-- 基于 Vue 3 + TypeScript + Element Plus
-- 采用 Monorepo 架构管理多个包
+### 1.2.13
 
-#### 📦 核心包
+- test
 
-- **@bingwu/iip-ui-components**: 核心组件包
-- **@bingwu/iip-ui-theme**: 主题样式包
-- **@bingwu/iip-ui-utils**: 工具函数包
+### 1.2.12
 
-#### 🧩 基础组件
+- 构建工具升级
 
-- **Input 输入框**: 基于 Element Plus 的输入框增强
-- **Select 选择器**: 基于 Element Plus 的选择器增强
-- **ThemeProvider**: 主题提供者组件
-- **ThemeSwitcher**: 主题切换器组件
+### 1.2.11
 
-#### 🎨 主题系统
+- 优化发包
 
-- 支持亮色和暗色主题
-- 动态主题切换功能
-- CSS 变量支持
-- 自定义主题变量
+## theme
 
-#### 🛠️ 开发工具
+### 1.2.11
 
-- Vite 构建工具
-- TypeScript 支持
-- ESLint + Prettier 代码规范
-- Vitest 单元测试
-- VitePress 文档站点
+- test
 
-#### 📚 文档站点
+### 1.2.10
 
-- 基于 VitePress 的文档站点
-- 组件 API 文档
-- 使用示例和最佳实践
-- 主题定制指南
+- 构建工具升级
 
----
+### 1.2.9
 
-## 发布说明
-
-### 版本规则
-
-我们遵循 [语义化版本](https://semver.org/lang/zh-CN/) 规范：
-
-- **MAJOR.MINOR.PATCH** (例如: 1.2.0)
-- **主版本号**：不兼容的 API 修改
-- **次版本号**：向下兼容的功能性新增
-- **修订号**：向下兼容的问题修正
-
-### 发布频率
-
-- **主版本**：根据重大功能更新和 API 变更发布，通常 6-12 个月
-- **次版本**：根据新功能发布，通常 1-3 个月
-- **修订版本**：根据 Bug 修复发布，通常 1-2 周
-
-### 兼容性
-
-- **向后兼容**：次版本和修订版本保证向后兼容
-- **破坏性变更**：仅在主版本中引入，并提前在文档中说明
-- **废弃警告**：功能废弃前会提前至少一个次版本发出警告
-
-### 升级建议
-
-#### 从 1.1.x 升级到 1.2.x
-
-✅ **安全升级**：完全向后兼容，建议升级以获得性能优化
-
-主要变更：
-
-- Table 组件插槽渲染性能优化
-- 新增插槽类型支持
-- 文档完善
-
-升级步骤：
-
-```bash
-pnpm update @bingwu/iip-ui-components @bingwu/iip-ui-theme @bingwu/iip-ui-utils
-```
-
-#### 从 1.0.x 升级到 1.1.x
-
-✅ **功能升级**：新增 Table 组件，向下兼容
-
-主要变更：
-
-- 新增 Table 组件
-- 新增 vxe-table 依赖要求
-
-升级步骤：
-
-```bash
-# 1. 更新包
-pnpm update @bingwu/iip-ui-components @bingwu/iip-ui-theme
-
-# 2. 安装新依赖（如果使用 Table 组件）
-pnpm add vxe-table@^4.15.6 vxe-pc-ui@4.8.15 xe-utils@^3.7.8
-
-# 3. 更新 main.ts（如果使用 Table 组件）
-# 参考安装指南添加 vxe-table 插件注册
-```
-
----
-
-## 贡献
-
-如果你发现了 Bug 或有功能建议，欢迎：
-
-1. 在 [GitHub Issues](https://github.com/BINGWU2003/iip-ui-vue3/issues) 报告问题
-2. 提交 [Pull Request](https://github.com/BINGWU2003/iip-ui-vue3/pulls) 贡献代码
-3. 完善文档和示例
-
-感谢所有贡献者！ 🎉
+- 优化发包

@@ -6,9 +6,10 @@
   "private": true,
   "scripts": {
     "dev": "vitepress dev",
-    "build": "vitepress build",
+    "build": "npm run gen:changelog && vitepress build",
     "preview": "vitepress preview",
-    "clean": "rimraf .vitepress/dist"
+    "clean": "rimraf .vitepress/dist",
+    "gen:changelog": "npx tsx .vitepress/utils/build-changelog.ts"
   },
   "dependencies": {
     "@bingwu/iip-ui-components": "workspace:*",
@@ -24,7 +25,8 @@
   },
   "devDependencies": {
     "@types/node": "^20.9.0",
-    "sass": "^1.90.0"
+    "sass": "^1.90.0",
+    "tsx": "^4.7.0"
   },
   "keywords": [
     "docs",
