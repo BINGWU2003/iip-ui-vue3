@@ -113,8 +113,6 @@ app.mount('#app')
 
 ## 手动引入
 
-mr
-
 ```vue
 <template>
   <div>
