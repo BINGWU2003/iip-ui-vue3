@@ -146,3 +146,5 @@ coverage/
 test-results/
 playwright-report/
 .claude/
+.shared/
+.agent/
