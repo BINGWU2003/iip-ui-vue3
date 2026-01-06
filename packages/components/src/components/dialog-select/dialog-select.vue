@@ -450,6 +450,11 @@ const fetchData = async () => {
     }
 
     const result = await props.fetchData(params)
+    setTimeout(() => {
+      if (gridRef.value) {
+        gridRef.value.scrollTo(0, 0)
+      }
+    })
 
     tableData.value = result.data || []
     total.value = result.total || 0
