@@ -24,51 +24,42 @@ IIP UI Vue3 采用 Monorepo 架构，包含以下核心包：
 ::: code-group
 
 ```bash [pnpm (推荐)]
-# 安装组件库
-pnpm add @bingwu/iip-ui-components @bingwu/iip-ui-utils
+# 安装组件库（会自动安装 @bingwu/iip-ui-utils、@element-plus/icons-vue 等依赖）
+pnpm add @bingwu/iip-ui-components
 
-# 安装必要的第三方依赖
-pnpm add vxe-table@^4.15.6 vxe-pc-ui@~4.8.15 xe-utils@^3.7.8
-
-# 安装 Element Plus (提供基础 UI 组件)
-pnpm add element-plus@^2.11.2 @element-plus/icons-vue@^2.1.0
+# 安装 peerDependencies
+pnpm add element-plus@^2.11.2 vxe-table@^4.15.6 vxe-pc-ui@~4.8.15 xe-utils@^3.7.8
 ```
 
 ```bash [npm]
-# 安装组件库
-npm install @bingwu/iip-ui-components @bingwu/iip-ui-utils
+# 安装组件库（会自动安装 @bingwu/iip-ui-utils、@element-plus/icons-vue 等依赖）
+npm install @bingwu/iip-ui-components
 
-# 安装必要的第三方依赖
-npm install vxe-table@^4.15.6 vxe-pc-ui@~4.8.15 xe-utils@^3.7.8
-
-# 安装 Element Plus (提供基础 UI 组件)
-npm install element-plus@^2.11.2 @element-plus/icons-vue@^2.1.0
+# 安装 peerDependencies
+npm install element-plus@^2.11.2 vxe-table@^4.15.6 vxe-pc-ui@~4.8.15 xe-utils@^3.7.8
 ```
 
 ```bash [yarn]
-# 安装组件库
-yarn add @bingwu/iip-ui-components @bingwu/iip-ui-utils
+# 安装组件库（会自动安装 @bingwu/iip-ui-utils、@element-plus/icons-vue 等依赖）
+yarn add @bingwu/iip-ui-components
 
-# 安装必要的第三方依赖
-yarn add vxe-table@^4.15.6 vxe-pc-ui@~4.8.15 xe-utils@^3.7.8
-
-# 安装 Element Plus (提供基础 UI 组件)
-yarn add element-plus@^2.11.2 @element-plus/icons-vue@^2.1.0
+# 安装 peerDependencies
+yarn add element-plus@^2.11.2 vxe-table@^4.15.6 vxe-pc-ui@~4.8.15 xe-utils@^3.7.8
 ```
 
 :::
 
 ### 依赖说明
 
-| 包名                        | 必需性   | 说明                   |
-| --------------------------- | -------- | ---------------------- |
-| `@bingwu/iip-ui-components` | **必需** | 核心组件库（包含样式） |
-| `@bingwu/iip-ui-utils`      | **必须** | 工具函数库             |
-| `vxe-table`                 | **必需** | Table 组件依赖         |
-| `vxe-pc-ui`                 | **必需** | Table 组件依赖         |
-| `xe-utils`                  | **必需** | Table 组件依赖         |
-| `element-plus`              | **必须** | 基础 UI 组件           |
-| `@element-plus/icons-vue`   | 推荐     | Element Plus 图标      |
+| 包名                        | 安装方式 | 说明                             |
+| --------------------------- | -------- | -------------------------------- |
+| `@bingwu/iip-ui-components` | **必需** | 核心组件库（包含样式）           |
+| `@bingwu/iip-ui-utils`      | 自动安装 | 工具函数库（组件库依赖）         |
+| `@element-plus/icons-vue`   | 自动安装 | Element Plus 图标（组件库依赖）  |
+| `element-plus`              | **必需** | 基础 UI 组件（peerDependency）   |
+| `vxe-table`                 | **必需** | Table 组件依赖（peerDependency） |
+| `vxe-pc-ui`                 | **必需** | Table 组件依赖（peerDependency） |
+| `xe-utils`                  | **必需** | Table 组件依赖（peerDependency） |
 
 ## 完整引入 (推荐)
 
