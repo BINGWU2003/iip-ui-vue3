@@ -167,7 +167,6 @@ const currentPage = ref(1)
 const currentPageSize = ref(DEFAULT_PAGE_SIZE)
 const formData = ref<BaseRecord>({})
 const selectedRows = ref<TableRowItem[]>([])
-const selectedRowKeys = ref<(string | number)[]>([])
 // 存储每个表单项的选项数据
 const formItemOptions = ref<Record<string, FormItemOption[]>>({})
 
@@ -374,7 +373,6 @@ watch(
     if (props.multiple) {
       const values = (newVal as TableRowItem[]) || []
       selectedRows.value = values
-      selectedRowKeys.value = values.map(item => getRowKey(item))
       // 更新表格选中状态
       await nextTick()
       if (gridRef.value) {
@@ -383,7 +381,6 @@ watch(
     } else {
       const value = newVal as TableRowItem | null
       selectedRows.value = value ? [value] : []
-      selectedRowKeys.value = value ? [getRowKey(value)] : []
       // 更新表格选中状态
       await nextTick()
       if (gridRef.value && value) {
@@ -489,7 +486,6 @@ const open = async () => {
   initFormData()
 
   selectedRows.value = []
-  selectedRowKeys.value = []
 
   // 加载表单项的选项数据
   await loadFormItemOptions()
@@ -499,11 +495,9 @@ const open = async () => {
     if (props.multiple) {
       const values = props.modelValue as TableRowItem[]
       selectedRows.value = [...values]
-      selectedRowKeys.value = values.map(item => getRowKey(item))
     } else {
       const value = props.modelValue as TableRowItem
       selectedRows.value = [value]
-      selectedRowKeys.value = [getRowKey(value)]
     }
   }
 
@@ -569,7 +563,6 @@ const handleCheckboxChange = ({ row, checked }: { row: TableRowItem; checked: bo
   } else {
     selectedRows.value = selectedRows.value.filter(item => getRowKey(item) !== rowKey)
   }
-  selectedRowKeys.value = selectedRows.value.map(item => getRowKey(item))
 }
 
 // 处理全选
@@ -590,13 +583,11 @@ const handleCheckboxAll = ({ checked, records }: { checked: boolean; records: Ta
       item => !currentPageKeys.includes(getRowKey(item))
     )
   }
-  selectedRowKeys.value = selectedRows.value.map(item => getRowKey(item))
 }
 
 // 处理单选变化
 const handleRadioChange = ({ row }: { row: TableRowItem }) => {
   selectedRows.value = [row]
-  selectedRowKeys.value = [getRowKey(row)]
 }
 
 // 处理确认
