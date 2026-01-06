@@ -44,7 +44,9 @@ export default defineConfig({
         '@bingwu/iip-ui-utils',
         'vxe-table',
         'vxe-pc-ui',
-        'xe-utils'
+        'xe-utils',
+        'dayjs',
+        '@element-plus/icons-vue'
       ],
       output: {
         // 导出模块声明
