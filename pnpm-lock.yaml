@@ -193,10 +193,11 @@ importers:
         version: 3.2.1(typescript@5.8.3)
 
   packages/components:
-    devDependencies:
+    dependencies:
       '@bingwu/iip-ui-utils':
         specifier: workspace:*
         version: link:../utils
+    devDependencies:
       '@element-plus/icons-vue':
         specifier: ^2.1.0
         version: 2.3.2(vue@3.5.26)

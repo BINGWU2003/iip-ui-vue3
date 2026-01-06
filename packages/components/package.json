@@ -31,7 +31,9 @@
     "clean": "rimraf dist dev-dist",
     "prepublishOnly": "pnpm build"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@bingwu/iip-ui-utils": "workspace:*"
+  },
   "peerDependencies": {
     "@element-plus/icons-vue": "^2.1.0",
     "element-plus": "^2.11.2",
@@ -39,7 +41,6 @@
     "vxe-pc-ui": "~4.8.15",
     "vxe-table": "^4.15.6",
     "xe-utils": "^3.7.8",
-    "@bingwu/iip-ui-utils": "workspace:*",
     "dayjs": "^1.11.13"
   },
   "devDependencies": {
@@ -55,7 +56,6 @@
     "vxe-pc-ui": "~4.8.15",
     "vxe-table": "^4.15.6",
     "xe-utils": "^3.7.8",
-    "@bingwu/iip-ui-utils": "workspace:*",
     "dayjs": "^1.11.13",
     "vue": "^3.3.8"
   },
