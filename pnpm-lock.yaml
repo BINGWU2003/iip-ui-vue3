@@ -7,10 +7,6 @@ settings:
 importers:
 
   .:
-    dependencies:
-      dayjs:
-        specifier: ^1.11.13
-        version: 1.11.19
     devDependencies:
       '@changesets/cli':
         specifier: ^2.29.7
