@@ -193,13 +193,13 @@ importers:
       '@bingwu/iip-ui-utils':
         specifier: workspace:*
         version: link:../utils
+      '@element-plus/icons-vue':
+        specifier: ^2.1.0
+        version: 2.3.2(vue@3.5.26)
       dayjs:
         specifier: ^1.11.13
         version: 1.11.19
     devDependencies:
-      '@element-plus/icons-vue':
-        specifier: ^2.1.0
-        version: 2.3.2(vue@3.5.26)
       '@types/node':
         specifier: ^20.9.0
         version: 20.19.27
