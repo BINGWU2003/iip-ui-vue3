@@ -33,10 +33,10 @@
   },
   "dependencies": {
     "@bingwu/iip-ui-utils": "workspace:*",
+    "@element-plus/icons-vue": "^2.1.0",
     "dayjs": "^1.11.13"
   },
   "peerDependencies": {
-    "@element-plus/icons-vue": "^2.1.0",
     "element-plus": "^2.11.2",
     "vue": "^3.3.8",
     "vxe-pc-ui": "~4.8.15",
