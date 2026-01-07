@@ -29,8 +29,7 @@
     "prepublishOnly": "pnpm build"
   },
   "devDependencies": {
-    "tsup": "^8.5.1",
-    "typescript": "^5.3.2"
+    "tsup": "^8.5.1"
   },
   "keywords": [
     "utils",
