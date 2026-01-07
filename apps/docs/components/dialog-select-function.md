@@ -717,6 +717,7 @@ const result2 = await openDialogSelect<UserRow>({ ... })
 | gridConfig          | vxe-grid 配置，支持透传 vxe-grid 的所有 props          | `VxeGridProps`                                                                  | -          | ❌   |
 | initialValue        | 初始值，单选时为对象，多选时为对象数组                 | `TableRowItem \| TableRowItem[] \| null`                                        | `null`     | ❌   |
 | animationDuration   | 弹窗关闭动画时长（ms）                                 | `number`                                                                        | `300`      | ❌   |
+| scrollToTopLeft     | 数据加载后是否滚动到顶部和左部                         | `boolean`                                                                       | `false`    | ❌   |
 
 ### 返回值
 

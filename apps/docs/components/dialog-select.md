@@ -673,6 +673,7 @@ interface EmployeeRow {
 | dialogSelectOptions | DialogSelect 选项配置数组（合并 columns 和 formItems） | `DialogSelectOptions`                                                                 | -          |
 | gridConfig          | vxe-grid 配置，支持透传 vxe-grid 的所有 props          | `VxeGridProps`                                                                        | -          |
 | style               | 输入框样式                                             | `CSSProperties`                                                                       | -          |
+| scrollToTopLeft     | 数据加载后是否滚动到顶部和左部                         | `boolean`                                                                             | `false`    |
 
 **泛型参数说明：**
 

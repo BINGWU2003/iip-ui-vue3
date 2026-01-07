@@ -67,6 +67,7 @@ export function openDialogSelect<T extends BaseRecord = BaseRecord>(
       dialogWidth: options.dialogWidth ?? '1100px',
       fetchData: options.fetchData,
       dialogSelectOptions: options.dialogSelectOptions,
+      scrollToTopLeft: options.scrollToTopLeft ?? false,
       gridConfig: options.gridConfig,
       // 通过 style 隐藏输入框，因为命令式调用只需要弹窗
       style: { display: 'none' },

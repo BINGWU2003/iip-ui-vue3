@@ -108,6 +108,8 @@ export type DialogSelectProps<T extends BaseRecord = BaseRecord> = {
   gridConfig?: VxeGridProps
   /** 输入框样式 */
   style?: CSSProperties
+  /** 数据加载后是否滚动到顶部和左部，默认为 false */
+  scrollToTopLeft?: boolean
 }
 
 /**
@@ -169,4 +171,6 @@ export type OpenDialogSelectOptions<T extends BaseRecord = BaseRecord> = {
   initialValue?: T | T[] | null
   /** 弹窗关闭动画时长（ms），默认 300 */
   animationDuration?: number
+  /** 数据加载后是否滚动到顶部和左部，默认为 false */
+  scrollToTopLeft?: boolean
 }

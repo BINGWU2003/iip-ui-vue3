@@ -152,7 +152,8 @@ const props = withDefaults(defineProps<DialogSelectProps>(), {
   dialogTitle: '请选择',
   dialogWidth: '1100px',
   gridConfig: undefined,
-  style: () => ({})
+  style: () => ({}),
+  scrollToTopLeft: false
 })
 
 const emit = defineEmits<DialogSelectEmits>()
@@ -447,16 +448,13 @@ const fetchData = async () => {
     }
 
     const result = await props.fetchData(params)
-    setTimeout(() => {
-      if (gridRef.value) {
-        gridRef.value.scrollTo(0, 0)
-      }
-    })
 
     tableData.value = result.data || []
     total.value = result.total || 0
 
     emit('data-loaded', result)
+
+    await scrollToTop()
 
     // 数据加载完成后，同步选中状态到表格
     syncSelectedToTable()
@@ -470,6 +468,14 @@ const fetchData = async () => {
   }
 }
 
+// 滚动到顶部和左部
+const scrollToTop = async () => {
+  if (!props.scrollToTopLeft) return
+  await new Promise(resolve => setTimeout(resolve))
+  if (gridRef.value) {
+    gridRef.value.scrollTo(0, 0)
+  }
+}
 // 处理输入框点击
 const handleInputClick = () => {
   if (props.disabled) return

@@ -7,6 +7,7 @@
       :multiple="true"
       placeholder="请选择员工（可多选）"
       dialog-title="选择员工"
+      scroll-to-top-left
       @change="handleChange"
     />
 

@@ -135,6 +135,7 @@
           :dialog-select-options="employeeDialogSelectOptions"
           :key-getter="employeeKeyGetter"
           placeholder="请选择员工"
+          scroll-to-top-left
           dialog-title="选择员工"
           @change="handleDialogSelectChange1"
         />
@@ -504,6 +505,9 @@ const employeeDialogSelectOptions = [
     formItemProps: {
       formType: 'input' as const,
       placeholder: '请输入姓名'
+    },
+    columnProps: {
+      width: 150
     }
   },
   {
@@ -525,6 +529,9 @@ const employeeDialogSelectOptions = [
           { label: '人事部', value: '人事部' }
         ]
       }
+    },
+    columnProps: {
+      width: 150
     }
   },
   {
@@ -535,6 +542,9 @@ const employeeDialogSelectOptions = [
       formType: 'date' as const,
       placeholder: '请选择创建日期',
       type: 'daterange'
+    },
+    columnProps: {
+      width: 150
     }
   }
 ]

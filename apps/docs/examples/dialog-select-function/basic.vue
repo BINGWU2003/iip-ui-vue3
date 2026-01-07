@@ -122,7 +122,8 @@ const handleOwnerClick = async (row: TableRowItem) => {
       fetchData: fetchEmployeeData,
       dialogSelectOptions: employeeDialogSelectOptions,
       dialogTitle: '选择负责人',
-      initialValue: row.ownerData
+      initialValue: row.ownerData,
+      scrollToTopLeft: true
     })
 
     if (result && typeof result === 'object' && !Array.isArray(result)) {
