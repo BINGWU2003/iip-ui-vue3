@@ -1,5 +1,11 @@
 # @bingwu/iip-ui-components
 
+## 1.2.31
+
+### Patch Changes
+
+- 在 dialog-select 组件中新增 scrollToTopLeft 属性，允许用户在数据加载后自动滚动到顶部和左部，默认为 false。
+
 ## 1.2.30
 
 ### Patch Changes
