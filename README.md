@@ -10,7 +10,6 @@
 
 - 🚀 **现代化技术栈** - 基于 Vue 3 + TypeScript + Vite
 - 📦 **Monorepo 架构** - 使用 pnpm workspace 管理多包
-- 🎨 **主题定制** - 支持亮色/暗色主题，动态切换
 - 🌍 **TypeScript** - 完整的类型定义支持
 - ⚡ **按需引入** - 支持 Tree Shaking
 - 🧪 **测试覆盖** - 基于 Vitest 的单元测试
@@ -131,20 +130,6 @@ pnpm release
 pnpm tag
 ```
 
-### 发布流程
-
-发布脚本会自动执行以下步骤：
-
-1. **版本检查** - 检查当前版本和工作区状态
-2. **依赖安装** - 确保所有依赖已正确安装
-3. **代码检查** - 运行 ESLint 和格式化检查
-4. **测试验证** - 执行所有单元测试
-5. **构建打包** - 构建所有包的生产版本
-6. **版本更新** - 自动更新所有包的版本号
-7. **Git 操作** - 提交更改并创建版本标签
-8. **NPM 发布** - 发布到 NPM 仓库
-9. **推送远程** - 推送代码和标签到远程仓库
-
 ### 发布前检查
 
 在发布前，请确保：
@@ -255,8 +240,9 @@ npm publish
 
 ## 📖 文档
 
-- [组件文档](./packages/docs) - 组件使用文档
-- [更新日志](./CHANGELOG.md) - 版本更新记录
+- **在线文档**: [https://iip-ui-docs.netlify.app/](https://iip-ui-docs.netlify.app/)
+- **组件文档**: [./apps/docs](./apps/docs) - 组件使用文档和示例
+- **更新日志**: [CHANGELOG.md](./CHANGELOG.md) - 版本更新记录
 
 ## 🤝 贡献指南
 
@@ -375,7 +361,3 @@ bingwu
 npmzjkNPMZJK123
 npmzjk@163.com
 ```
-
-## 文档
-
-地址：https://iip-ui-docs.netlify.app/
