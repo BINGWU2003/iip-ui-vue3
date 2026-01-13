@@ -670,6 +670,82 @@ const handleAssigneeClick = async (row: any) => {
 </style>
 ```
 
+## beforeClose 关闭前回调
+
+`beforeClose` 回调函数在对话框关闭前被调用，可以用来执行自定义逻辑，比如验证数据、显示确认提示、保存数据或阻止关闭。
+
+### 参数说明
+
+```typescript
+beforeClose?: (params: {
+  action: 'confirm' | 'cancel'  // 触发关闭的动作
+  done: () => void              // 确认关闭的回调
+  selectedRows: T[]             // 当前已选中的数据行列表
+}) => void | boolean | Promise<void>
+```
+
+### 示例1：确认前验证
+
+```typescript
+const result = await openDialogSelect({
+  fetchData: fetchEmployeeData,
+  dialogSelectOptions: employeeDialogSelectOptions,
+  multiple: true,
+  beforeClose: ({ action, done, selectedRows }) => {
+    if (action === 'confirm' && selectedRows.length === 0) {
+      ElMessage.warning('请至少选择一个员工')
+      return // 不调用 done，阻止关闭
+    }
+    done()
+  }
+})
+```
+
+### 示例2：取消时确认
+
+```typescript
+const result = await openDialogSelect({
+  fetchData: fetchEmployeeData,
+  dialogSelectOptions: employeeDialogSelectOptions,
+  beforeClose: async ({ action, done, selectedRows }) => {
+    if (action === 'cancel' && selectedRows.length > 0) {
+      try {
+        await ElMessageBox.confirm('您已选择了数据，确定要取消吗？', '提示')
+        done()
+      } catch {
+        // 不调用 done，保持弹窗打开
+      }
+    } else {
+      done()
+    }
+  }
+})
+```
+
+### 示例3：返回 Promise
+
+```typescript
+const result = await openDialogSelect({
+  fetchData: fetchEmployeeData,
+  dialogSelectOptions: employeeDialogSelectOptions,
+  beforeClose: async ({ action, done, selectedRows }) => {
+    if (action === 'confirm') {
+      try {
+        // 调用 API 保存数据
+        await saveEmployees(selectedRows)
+        ElMessage.success('保存成功')
+        done()
+      } catch (error) {
+        ElMessage.error('保存失败')
+        // 不调用 done，保持弹窗打开
+      }
+    } else {
+      done()
+    }
+  }
+})
+```
+
 ## API
 
 ### openDialogSelect
@@ -721,6 +797,7 @@ const result2 = await openDialogSelect<UserRow>({ ... })
 | scrollToTopLeft        | 数据加载后是否滚动到顶部和左部                         | `boolean`                                                                       | `false`    | ❌   |
 | showSelectionPanel     | 多选时，是否显示已选项列表面板                         | `boolean`                                                                       | `true`     | ❌   |
 | selectedLabelFormatter | 多选时，已选项列表中每项的显示内容格式化函数           | `(row: TableRowItem) => string`                                                 | -          | ❌   |
+| beforeClose            | 关闭前的回调函数，可用于验证、确认或阻止关闭           | `(params: { action, done, selectedRows }) => void \| boolean \| Promise<void>`  | -          | ❌   |
 
 ### 返回值
 

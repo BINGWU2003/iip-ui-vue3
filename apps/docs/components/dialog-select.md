@@ -706,6 +706,78 @@ const handleRefresh = () => {
 </script>
 ```
 
+## beforeClose 关闭前回调
+
+`beforeClose` 回调函数在对话框关闭前被调用，可以用来执行自定义逻辑，比如验证数据、显示确认提示、保存数据或阻止关闭。
+
+### 参数说明
+
+```typescript
+beforeClose?: (params: {
+  action: 'confirm' | 'cancel'  // 触发关闭的动作
+  done: () => void              // 确认关闭的回调
+  selectedRows: T[]             // 当前已选中的数据行列表
+}) => void | boolean | Promise<void>
+```
+
+### 示例1：取消时确认提示
+
+```vue
+<template>
+  <iip-dialog-select
+    v-model="selectedEmployee"
+    :fetch-data="fetchEmployeeData"
+    :dialog-select-options="employeeDialogSelectOptions"
+    :before-close="handleBeforeClose"
+    placeholder="请选择员工"
+  />
+</template>
+
+<script setup lang="ts">
+import { ElMessageBox } from 'element-plus'
+
+const handleBeforeClose = async ({ action, done, selectedRows }) => {
+  if (action === 'cancel' && selectedRows.length > 0) {
+    try {
+      await ElMessageBox.confirm('您已选择了数据，确定要取消吗？', '提示')
+      done() // 用户确认，关闭对话框
+    } catch {
+      // 用户点击取消，不调用 done，对话框保持打开
+    }
+  } else {
+    done()
+  }
+}
+</script>
+```
+
+### 示例2：确认前验证
+
+```vue
+<script setup lang="ts">
+const handleBeforeClose = ({ action, done, selectedRows }) => {
+  if (action === 'confirm' && selectedRows.length < 3) {
+    ElMessage.warning('请至少选择3个员工')
+    return // 不调用 done，阻止关闭
+  }
+  done()
+}
+</script>
+```
+
+### 示例3：返回 false 阻止关闭
+
+```vue
+<script setup lang="ts">
+const handleBeforeClose = ({ action, selectedRows }) => {
+  if (action === 'cancel' && selectedRows.length > 0) {
+    ElMessage.warning('请点击确定按钮提交选择')
+    return false // 返回 false 阻止关闭
+  }
+}
+</script>
+```
+
 ## API
 
 ### Props
@@ -742,6 +814,7 @@ interface EmployeeRow {
 | scrollToTopLeft        | 数据加载后是否滚动到顶部和左部                         | `boolean`                                                                             | `false`    |
 | showSelectionPanel     | 多选时，是否显示已选项列表面板                         | `boolean`                                                                             | `true`     |
 | selectedLabelFormatter | 多选时，已选项列表中每项的显示内容格式化函数           | `(row: T) => string`（`T` 为泛型参数）                                                | -          |
+| beforeClose            | 关闭前的回调函数，可用于验证、确认或阻止关闭           | `(params: { action, done, selectedRows }) => void \| boolean \| Promise<void>`        | -          |
 
 **泛型参数说明：**
 

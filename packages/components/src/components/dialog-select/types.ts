@@ -114,6 +114,18 @@ export type DialogSelectProps<T extends BaseRecord = BaseRecord> = {
   selectedLabelFormatter?: (row: T) => string
   /** 多选时，是否显示已选项列表面板，默认为 true */
   showSelectionPanel?: boolean
+  /**
+   * 关闭前的回调函数
+   * @param params - 参数对象
+   * @param params.action - 'confirm' | 'cancel' 触发关闭的动作
+   * @param params.done - 确认关闭的回调，调用后才会真正关闭
+   * @param params.selectedRows - 当前已选中的数据行列表
+   */
+  beforeClose?: (params: {
+    action: 'confirm' | 'cancel'
+    done: () => void
+    selectedRows: T[]
+  }) => void | boolean | Promise<void>
 }
 
 /**
@@ -181,4 +193,16 @@ export type OpenDialogSelectOptions<T extends BaseRecord = BaseRecord> = {
   selectedLabelFormatter?: (row: T) => string
   /** 多选时，是否显示已选项列表面板，默认为 true */
   showSelectionPanel?: boolean
+  /**
+   * 关闭前的回调函数
+   * @param params - 参数对象
+   * @param params.action - 'confirm' | 'cancel' 触发关闭的动作
+   * @param params.done - 确认关闭的回调，调用后才会真正关闭
+   * @param params.selectedRows - 当前已选中的数据行列表
+   */
+  beforeClose?: (params: {
+    action: 'confirm' | 'cancel'
+    done: () => void
+    selectedRows: T[]
+  }) => void | boolean | Promise<void>
 }

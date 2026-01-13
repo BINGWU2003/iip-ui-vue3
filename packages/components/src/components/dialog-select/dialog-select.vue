@@ -140,7 +140,9 @@
             </div>
             <div>
               <el-button @click="handleDialogClose">取消</el-button>
-              <el-button type="primary" @click="handleConfirm">确定</el-button>
+              <el-button type="primary" :loading="isConfirming" @click="handleConfirm"
+                >确定</el-button
+              >
             </div>
           </div>
         </template>
@@ -205,7 +207,8 @@ const props = withDefaults(defineProps<DialogSelectProps>(), {
   gridConfig: undefined,
   style: () => ({}),
   scrollToTopLeft: false,
-  showSelectionPanel: true
+  showSelectionPanel: true,
+  beforeClose: undefined
 })
 
 const emit = defineEmits<DialogSelectEmits>()
@@ -222,6 +225,8 @@ const formData = ref<BaseRecord>({})
 const selectedRows = ref<TableRowItem[]>([])
 // 存储每个表单项的选项数据
 const formItemOptions = ref<Record<string, FormItemOption[]>>({})
+// 确认按钮加载状态
+const isConfirming = ref(false)
 
 // 获取行的唯一标识key
 const getRowKey = (row: TableRowItem): string | number => {
@@ -229,6 +234,78 @@ const getRowKey = (row: TableRowItem): string | number => {
     return props.keyGetter(row)
   }
   return row[props.valueKey]
+}
+
+/**
+ * 执行关闭前的回调
+ * @param action - 'confirm' | 'cancel'
+ * @returns {Promise<boolean>} - true 表示可以关闭，false 表示阻止关闭
+ */
+const executeBeforeClose = async (action: 'confirm' | 'cancel'): Promise<boolean> => {
+  if (!props.beforeClose) {
+    return true
+  }
+
+  return new Promise(resolve => {
+    let called = false
+
+    // done 回调函数
+    const done = () => {
+      if (!called) {
+        called = true
+        resolve(true)
+      }
+    }
+
+    try {
+      // 调用 beforeClose，传入对象参数
+      const result = props.beforeClose({
+        action,
+        done,
+        selectedRows: selectedRows.value
+      })
+      console.log('result', result)
+      // 如果返回 Promise，等待其完成
+      if (result && typeof (result as any).then === 'function') {
+        ;(result as Promise<void>)
+          .then(() => {
+            if (!called) {
+              called = true
+              resolve(true)
+            }
+          })
+          .catch(() => {
+            if (!called) {
+              called = true
+              resolve(false)
+            }
+          })
+      }
+      // 如果返回 false，阻止关闭
+      else if (result === false) {
+        called = true
+        resolve(false)
+      }
+      // 其他情况，等待 done 被调用或超时（10秒）
+      else {
+        setTimeout(() => {
+          if (!called) {
+            console.warn(
+              'beforeClose callback did not call done() within 10 seconds, forcing close'
+            )
+            called = true
+            resolve(true)
+          }
+        }, 10000)
+      }
+    } catch (error) {
+      console.error('Error in beforeClose:', error)
+      if (!called) {
+        called = true
+        resolve(false)
+      }
+    }
+  })
 }
 
 // 计算属性
@@ -575,8 +652,13 @@ const close = () => {
 }
 
 // 处理弹窗关闭
-const handleDialogClose = () => {
-  close()
+const handleDialogClose = async () => {
+  // 执行 beforeClose 回调
+  const canClose = await executeBeforeClose('cancel')
+
+  if (canClose) {
+    close()
+  }
 }
 
 // 处理表单变化
@@ -654,22 +736,34 @@ const handleRadioChange = ({ row }: { row: TableRowItem }) => {
 }
 
 // 处理确认
-const handleConfirm = () => {
+const handleConfirm = async () => {
   // 判断至少选择一个
   if (selectedRows.value.length === 0) {
     ElMessage.warning('请至少选择一项')
     return
   }
 
-  if (props.multiple) {
-    emit('update:modelValue', selectedRows.value)
-    emit('change', selectedRows.value, selectedRows.value)
-  } else {
-    const value = selectedRows.value[0]
-    emit('update:modelValue', value)
-    emit('change', value, selectedRows.value)
+  // 执行 beforeClose 回调
+  isConfirming.value = true
+  try {
+    const canClose = await executeBeforeClose('confirm')
+
+    if (!canClose) {
+      return
+    }
+
+    if (props.multiple) {
+      emit('update:modelValue', selectedRows.value)
+      emit('change', selectedRows.value, selectedRows.value)
+    } else {
+      const value = selectedRows.value[0]
+      emit('update:modelValue', value)
+      emit('change', value, selectedRows.value)
+    }
+    close()
+  } finally {
+    isConfirming.value = false
   }
-  close()
 }
 
 // 处理清空
