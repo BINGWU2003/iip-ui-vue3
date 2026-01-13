@@ -397,8 +397,6 @@ const mockEmployees = Array.from({ length: 100 }, (_, i) => ({
 const employeeDialogSelectOptions = [
   // 表格列配置（useForm 默认为 false，或显式设置为 false）
   { field: 'id', title: 'ID', useForm: false, columnProps: { width: 80 } },
-  { field: 'name', title: '姓名', useForm: false, columnProps: { width: 120 } },
-  { field: 'department', title: '部门', useForm: false, columnProps: { width: 120 } },
   { field: 'email', title: '邮箱', useForm: false, columnProps: { width: 200 } },
   { field: 'phone', title: '电话', useForm: false, columnProps: { width: 150 } },
   { field: 'status', title: '状态', useForm: false, columnProps: { width: 100 } },
@@ -407,8 +405,9 @@ const employeeDialogSelectOptions = [
     field: 'name',
     title: '姓名',
     useForm: true,
+    columnProps: { width: 120 },
     formItemProps: {
-      type: 'input' as const,
+      formType: 'input' as const,
       placeholder: '请输入姓名',
     },
   },
@@ -416,8 +415,9 @@ const employeeDialogSelectOptions = [
     field: 'department',
     title: '部门',
     useForm: true,
+    columnProps: { width: 120 },
     formItemProps: {
-      type: 'select' as const,
+      formType: 'select' as const,
       placeholder: '请选择部门',
       // 使用函数返回选项，支持从接口获取
       options: async () => {
@@ -438,8 +438,11 @@ const employeeDialogSelectOptions = [
     title: '创建日期',
     useForm: true,
     formItemProps: {
-      type: 'date' as const,
+      formType: 'date' as const,
       placeholder: '请选择创建日期',
+    },
+    columnProps: {
+      width: 150,
     },
   },
 ]
@@ -479,16 +482,14 @@ const fetchEmployeeData = async (
 const productDialogSelectOptions = [
   // 表格列配置（useForm 默认为 false）
   { field: 'id', title: '产品ID', columnProps: { width: 120 } },
-  { field: 'name', title: '产品名称', columnProps: { width: 150 } },
   { field: 'price', title: '价格', columnProps: { width: 100 } },
-  { field: 'category', title: '分类', columnProps: { width: 120 } },
   // 表单配置（用于筛选，useForm 设置为 true）
   {
     field: 'name',
     title: '产品名称',
     useForm: true,
     formItemProps: {
-      type: 'input' as const,
+      formType: 'input' as const,
       placeholder: '请输入产品名称',
       defaultValue: '产品',
     },
@@ -498,7 +499,7 @@ const productDialogSelectOptions = [
     title: '分类',
     useForm: true,
     formItemProps: {
-      type: 'select' as const,
+      formType: 'select' as const,
       placeholder: '请选择分类',
       defaultValue: '电子产品',
       options: [
