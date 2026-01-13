@@ -69,6 +69,8 @@ export function openDialogSelect<T extends BaseRecord = BaseRecord>(
       dialogSelectOptions: options.dialogSelectOptions,
       scrollToTopLeft: options.scrollToTopLeft ?? false,
       gridConfig: options.gridConfig,
+      selectedLabelFormatter: options.selectedLabelFormatter,
+      showSelectionPanel: options.showSelectionPanel ?? true,
       // 通过 style 隐藏输入框，因为命令式调用只需要弹窗
       style: { display: 'none' },
       'onUpdate:modelValue': handleChange,

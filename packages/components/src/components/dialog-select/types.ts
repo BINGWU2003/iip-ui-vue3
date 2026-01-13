@@ -110,6 +110,10 @@ export type DialogSelectProps<T extends BaseRecord = BaseRecord> = {
   style?: CSSProperties
   /** 数据加载后是否滚动到顶部和左部，默认为 false */
   scrollToTopLeft?: boolean
+  /** 多选时，已选项列表中每项的显示内容格式化函数 */
+  selectedLabelFormatter?: (row: T) => string
+  /** 多选时，是否显示已选项列表面板，默认为 true */
+  showSelectionPanel?: boolean
 }
 
 /**
@@ -173,4 +177,8 @@ export type OpenDialogSelectOptions<T extends BaseRecord = BaseRecord> = {
   animationDuration?: number
   /** 数据加载后是否滚动到顶部和左部，默认为 false */
   scrollToTopLeft?: boolean
+  /** 多选时，已选项列表中每项的显示内容格式化函数 */
+  selectedLabelFormatter?: (row: T) => string
+  /** 多选时，是否显示已选项列表面板，默认为 true */
+  showSelectionPanel?: boolean
 }
