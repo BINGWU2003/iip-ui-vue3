@@ -1,5 +1,18 @@
 # @bingwu/iip-ui-components
 
+## 1.2.32
+
+### Patch Changes
+
+- 在dialog-select组件中新增showSelectionPanel和selectedLabelFormatter属性，支持实时显示已选项、单个删除和清空操作。
+- 更新参数表，添加 showSelectionPanel 和 selectedLabelFormatter 属性的说明。
+- 优化示例代码，展示如何使用新功能。
+- 在 dialog-select 组件中新增 beforeClose 回调函数，允许用户在对话框关闭前执行自定义逻辑，如验证数据、显示确认提示或阻止关闭。
+- 更新文档，提供 beforeClose 的参数说明和多个使用示例，展示如何在确认和取消操作中使用该回调。
+- 在相关组件中实现 beforeClose 功能，确保用户可以根据选择的行数据进行相应的处理。
+- Updated dependencies
+  - @bingwu/iip-ui-utils@1.2.15
+
 ## 1.2.31
 
 ### Patch Changes
