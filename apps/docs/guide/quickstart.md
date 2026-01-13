@@ -15,7 +15,7 @@
 IIP UI Vue3 采用 Monorepo 架构，包含以下核心包：
 
 - **@bingwu/iip-ui-components**: 核心组件库 (包含组件和样式)
-- **@bingwu/iip-ui-utils**: 工具函数库 (类型检查、验证、Vue 工具等)
+- **@bingwu/iip-ui-utils**: 工具函数库 (类型检查等)
 
 ## 安装
 
@@ -567,11 +567,10 @@ import '@bingwu/iip-ui-components/dist/style.css' // IIP UI 主题样式
 
 ```typescript
 // 手动导入
-import { debounce, isEmail, deepClone } from '@bingwu/iip-ui-utils'
+import { debounce, deepClone } from '@bingwu/iip-ui-utils'
 
 // 使用示例
 const debouncedFn = debounce(() => {}, 300)
-const isValid = isEmail('test@example.com')
 ```
 
 -
