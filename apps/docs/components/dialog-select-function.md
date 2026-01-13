@@ -72,21 +72,21 @@ const mockProducts = Array.from({ length: 50 }, (_, i) => ({
 // DialogSelect 选项配置
 const productDialogSelectOptions: DialogSelectOptions = [
   { field: 'id', title: '产品ID', columnProps: { width: 120 } },
-  { field: 'name', title: '产品名称', columnProps: { width: 150 } },
-  { field: 'price', title: '价格', columnProps: { width: 100 } },
-  { field: 'category', title: '分类', columnProps: { width: 120 } },
   {
     field: 'name',
     title: '产品名称',
+    columnProps: { width: 150 },
     useForm: true,
     formItemProps: {
       formType: 'input',
       placeholder: '请输入产品名称'
     }
   },
+  { field: 'price', title: '价格', columnProps: { width: 100 } },
   {
     field: 'category',
     title: '分类',
+    columnProps: { width: 120 },
     useForm: true,
     formItemProps: {
       formType: 'select',
@@ -221,14 +221,10 @@ const mockEmployees = Array.from({ length: 100 }, (_, i) => ({
 // DialogSelect 选项配置
 const employeeDialogSelectOptions: DialogSelectOptions = [
   { field: 'id', title: 'ID', columnProps: { width: 80 } },
-  { field: 'name', title: '姓名', columnProps: { width: 120 } },
-  { field: 'department', title: '部门', columnProps: { width: 120 } },
-  { field: 'email', title: '邮箱', columnProps: { width: 200 } },
-  { field: 'phone', title: '电话', columnProps: { width: 150 } },
-  { field: 'status', title: '状态', columnProps: { width: 100 } },
   {
     field: 'name',
     title: '姓名',
+    columnProps: { width: 120 },
     useForm: true,
     formItemProps: {
       formType: 'input',
@@ -238,6 +234,7 @@ const employeeDialogSelectOptions: DialogSelectOptions = [
   {
     field: 'department',
     title: '部门',
+    columnProps: { width: 120 },
     useForm: true,
     formItemProps: {
       formType: 'select',
@@ -250,7 +247,10 @@ const employeeDialogSelectOptions: DialogSelectOptions = [
         { label: '人事部', value: '人事部' }
       ]
     }
-  }
+  },
+  { field: 'email', title: '邮箱', columnProps: { width: 200 } },
+  { field: 'phone', title: '电话', columnProps: { width: 150 } },
+  { field: 'status', title: '状态', columnProps: { width: 100 } }
 ]
 
 // 获取员工数据
@@ -435,14 +435,10 @@ const mockEmployees = Array.from({ length: 100 }, (_, i) => ({
 // DialogSelect 选项配置（合并 columns 和 formItems）
 const employeeDialogSelectOptions: DialogSelectOptions = [
   { field: 'id', title: 'ID', columnProps: { width: 80 } },
-  { field: 'name', title: '姓名', columnProps: { width: 120 } },
-  { field: 'department', title: '部门', columnProps: { width: 120 } },
-  { field: 'email', title: '邮箱', columnProps: { width: 200 } },
-  { field: 'phone', title: '电话', columnProps: { width: 150 } },
-  { field: 'status', title: '状态', columnProps: { width: 100 } },
   {
     field: 'name',
     title: '姓名',
+    columnProps: { width: 120 },
     useForm: true,
     formItemProps: {
       formType: 'input',
@@ -452,6 +448,7 @@ const employeeDialogSelectOptions: DialogSelectOptions = [
   {
     field: 'department',
     title: '部门',
+    columnProps: { width: 120 },
     useForm: true,
     formItemProps: {
       formType: 'select',
@@ -467,7 +464,10 @@ const employeeDialogSelectOptions: DialogSelectOptions = [
         ]
       }
     }
-  }
+  },
+  { field: 'email', title: '邮箱', columnProps: { width: 200 } },
+  { field: 'phone', title: '电话', columnProps: { width: 150 } },
+  { field: 'status', title: '状态', columnProps: { width: 100 } }
 ]
 
 // 获取员工数据
@@ -533,12 +533,10 @@ const mockProducts = Array.from({ length: 50 }, (_, i) => ({
 // DialogSelect 选项配置（产品）
 const productDialogSelectOptions: DialogSelectOptions = [
   { field: 'id', title: '产品ID', columnProps: { width: 120 } },
-  { field: 'name', title: '产品名称', columnProps: { width: 150 } },
-  { field: 'price', title: '价格', columnProps: { width: 100 } },
-  { field: 'category', title: '分类', columnProps: { width: 120 } },
   {
     field: 'name',
     title: '产品名称',
+    columnProps: { width: 150 },
     useForm: true,
     formItemProps: {
       formType: 'input',
@@ -546,9 +544,11 @@ const productDialogSelectOptions: DialogSelectOptions = [
       defaultValue: '产品'
     }
   },
+  { field: 'price', title: '价格', columnProps: { width: 100 } },
   {
     field: 'category',
     title: '分类',
+    columnProps: { width: 120 },
     useForm: true,
     formItemProps: {
       formType: 'select',

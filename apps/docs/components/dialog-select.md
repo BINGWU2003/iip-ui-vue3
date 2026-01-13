@@ -157,17 +157,11 @@ const mockEmployees = Array.from({ length: 100 }, (_, i) => ({
 
 // DialogSelect 选项配置（合并 columns 和 formItems）
 const employeeDialogSelectOptions: DialogSelectOptions = [
-  // 表格列配置（useForm 默认为 false）
   { field: 'id', title: 'ID', columnProps: { width: 80 } },
-  { field: 'name', title: '姓名', columnProps: { width: 120 } },
-  { field: 'department', title: '部门', columnProps: { width: 120 } },
-  { field: 'email', title: '邮箱', columnProps: { width: 200 } },
-  { field: 'phone', title: '电话', columnProps: { width: 150 } },
-  { field: 'status', title: '状态', columnProps: { width: 100 } },
-  // 表单配置（用于筛选，useForm 设置为 true）
   {
     field: 'name',
     title: '姓名',
+    columnProps: { width: 120 },
     useForm: true,
     formItemProps: {
       formType: 'input',
@@ -177,6 +171,7 @@ const employeeDialogSelectOptions: DialogSelectOptions = [
   {
     field: 'department',
     title: '部门',
+    columnProps: { width: 120 },
     useForm: true,
     formItemProps: {
       formType: 'select',
@@ -190,6 +185,9 @@ const employeeDialogSelectOptions: DialogSelectOptions = [
       ]
     }
   },
+  { field: 'email', title: '邮箱', columnProps: { width: 200 } },
+  { field: 'phone', title: '电话', columnProps: { width: 150 } },
+  { field: 'status', title: '状态', columnProps: { width: 100 } },
   {
     field: 'createDate',
     title: '创建日期',
