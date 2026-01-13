@@ -45,6 +45,31 @@ export interface RequestResult<T = any> {
 }
 
 /**
+ * 请求配置选项
+ */
+export interface RequestOptions<T = any, R = any> {
+  /**
+   * 成功回调，仅当是最新请求时调用
+   */
+  onSuccess?: (data: T) => R
+
+  /**
+   * 错误回调，仅当是最新请求时调用
+   */
+  onError?: (error: Error) => void
+
+  /**
+   * 过期请求回调，可选
+   */
+  onOutdated?: (data: T, requestId: number) => void
+
+  /**
+   * 无论成功失败都会执行的回调
+   */
+  onFinally?: () => void
+}
+
+/**
  * 请求管理器接口
  */
 export interface RequestManager {
@@ -55,24 +80,15 @@ export interface RequestManager {
   createRequest: () => RequestIdentifier
 
   /**
-   * 执行一个受控的异步请求，只处理最新请求的响应
-   * @param asyncFn 异步请求函数，接收requestId作为参数
-   * @param onSuccess 成功回调，仅当是最新请求时调用
-   * @param onOutdated 过期请求回调，可选
-   * @returns 返回Promise，可用于链式调用或await
+   * 通用请求方法，同时支持 async/await 和 then/catch 写法
+   * @param asyncFn 异步请求函数
+   * @param options 可选的配置选项，包含成功、失败、过期回调
+   * @returns 返回 Promise，可链式调用
    */
-  managedRequest: <T = any, R = any>(
+  request: <T = any, R = any>(
     asyncFn: (requestId: number) => Promise<T>,
-    onSuccess?: (data: T) => R,
-    onOutdated?: (data: T, requestId: number) => void
+    options?: RequestOptions<T, R>
   ) => Promise<RequestResult<T>>
-
-  /**
-   * 使用async/await方式处理请求竞态
-   * @param fetchFn 获取数据的异步函数
-   * @returns 处理过竞态问题的Promise
-   */
-  managedFetch: <T = any>(fetchFn: (requestId: number) => Promise<T>) => Promise<RequestResult<T>>
 
   /**
    * 获取当前最新的请求ID
