@@ -126,6 +126,9 @@ pnpm changeset version
 
 # 发布版本
 pnpm release
+
+# 生成Git Tag
+pnpm tag
 ```
 
 ### 发布流程
