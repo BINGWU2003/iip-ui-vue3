@@ -103,6 +103,10 @@ export default defineConfig({
     },
     ssr: {
       noExternal: ['element-plus', '@bingwu/iip-ui-components']
+    },
+    server: {
+      port: 3001,
+      host: '0.0.0.0'
     }
   }
 })
