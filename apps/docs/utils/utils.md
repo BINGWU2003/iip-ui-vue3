@@ -26,6 +26,9 @@ import {
 import {
   isString,
   isNumber,
+  isInteger,
+  isNumeric,
+  isNumericInteger,
   isBoolean, // 类型检查
   debounce,
   throttle,
@@ -44,6 +47,9 @@ import {
 import {
   isString,
   isNumber,
+  isInteger,
+  isNumeric,
+  isNumericInteger,
   isBoolean,
   isFunction,
   isObject,
@@ -60,6 +66,32 @@ console.log(isString(123)) // false
 // 检查数字
 console.log(isNumber(123)) // true
 console.log(isNumber('123')) // false
+
+// 检查整数
+console.log(isInteger(123)) // true
+console.log(isInteger(3.14)) // false
+console.log(isInteger('123')) // false
+
+// 检查是否为数字（支持 number 和数字字符串）
+console.log(isNumeric(123)) // true
+console.log(isNumeric('123')) // true
+console.log(isNumeric('123.45')) // true
+console.log(isNumeric('-123')) // true
+console.log(isNumeric('abc')) // false
+console.log(isNumeric('')) // false
+console.log(isNumeric(Infinity)) // false
+console.log(isNumeric(NaN)) // false
+
+// 检查是否为整数（支持 number 和整数字符串）
+console.log(isNumericInteger(123)) // true
+console.log(isNumericInteger('123')) // true
+console.log(isNumericInteger('-456')) // true
+console.log(isNumericInteger('123.45')) // false
+console.log(isNumericInteger(3.14)) // false
+console.log(isNumericInteger('abc')) // false
+console.log(isNumericInteger('')) // false
+console.log(isNumericInteger(Infinity)) // false
+console.log(isNumericInteger(NaN)) // false
 
 // 检查布尔值
 console.log(isBoolean(true)) // true
@@ -1117,17 +1149,20 @@ onMounted(() => {
 
 ### 类型检查函数
 
-| 函数名                   | 参数      | 返回值    | 描述                         |
-| ------------------------ | --------- | --------- | ---------------------------- |
-| `isString(val)`          | `unknown` | `boolean` | 检查是否为字符串             |
-| `isNumber(val)`          | `unknown` | `boolean` | 检查是否为数字               |
-| `isBoolean(val)`         | `unknown` | `boolean` | 检查是否为布尔值             |
-| `isFunction(val)`        | `unknown` | `boolean` | 检查是否为函数               |
-| `isObject(val)`          | `unknown` | `boolean` | 检查是否为对象               |
-| `isArray(val)`           | `unknown` | `boolean` | 检查是否为数组               |
-| `isUndefined(val)`       | `unknown` | `boolean` | 检查是否为 undefined         |
-| `isNull(val)`            | `unknown` | `boolean` | 检查是否为 null              |
-| `isNullOrUndefined(val)` | `unknown` | `boolean` | 检查是否为 null 或 undefined |
+| 函数名                   | 参数      | 返回值    | 描述                                       |
+| ------------------------ | --------- | --------- | ------------------------------------------ |
+| `isString(val)`          | `unknown` | `boolean` | 检查是否为字符串                           |
+| `isNumber(val)`          | `unknown` | `boolean` | 检查是否为数字                             |
+| `isInteger(val)`         | `unknown` | `boolean` | 检查是否为整数                             |
+| `isNumeric(val)`         | `unknown` | `boolean` | 检查是否为数字（支持 number 和数字字符串） |
+| `isNumericInteger(val)`  | `unknown` | `boolean` | 检查是否为整数（支持 number 和整数字符串） |
+| `isBoolean(val)`         | `unknown` | `boolean` | 检查是否为布尔值                           |
+| `isFunction(val)`        | `unknown` | `boolean` | 检查是否为函数                             |
+| `isObject(val)`          | `unknown` | `boolean` | 检查是否为对象                             |
+| `isArray(val)`           | `unknown` | `boolean` | 检查是否为数组                             |
+| `isUndefined(val)`       | `unknown` | `boolean` | 检查是否为 undefined                       |
+| `isNull(val)`            | `unknown` | `boolean` | 检查是否为 null                            |
+| `isNullOrUndefined(val)` | `unknown` | `boolean` | 检查是否为 null 或 undefined               |
 
 ### 通用工具函数
 

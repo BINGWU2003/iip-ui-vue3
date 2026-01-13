@@ -1,9 +1,9 @@
 import { describe, it, expect, vi } from 'vitest'
 import { debounce, throttle, deepClone, generateId } from '../common'
 
-describe('common utils', () => {
+describe('通用工具函数', () => {
   describe('debounce', () => {
-    it('should debounce function calls', async () => {
+    it('应该对函数调用进行防抖处理', async () => {
       vi.useFakeTimers()
 
       const fn = vi.fn()
@@ -27,7 +27,7 @@ describe('common utils', () => {
       vi.useRealTimers()
     })
 
-    it('should support immediate execution', async () => {
+    it('应该支持立即执行模式', async () => {
       vi.useFakeTimers()
 
       const fn = vi.fn()
@@ -44,7 +44,7 @@ describe('common utils', () => {
   })
 
   describe('throttle', () => {
-    it('should throttle function calls', async () => {
+    it('应该对函数调用进行节流处理', async () => {
       vi.useFakeTimers()
 
       const fn = vi.fn()
@@ -73,7 +73,7 @@ describe('common utils', () => {
   })
 
   describe('deepClone', () => {
-    it('should clone primitive values', () => {
+    it('应该克隆原始值', () => {
       expect(deepClone(42)).toBe(42)
       expect(deepClone('hello')).toBe('hello')
       expect(deepClone(true)).toBe(true)
@@ -81,7 +81,7 @@ describe('common utils', () => {
       expect(deepClone(undefined)).toBe(undefined)
     })
 
-    it('should clone arrays', () => {
+    it('应该克隆数组', () => {
       const original = [1, 2, [3, 4]]
       const cloned = deepClone(original)
 
@@ -90,7 +90,7 @@ describe('common utils', () => {
       expect(cloned[2]).not.toBe(original[2])
     })
 
-    it('should clone objects', () => {
+    it('应该克隆对象', () => {
       const original = {
         a: 1,
         b: 'hello',
@@ -107,7 +107,7 @@ describe('common utils', () => {
       expect(cloned.c.e).not.toBe(original.c.e)
     })
 
-    it('should clone dates', () => {
+    it('应该克隆日期对象', () => {
       const original = new Date('2023-01-01')
       const cloned = deepClone(original)
 
@@ -118,7 +118,7 @@ describe('common utils', () => {
   })
 
   describe('generateId', () => {
-    it('should generate unique IDs', () => {
+    it('应该生成唯一的 ID', () => {
       const id1 = generateId()
       const id2 = generateId()
 
@@ -127,12 +127,12 @@ describe('common utils', () => {
       expect(id2).toMatch(/^id-[a-z0-9]+$/)
     })
 
-    it('should use custom prefix', () => {
+    it('应该使用自定义前缀', () => {
       const id = generateId('custom')
       expect(id).toMatch(/^custom-[a-z0-9]+$/)
     })
 
-    it('should generate IDs of consistent length', () => {
+    it('应该生成固定长度的 ID', () => {
       const id1 = generateId()
       const id2 = generateId()
 
