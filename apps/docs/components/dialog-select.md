@@ -8,6 +8,7 @@
 - 📋 **表格展示**: 使用 VXE-Table 高性能表格组件展示数据
 - 🔍 **表单筛选**: 支持 input、select、date 三种类型的筛选条件
 - ✅ **单选/多选**: 支持单选和多选两种模式
+- 📝 **已选项面板**: 多选模式下支持在表格右侧显示已选项列表，支持单个删除和清空
 - 🔑 **灵活 Key**: 支持自定义 keyGetter 函数，处理复合 key 场景
 - 📄 **分页支持**: 内置分页功能，支持切换每页显示条数
 - 🔄 **数据回显**: 自动回显已选中的数据，支持跨页选择
@@ -116,6 +117,73 @@ const handleChange = (value: TableRowItem[] | null, selectedRows: TableRowItem[]
 }
 </script>
 ```
+
+## 已选项面板
+
+多选模式下，可以通过 `showSelectionPanel` 属性控制是否在表格右侧显示已选项面板（默认开启）。还可以通过 `selectedLabelFormatter` 自定义已选项的显示文本：
+
+```vue
+<template>
+  <div>
+    <!-- 默认显示已选项面板 -->
+    <IipDialogSelect
+      v-model="selectedEmployees1"
+      :fetch-data="fetchEmployeeData"
+      :dialog-select-options="employeeDialogSelectOptions"
+      :multiple="true"
+      placeholder="多选（显示已选项面板）"
+      dialog-title="选择员工"
+    />
+
+    <!-- 隐藏已选项面板 -->
+    <IipDialogSelect
+      v-model="selectedEmployees2"
+      :fetch-data="fetchEmployeeData"
+      :dialog-select-options="employeeDialogSelectOptions"
+      :multiple="true"
+      :show-selection-panel="false"
+      placeholder="多选（隐藏已选项面板）"
+      dialog-title="选择员工"
+    />
+
+    <!-- 自定义已选项显示文本 -->
+    <IipDialogSelect
+      v-model="selectedEmployees3"
+      :fetch-data="fetchEmployeeData"
+      :dialog-select-options="employeeDialogSelectOptions"
+      :multiple="true"
+      :selected-label-formatter="formatEmployeeLabel"
+      placeholder="多选（自定义显示格式）"
+      dialog-title="选择员工"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { IipDialogSelect } from '@bingwu/iip-ui-components'
+import type { TableRowItem } from '@bingwu/iip-ui-components'
+
+const selectedEmployees1 = ref<TableRowItem[] | null>(null)
+const selectedEmployees2 = ref<TableRowItem[] | null>(null)
+const selectedEmployees3 = ref<TableRowItem[] | null>(null)
+
+// 自定义已选项显示文本格式化函数
+const formatEmployeeLabel = (row: TableRowItem) => {
+  return `${row.name} (${row.department})`
+}
+
+// ... 其他代码省略
+</script>
+```
+
+### 已选项面板特性
+
+- 📝 **实时显示**: 在表格右侧实时显示已选择的项目列表
+- ✖️ **单个删除**: 点击每项右侧的关闭图标可移除该项
+- 🗑️ **清空操作**: 点击“清空”按钮可一键清除所有已选项
+- 🎨 **自定义显示**: 通过 `selectedLabelFormatter` 自定义每个已选项的显示文本
+- 💡 **智能提示**: 鼠标悬停时显示完整文本（使用 ElTooltip）
 
 ## 表单筛选
 
@@ -655,23 +723,25 @@ interface EmployeeRow {
 <IipDialogSelect<EmployeeRow> ... />
 ```
 
-| 参数                | 说明                                                   | 类型                                                                                  | 默认值     |
-| ------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------- | ---------- |
-| modelValue          | 绑定值，单选时为对象，多选时为对象数组                 | `T \| T[] \| null`（`T` 为泛型参数，默认为 `BaseRecord`）                             | `null`     |
-| placeholder         | 占位符                                                 | `string`                                                                              | `'请选择'` |
-| multiple            | 是否多选                                               | `boolean`                                                                             | `false`    |
-| valueKey            | 选项值的键名                                           | `string`                                                                              | `'id'`     |
-| labelKey            | 选项标签的键名（用于显示在输入框中）                   | `string`                                                                              | `'name'`   |
-| keyGetter           | 获取行的唯一标识key的函数，如果不提供则使用valueKey    | `(row: T) => string \| number`（`T` 为泛型参数）                                      | -          |
-| clearable           | 是否可清空                                             | `boolean`                                                                             | `true`     |
-| disabled            | 是否禁用                                               | `boolean`                                                                             | `false`    |
-| dialogTitle         | 弹窗标题                                               | `string`                                                                              | `'请选择'` |
-| dialogWidth         | 弹窗宽度                                               | `string \| number`                                                                    | `'1100px'` |
-| fetchData           | 获取数据的方法                                         | `(params: FetchDialogSelectDataParams<T>) => Promise<FetchDialogSelectDataResult<T>>` | -          |
-| dialogSelectOptions | DialogSelect 选项配置数组（合并 columns 和 formItems） | `DialogSelectOptions`                                                                 | -          |
-| gridConfig          | vxe-grid 配置，支持透传 vxe-grid 的所有 props          | `VxeGridProps`                                                                        | -          |
-| style               | 输入框样式                                             | `CSSProperties`                                                                       | -          |
-| scrollToTopLeft     | 数据加载后是否滚动到顶部和左部                         | `boolean`                                                                             | `false`    |
+| 参数                   | 说明                                                   | 类型                                                                                  | 默认值     |
+| ---------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------- | ---------- |
+| modelValue             | 绑定值，单选时为对象，多选时为对象数组                 | `T \| T[] \| null`（`T` 为泛型参数，默认为 `BaseRecord`）                             | `null`     |
+| placeholder            | 占位符                                                 | `string`                                                                              | `'请选择'` |
+| multiple               | 是否多选                                               | `boolean`                                                                             | `false`    |
+| valueKey               | 选项值的键名                                           | `string`                                                                              | `'id'`     |
+| labelKey               | 选项标签的键名（用于显示在输入框中）                   | `string`                                                                              | `'name'`   |
+| keyGetter              | 获取行的唯一标识key的函数，如果不提供则使用valueKey    | `(row: T) => string \| number`（`T` 为泛型参数）                                      | -          |
+| clearable              | 是否可清空                                             | `boolean`                                                                             | `true`     |
+| disabled               | 是否禁用                                               | `boolean`                                                                             | `false`    |
+| dialogTitle            | 弹窗标题                                               | `string`                                                                              | `'请选择'` |
+| dialogWidth            | 弹窗宽度                                               | `string \| number`                                                                    | `'1100px'` |
+| fetchData              | 获取数据的方法                                         | `(params: FetchDialogSelectDataParams<T>) => Promise<FetchDialogSelectDataResult<T>>` | -          |
+| dialogSelectOptions    | DialogSelect 选项配置数组（合并 columns 和 formItems） | `DialogSelectOptions`                                                                 | -          |
+| gridConfig             | vxe-grid 配置，支持透传 vxe-grid 的所有 props          | `VxeGridProps`                                                                        | -          |
+| style                  | 输入框样式                                             | `CSSProperties`                                                                       | -          |
+| scrollToTopLeft        | 数据加载后是否滚动到顶部和左部                         | `boolean`                                                                             | `false`    |
+| showSelectionPanel     | 多选时，是否显示已选项列表面板                         | `boolean`                                                                             | `true`     |
+| selectedLabelFormatter | 多选时，已选项列表中每项的显示内容格式化函数           | `(row: T) => string`（`T` 为泛型参数）                                                | -          |
 
 **泛型参数说明：**
 
