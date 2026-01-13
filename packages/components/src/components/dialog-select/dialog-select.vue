@@ -17,7 +17,9 @@
         :title="dialogTitle"
         :width="dialogWidth"
         :close-on-click-modal="false"
+        lock-scroll
         append-to-body
+        top="10vh"
         @close="handleDialogClose"
       >
         <!-- 表单筛选区域 -->
@@ -67,22 +69,68 @@
         </div>
 
         <!-- 表格区域 -->
-        <div class="dialog-select-table">
-          <vxe-grid
-            ref="gridRef"
-            :loading="loading"
-            :data="tableData"
-            :columns="computedColumns"
-            :pager-config="computedPagerConfig"
-            :checkbox-config="computedCheckboxConfig"
-            :radio-config="computedRadioConfig"
-            :row-config="computedRowConfig"
-            @page-change="handlePageChange"
-            @checkbox-change="handleCheckboxChange"
-            @checkbox-all="handleCheckboxAll"
-            @radio-change="handleRadioChange"
-            v-bind="computedGridConfig"
-          />
+        <div
+          class="dialog-select-content"
+          :class="{ 'has-selection-panel': shouldShowSelectionPanel }"
+        >
+          <div class="dialog-select-table">
+            <vxe-grid
+              ref="gridRef"
+              :loading="loading"
+              :data="tableData"
+              :columns="computedColumns"
+              :pager-config="computedPagerConfig"
+              :checkbox-config="computedCheckboxConfig"
+              :radio-config="computedRadioConfig"
+              :row-config="computedRowConfig"
+              @page-change="handlePageChange"
+              @checkbox-change="handleCheckboxChange"
+              @checkbox-all="handleCheckboxAll"
+              @radio-change="handleRadioChange"
+              v-bind="computedGridConfig"
+            />
+          </div>
+
+          <!-- 多选时显示已选项列表 -->
+          <div v-if="shouldShowSelectionPanel" class="dialog-select-selection-panel">
+            <div class="selection-panel-header">
+              <span class="selection-panel-title">已选项</span>
+              <span class="selection-panel-count">{{ selectedRows.length }} 项</span>
+            </div>
+            <div class="selection-panel-body">
+              <div
+                v-for="(row, index) in selectedRows"
+                :key="getRowKey(row)"
+                class="selection-panel-item"
+              >
+                <el-tooltip
+                  :content="getSelectedRowLabel(row)"
+                  placement="top"
+                  :show-after="500"
+                  :hide-after="0"
+                >
+                  <span class="selection-item-label">
+                    {{ getSelectedRowLabel(row) }}
+                  </span>
+                </el-tooltip>
+                <el-icon class="selection-item-remove" @click="handleRemoveSelectedRow(index)">
+                  <Close />
+                </el-icon>
+              </div>
+              <div v-if="selectedRows.length === 0" class="selection-panel-empty">暂无已选项</div>
+            </div>
+            <div class="selection-panel-footer">
+              <el-button
+                type="danger"
+                text
+                size="small"
+                :disabled="selectedRows.length === 0"
+                @click="handleClearAllSelected"
+              >
+                清空全部
+              </el-button>
+            </div>
+          </div>
         </div>
 
         <template #footer>
@@ -92,7 +140,9 @@
             </div>
             <div>
               <el-button @click="handleDialogClose">取消</el-button>
-              <el-button type="primary" @click="handleConfirm">确定</el-button>
+              <el-button type="primary" :loading="isConfirming" @click="handleConfirm"
+                >确定</el-button
+              >
             </div>
           </div>
         </template>
@@ -113,8 +163,11 @@ import {
   ElOption,
   ElDatePicker,
   ElMessage,
-  ElConfigProvider
+  ElConfigProvider,
+  ElIcon,
+  ElTooltip
 } from 'element-plus'
+import { Close } from '@element-plus/icons-vue'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import { VxeGrid } from 'vxe-table'
 import type {
@@ -153,7 +206,9 @@ const props = withDefaults(defineProps<DialogSelectProps>(), {
   dialogWidth: '1100px',
   gridConfig: undefined,
   style: () => ({}),
-  scrollToTopLeft: false
+  scrollToTopLeft: false,
+  showSelectionPanel: true,
+  beforeClose: undefined
 })
 
 const emit = defineEmits<DialogSelectEmits>()
@@ -170,6 +225,8 @@ const formData = ref<BaseRecord>({})
 const selectedRows = ref<TableRowItem[]>([])
 // 存储每个表单项的选项数据
 const formItemOptions = ref<Record<string, FormItemOption[]>>({})
+// 确认按钮加载状态
+const isConfirming = ref(false)
 
 // 获取行的唯一标识key
 const getRowKey = (row: TableRowItem): string | number => {
@@ -179,7 +236,84 @@ const getRowKey = (row: TableRowItem): string | number => {
   return row[props.valueKey]
 }
 
+/**
+ * 执行关闭前的回调
+ * @param action - 'confirm' | 'cancel'
+ * @returns {Promise<boolean>} - true 表示可以关闭，false 表示阻止关闭
+ */
+const executeBeforeClose = async (action: 'confirm' | 'cancel'): Promise<boolean> => {
+  if (!props.beforeClose) {
+    return true
+  }
+
+  return new Promise(resolve => {
+    let called = false
+
+    // done 回调函数
+    const done = () => {
+      if (!called) {
+        called = true
+        resolve(true)
+      }
+    }
+
+    try {
+      // 调用 beforeClose，传入对象参数
+      const result = props.beforeClose({
+        action,
+        done,
+        selectedRows: selectedRows.value
+      })
+      console.log('result', result)
+      // 如果返回 Promise，等待其完成
+      if (result && typeof (result as any).then === 'function') {
+        ;(result as Promise<void>)
+          .then(() => {
+            if (!called) {
+              called = true
+              resolve(true)
+            }
+          })
+          .catch(() => {
+            if (!called) {
+              called = true
+              resolve(false)
+            }
+          })
+      }
+      // 如果返回 false，阻止关闭
+      else if (result === false) {
+        called = true
+        resolve(false)
+      }
+      // 其他情况，等待 done 被调用或超时（10秒）
+      else {
+        setTimeout(() => {
+          if (!called) {
+            console.warn(
+              'beforeClose callback did not call done() within 10 seconds, forcing close'
+            )
+            called = true
+            resolve(true)
+          }
+        }, 10000)
+      }
+    } catch (error) {
+      console.error('Error in beforeClose:', error)
+      if (!called) {
+        called = true
+        resolve(false)
+      }
+    }
+  })
+}
+
 // 计算属性
+// 是否显示已选项面板（需要 multiple 和 showSelectionPanel 都为 true）
+const shouldShowSelectionPanel = computed(() => {
+  return props.multiple && props.showSelectionPanel
+})
+
 const displayText = computed(() => {
   if (!props.modelValue) return ''
 
@@ -518,8 +652,13 @@ const close = () => {
 }
 
 // 处理弹窗关闭
-const handleDialogClose = () => {
-  close()
+const handleDialogClose = async () => {
+  // 执行 beforeClose 回调
+  const canClose = await executeBeforeClose('cancel')
+
+  if (canClose) {
+    close()
+  }
 }
 
 // 处理表单变化
@@ -597,22 +736,34 @@ const handleRadioChange = ({ row }: { row: TableRowItem }) => {
 }
 
 // 处理确认
-const handleConfirm = () => {
+const handleConfirm = async () => {
   // 判断至少选择一个
   if (selectedRows.value.length === 0) {
     ElMessage.warning('请至少选择一项')
     return
   }
 
-  if (props.multiple) {
-    emit('update:modelValue', selectedRows.value)
-    emit('change', selectedRows.value, selectedRows.value)
-  } else {
-    const value = selectedRows.value[0]
-    emit('update:modelValue', value)
-    emit('change', value, selectedRows.value)
+  // 执行 beforeClose 回调
+  isConfirming.value = true
+  try {
+    const canClose = await executeBeforeClose('confirm')
+
+    if (!canClose) {
+      return
+    }
+
+    if (props.multiple) {
+      emit('update:modelValue', selectedRows.value)
+      emit('change', selectedRows.value, selectedRows.value)
+    } else {
+      const value = selectedRows.value[0]
+      emit('update:modelValue', value)
+      emit('change', value, selectedRows.value)
+    }
+    close()
+  } finally {
+    isConfirming.value = false
   }
-  close()
 }
 
 // 处理清空
@@ -620,6 +771,34 @@ const handleClear = () => {
   emit('update:modelValue', null)
   emit('change', null, [])
   emit('clear')
+}
+
+// 获取已选行的显示标签
+const getSelectedRowLabel = (row: TableRowItem): string => {
+  if (props.selectedLabelFormatter) {
+    return props.selectedLabelFormatter(row)
+  }
+  return row[props.labelKey] || String(row[props.valueKey]) || ''
+}
+
+// 处理从已选列表中删除某项
+const handleRemoveSelectedRow = (index: number) => {
+  const row = selectedRows.value[index]
+  selectedRows.value.splice(index, 1)
+
+  if (gridRef.value && row) {
+    // 直接取消该行的选中状态
+    gridRef.value.setCheckboxRow([row], false)
+  }
+}
+
+// 处理清空所有已选项
+const handleClearAllSelected = () => {
+  selectedRows.value = []
+  // 清空表格选中状态
+  if (gridRef.value) {
+    gridRef.value.clearCheckboxRow()
+  }
 }
 
 // 刷新数据
@@ -647,8 +826,108 @@ defineExpose({
   border-bottom: 1px solid var(--el-border-color-lighter);
 }
 
-.dialog-select-table {
-  margin-bottom: 16px;
+.dialog-select-content {
+  &.has-selection-panel {
+    display: flex;
+    gap: 16px;
+
+    .dialog-select-table {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+}
+
+.dialog-select-selection-panel {
+  width: 240px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--el-border-color-light);
+  border-radius: 4px;
+  background-color: var(--el-fill-color-lighter);
+
+  .selection-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--el-border-color-light);
+    background-color: var(--el-fill-color-light);
+
+    .selection-panel-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--el-text-color-primary);
+    }
+
+    .selection-panel-count {
+      font-size: 12px;
+      color: var(--el-text-color-secondary);
+    }
+  }
+
+  .selection-panel-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px 0;
+    min-height: 200px;
+    max-height: 400px;
+  }
+
+  .selection-panel-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    cursor: default;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: var(--el-fill-color);
+    }
+
+    .selection-item-label {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 13px;
+      color: var(--el-text-color-regular);
+    }
+
+    .selection-item-remove {
+      flex-shrink: 0;
+      margin-left: 8px;
+      font-size: 14px;
+      color: var(--el-text-color-placeholder);
+      cursor: pointer;
+      transition:
+        opacity 0.2s,
+        color 0.2s;
+
+      &:hover {
+        color: var(--el-color-danger);
+      }
+    }
+  }
+
+  .selection-panel-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 100px;
+    font-size: 13px;
+    color: var(--el-text-color-placeholder);
+  }
+
+  .selection-panel-footer {
+    padding: 8px 16px;
+    border-top: 1px solid var(--el-border-color-light);
+    text-align: right;
+  }
 }
 
 .dialog-select-footer {

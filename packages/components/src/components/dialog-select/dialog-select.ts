@@ -13,7 +13,6 @@ export function openDialogSelect<T extends BaseRecord = BaseRecord>(
     let vnode: VNode | null = null
     let currentValue = options.initialValue || null
     let isConfirmed = false // 标记是否是确认操作
-    const isCancelled = false // 标记是否已取消（预留给未来可能的主动取消功能）
 
     const cleanup = () => {
       if (vnode) {
@@ -33,22 +32,22 @@ export function openDialogSelect<T extends BaseRecord = BaseRecord>(
     }
 
     const handleDialogVisibleChange = (visible: boolean) => {
-      if (!visible && !isConfirmed && !isCancelled) {
-        // 弹窗关闭，且不是确认操作也不是主动取消，说明是用户点击了取消按钮或遮罩层
+      if (!visible) {
+        // 弹窗关闭时清理
         cleanup()
-        reject(new Error('用户取消选择'))
+        if (!isConfirmed) {
+          // 如果不是确认操作，说明是用户点击了取消按钮或遮罩层
+          reject(new Error('用户取消选择'))
+        }
       }
     }
 
     const handleConfirm = (value: T | T[] | null) => {
       isConfirmed = true
       currentValue = value
-
-      // 等待弹窗关闭动画完成后再清理
-      setTimeout(() => {
-        cleanup()
-        resolve(value)
-      }, animationDuration)
+      // 确认后直接 resolve，不调用 cleanup
+      // cleanup 会在弹窗关闭时（handleDialogVisibleChange）自动执行
+      resolve(value)
     }
 
     const handleError = (error: any) => {
@@ -69,6 +68,9 @@ export function openDialogSelect<T extends BaseRecord = BaseRecord>(
       dialogSelectOptions: options.dialogSelectOptions,
       scrollToTopLeft: options.scrollToTopLeft ?? false,
       gridConfig: options.gridConfig,
+      selectedLabelFormatter: options.selectedLabelFormatter,
+      showSelectionPanel: options.showSelectionPanel ?? true,
+      beforeClose: options.beforeClose,
       // 通过 style 隐藏输入框，因为命令式调用只需要弹窗
       style: { display: 'none' },
       'onUpdate:modelValue': handleChange,

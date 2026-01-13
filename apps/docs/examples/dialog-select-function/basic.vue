@@ -57,14 +57,10 @@ const mockEmployees: EmployeeRow[] = Array.from({ length: 100 }, (_, i) => ({
 // DialogSelect 选项配置
 const employeeDialogSelectOptions: DialogSelectOptions = [
   { field: 'id', title: 'ID', columnProps: { width: 80 } },
-  { field: 'name', title: '姓名', columnProps: { width: 120 } },
-  { field: 'department', title: '部门', columnProps: { width: 120 } },
-  { field: 'email', title: '邮箱', columnProps: { width: 200 } },
-  { field: 'phone', title: '电话', columnProps: { width: 150 } },
-  { field: 'status', title: '状态', columnProps: { width: 100 } },
   {
     field: 'name',
     title: '姓名',
+    columnProps: { width: 120 },
     useForm: true,
     formItemProps: {
       formType: 'input',
@@ -74,6 +70,7 @@ const employeeDialogSelectOptions: DialogSelectOptions = [
   {
     field: 'department',
     title: '部门',
+    columnProps: { width: 120 },
     useForm: true,
     formItemProps: {
       formType: 'select',
@@ -86,7 +83,10 @@ const employeeDialogSelectOptions: DialogSelectOptions = [
         { label: '人事部', value: '人事部' }
       ]
     }
-  }
+  },
+  { field: 'email', title: '邮箱', columnProps: { width: 200 } },
+  { field: 'phone', title: '电话', columnProps: { width: 150 } },
+  { field: 'status', title: '状态', columnProps: { width: 100 } }
 ]
 
 // 获取员工数据

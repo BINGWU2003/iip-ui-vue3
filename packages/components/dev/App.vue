@@ -331,7 +331,7 @@ import type {
   FetchDialogSelectDataResult,
   TableRowItem
 } from '../src/components/dialog-select/types'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import type { DropdownListItemType } from '../src/components/dropdown-list/type'
 import type { DropdownListInstance } from '../src/components/dropdown-list/type'
 // DateRange 相关
@@ -492,8 +492,6 @@ type Employee = {
 const employeeDialogSelectOptions = [
   // 表格列配置（useForm 默认为 false，或显式设置为 false）
   { field: 'id', title: 'ID', useForm: false, columnProps: { width: 80 } },
-  { field: 'name', title: '姓名', useForm: false, columnProps: { width: 120 } },
-  { field: 'department', title: '部门', useForm: false, columnProps: { width: 120 } },
   { field: 'email', title: '邮箱', useForm: false, columnProps: { width: 200 } },
   { field: 'phone', title: '电话', useForm: false, columnProps: { width: 150 } },
   { field: 'status', title: '状态', useForm: false, columnProps: { width: 100 } },
@@ -582,9 +580,9 @@ const fetchEmployeeData = async (
 const productDialogSelectOptions = [
   // 表格列配置（useForm 默认为 false）
   { field: 'id', title: '产品ID', columnProps: { width: 120 } },
-  { field: 'name', title: '产品名称', columnProps: { width: 150 } },
+
   { field: 'price', title: '价格', columnProps: { width: 100 } },
-  { field: 'category', title: '分类', columnProps: { width: 120 } },
+
   // 表单配置（用于筛选，useForm 设置为 true）
   {
     field: 'name',
@@ -682,7 +680,15 @@ const handleOwnerClick = async (row: any) => {
       dialogSelectOptions: employeeDialogSelectOptions,
       keyGetter: employeeKeyGetter,
       dialogTitle: '选择负责人',
-      initialValue: row.ownerData
+      initialValue: row.ownerData,
+      beforeClose: async ({ action, done, selectedRows }) => {
+        if (action === 'cancel' && selectedRows.length > 0) {
+          await ElMessageBox.confirm('您已选择了数据，确定要取消吗？', '提示')
+          done()
+        } else {
+          done()
+        }
+      }
     })
 
     if (result && typeof result === 'object' && !Array.isArray(result)) {

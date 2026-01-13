@@ -7,7 +7,8 @@
 - 🎯 **命令式调用**: 无需在模板中声明组件，通过函数调用即可打开弹窗
 - 📋 **Promise 返回**: 返回 Promise，支持 async/await 语法
 - ✅ **单选/多选**: 支持单选和多选两种模式
-- 🔄 **初始值支持**: 支持传入初始值，弹窗打开时自动选中
+- � **已选项面板**: 多选模式下支持在表格右侧显示已选项列表，支持单个删除和清空
+- �🔄 **初始值支持**: 支持传入初始值，弹窗打开时自动选中
 - 🎨 **完整配置**: 支持 DialogSelect 组件的所有配置选项
 - 🛠️ **TypeScript**: 完整的 TypeScript 类型支持
 - ⚡ **自动清理**: 弹窗关闭后自动清理 DOM，无需手动管理
@@ -72,21 +73,21 @@ const mockProducts = Array.from({ length: 50 }, (_, i) => ({
 // DialogSelect 选项配置
 const productDialogSelectOptions: DialogSelectOptions = [
   { field: 'id', title: '产品ID', columnProps: { width: 120 } },
-  { field: 'name', title: '产品名称', columnProps: { width: 150 } },
-  { field: 'price', title: '价格', columnProps: { width: 100 } },
-  { field: 'category', title: '分类', columnProps: { width: 120 } },
   {
     field: 'name',
     title: '产品名称',
+    columnProps: { width: 150 },
     useForm: true,
     formItemProps: {
       formType: 'input',
       placeholder: '请输入产品名称'
     }
   },
+  { field: 'price', title: '价格', columnProps: { width: 100 } },
   {
     field: 'category',
     title: '分类',
+    columnProps: { width: 120 },
     useForm: true,
     formItemProps: {
       formType: 'select',
@@ -221,14 +222,10 @@ const mockEmployees = Array.from({ length: 100 }, (_, i) => ({
 // DialogSelect 选项配置
 const employeeDialogSelectOptions: DialogSelectOptions = [
   { field: 'id', title: 'ID', columnProps: { width: 80 } },
-  { field: 'name', title: '姓名', columnProps: { width: 120 } },
-  { field: 'department', title: '部门', columnProps: { width: 120 } },
-  { field: 'email', title: '邮箱', columnProps: { width: 200 } },
-  { field: 'phone', title: '电话', columnProps: { width: 150 } },
-  { field: 'status', title: '状态', columnProps: { width: 100 } },
   {
     field: 'name',
     title: '姓名',
+    columnProps: { width: 120 },
     useForm: true,
     formItemProps: {
       formType: 'input',
@@ -238,6 +235,7 @@ const employeeDialogSelectOptions: DialogSelectOptions = [
   {
     field: 'department',
     title: '部门',
+    columnProps: { width: 120 },
     useForm: true,
     formItemProps: {
       formType: 'select',
@@ -250,7 +248,10 @@ const employeeDialogSelectOptions: DialogSelectOptions = [
         { label: '人事部', value: '人事部' }
       ]
     }
-  }
+  },
+  { field: 'email', title: '邮箱', columnProps: { width: 200 } },
+  { field: 'phone', title: '电话', columnProps: { width: 150 } },
+  { field: 'status', title: '状态', columnProps: { width: 100 } }
 ]
 
 // 获取员工数据
@@ -435,14 +436,10 @@ const mockEmployees = Array.from({ length: 100 }, (_, i) => ({
 // DialogSelect 选项配置（合并 columns 和 formItems）
 const employeeDialogSelectOptions: DialogSelectOptions = [
   { field: 'id', title: 'ID', columnProps: { width: 80 } },
-  { field: 'name', title: '姓名', columnProps: { width: 120 } },
-  { field: 'department', title: '部门', columnProps: { width: 120 } },
-  { field: 'email', title: '邮箱', columnProps: { width: 200 } },
-  { field: 'phone', title: '电话', columnProps: { width: 150 } },
-  { field: 'status', title: '状态', columnProps: { width: 100 } },
   {
     field: 'name',
     title: '姓名',
+    columnProps: { width: 120 },
     useForm: true,
     formItemProps: {
       formType: 'input',
@@ -452,6 +449,7 @@ const employeeDialogSelectOptions: DialogSelectOptions = [
   {
     field: 'department',
     title: '部门',
+    columnProps: { width: 120 },
     useForm: true,
     formItemProps: {
       formType: 'select',
@@ -467,7 +465,10 @@ const employeeDialogSelectOptions: DialogSelectOptions = [
         ]
       }
     }
-  }
+  },
+  { field: 'email', title: '邮箱', columnProps: { width: 200 } },
+  { field: 'phone', title: '电话', columnProps: { width: 150 } },
+  { field: 'status', title: '状态', columnProps: { width: 100 } }
 ]
 
 // 获取员工数据
@@ -533,12 +534,10 @@ const mockProducts = Array.from({ length: 50 }, (_, i) => ({
 // DialogSelect 选项配置（产品）
 const productDialogSelectOptions: DialogSelectOptions = [
   { field: 'id', title: '产品ID', columnProps: { width: 120 } },
-  { field: 'name', title: '产品名称', columnProps: { width: 150 } },
-  { field: 'price', title: '价格', columnProps: { width: 100 } },
-  { field: 'category', title: '分类', columnProps: { width: 120 } },
   {
     field: 'name',
     title: '产品名称',
+    columnProps: { width: 150 },
     useForm: true,
     formItemProps: {
       formType: 'input',
@@ -546,9 +545,11 @@ const productDialogSelectOptions: DialogSelectOptions = [
       defaultValue: '产品'
     }
   },
+  { field: 'price', title: '价格', columnProps: { width: 100 } },
   {
     field: 'category',
     title: '分类',
+    columnProps: { width: 120 },
     useForm: true,
     formItemProps: {
       formType: 'select',
@@ -669,6 +670,82 @@ const handleAssigneeClick = async (row: any) => {
 </style>
 ```
 
+## beforeClose 关闭前回调
+
+`beforeClose` 回调函数在对话框关闭前被调用，可以用来执行自定义逻辑，比如验证数据、显示确认提示、保存数据或阻止关闭。
+
+### 参数说明
+
+```typescript
+beforeClose?: (params: {
+  action: 'confirm' | 'cancel'  // 触发关闭的动作
+  done: () => void              // 确认关闭的回调
+  selectedRows: T[]             // 当前已选中的数据行列表
+}) => void | boolean | Promise<void>
+```
+
+### 示例1：确认前验证
+
+```typescript
+const result = await openDialogSelect({
+  fetchData: fetchEmployeeData,
+  dialogSelectOptions: employeeDialogSelectOptions,
+  multiple: true,
+  beforeClose: ({ action, done, selectedRows }) => {
+    if (action === 'confirm' && selectedRows.length === 0) {
+      ElMessage.warning('请至少选择一个员工')
+      return // 不调用 done，阻止关闭
+    }
+    done()
+  }
+})
+```
+
+### 示例2：取消时确认
+
+```typescript
+const result = await openDialogSelect({
+  fetchData: fetchEmployeeData,
+  dialogSelectOptions: employeeDialogSelectOptions,
+  beforeClose: async ({ action, done, selectedRows }) => {
+    if (action === 'cancel' && selectedRows.length > 0) {
+      try {
+        await ElMessageBox.confirm('您已选择了数据，确定要取消吗？', '提示')
+        done()
+      } catch {
+        // 不调用 done，保持弹窗打开
+      }
+    } else {
+      done()
+    }
+  }
+})
+```
+
+### 示例3：返回 Promise
+
+```typescript
+const result = await openDialogSelect({
+  fetchData: fetchEmployeeData,
+  dialogSelectOptions: employeeDialogSelectOptions,
+  beforeClose: async ({ action, done, selectedRows }) => {
+    if (action === 'confirm') {
+      try {
+        // 调用 API 保存数据
+        await saveEmployees(selectedRows)
+        ElMessage.success('保存成功')
+        done()
+      } catch (error) {
+        ElMessage.error('保存失败')
+        // 不调用 done，保持弹窗打开
+      }
+    } else {
+      done()
+    }
+  }
+})
+```
+
 ## API
 
 ### openDialogSelect
@@ -704,20 +781,23 @@ const result2 = await openDialogSelect<UserRow>({ ... })
 
 ### OpenDialogSelectOptions
 
-| 参数                | 说明                                                   | 类型                                                                            | 默认值     | 必需 |
-| ------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------- | ---------- | ---- |
-| fetchData           | 获取数据的方法                                         | `(params: FetchDialogSelectDataParams) => Promise<FetchDialogSelectDataResult>` | -          | ✅   |
-| dialogSelectOptions | DialogSelect 选项配置数组（合并 columns 和 formItems） | `DialogSelectOptions`                                                           | -          | ✅   |
-| multiple            | 是否多选                                               | `boolean`                                                                       | `false`    | ❌   |
-| valueKey            | 选项值的键名                                           | `string`                                                                        | `'id'`     | ❌   |
-| labelKey            | 选项标签的键名（用于显示在输入框中）                   | `string`                                                                        | `'name'`   | ❌   |
-| keyGetter           | 获取行的唯一标识key的函数，如果不提供则使用valueKey    | `(row: TableRowItem) => string \| number`                                       | -          | ❌   |
-| dialogTitle         | 弹窗标题                                               | `string`                                                                        | `'请选择'` | ❌   |
-| dialogWidth         | 弹窗宽度                                               | `string \| number`                                                              | `'1100px'` | ❌   |
-| gridConfig          | vxe-grid 配置，支持透传 vxe-grid 的所有 props          | `VxeGridProps`                                                                  | -          | ❌   |
-| initialValue        | 初始值，单选时为对象，多选时为对象数组                 | `TableRowItem \| TableRowItem[] \| null`                                        | `null`     | ❌   |
-| animationDuration   | 弹窗关闭动画时长（ms）                                 | `number`                                                                        | `300`      | ❌   |
-| scrollToTopLeft     | 数据加载后是否滚动到顶部和左部                         | `boolean`                                                                       | `false`    | ❌   |
+| 参数                   | 说明                                                   | 类型                                                                            | 默认值     | 必需 |
+| ---------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------- | ---------- | ---- |
+| fetchData              | 获取数据的方法                                         | `(params: FetchDialogSelectDataParams) => Promise<FetchDialogSelectDataResult>` | -          | ✅   |
+| dialogSelectOptions    | DialogSelect 选项配置数组（合并 columns 和 formItems） | `DialogSelectOptions`                                                           | -          | ✅   |
+| multiple               | 是否多选                                               | `boolean`                                                                       | `false`    | ❌   |
+| valueKey               | 选项值的键名                                           | `string`                                                                        | `'id'`     | ❌   |
+| labelKey               | 选项标签的键名（用于显示在输入框中）                   | `string`                                                                        | `'name'`   | ❌   |
+| keyGetter              | 获取行的唯一标识key的函数，如果不提供则使用valueKey    | `(row: TableRowItem) => string \| number`                                       | -          | ❌   |
+| dialogTitle            | 弹窗标题                                               | `string`                                                                        | `'请选择'` | ❌   |
+| dialogWidth            | 弹窗宽度                                               | `string \| number`                                                              | `'1100px'` | ❌   |
+| gridConfig             | vxe-grid 配置，支持透传 vxe-grid 的所有 props          | `VxeGridProps`                                                                  | -          | ❌   |
+| initialValue           | 初始值，单选时为对象，多选时为对象数组                 | `TableRowItem \| TableRowItem[] \| null`                                        | `null`     | ❌   |
+| animationDuration      | 弹窗关闭动画时长（ms）                                 | `number`                                                                        | `300`      | ❌   |
+| scrollToTopLeft        | 数据加载后是否滚动到顶部和左部                         | `boolean`                                                                       | `false`    | ❌   |
+| showSelectionPanel     | 多选时，是否显示已选项列表面板                         | `boolean`                                                                       | `true`     | ❌   |
+| selectedLabelFormatter | 多选时，已选项列表中每项的显示内容格式化函数           | `(row: TableRowItem) => string`                                                 | -          | ❌   |
+| beforeClose            | 关闭前的回调函数，可用于验证、确认或阻止关闭           | `(params: { action, done, selectedRows }) => void \| boolean \| Promise<void>`  | -          | ❌   |
 
 ### 返回值
 
