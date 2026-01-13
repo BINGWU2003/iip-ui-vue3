@@ -492,8 +492,6 @@ type Employee = {
 const employeeDialogSelectOptions = [
   // 表格列配置（useForm 默认为 false，或显式设置为 false）
   { field: 'id', title: 'ID', useForm: false, columnProps: { width: 80 } },
-  { field: 'name', title: '姓名', useForm: false, columnProps: { width: 120 } },
-  { field: 'department', title: '部门', useForm: false, columnProps: { width: 120 } },
   { field: 'email', title: '邮箱', useForm: false, columnProps: { width: 200 } },
   { field: 'phone', title: '电话', useForm: false, columnProps: { width: 150 } },
   { field: 'status', title: '状态', useForm: false, columnProps: { width: 100 } },
