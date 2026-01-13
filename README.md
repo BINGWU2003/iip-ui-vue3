@@ -334,7 +334,7 @@ git commit -m "fix(input): 修复验证规则问题"
 
 ## 📄 许可证
 
-[MIT](./LICENSE) © 2024 IIP UI Vue3 Team
+[MIT](./LICENSE) © 2025 IIP UI Vue3 Team
 
 ## 🙏 致谢
 
