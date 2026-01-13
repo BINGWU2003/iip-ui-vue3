@@ -1,6 +1,6 @@
 # Utils 工具函数
 
-IIP UI Vue3 提供了一系列实用的工具函数，包括类型检查、通用工具、数据验证和 Vue 工具等功能。
+IIP UI Vue3 提供了一系列实用的工具函数，包括类型检查、通用工具等功能。
 
 ## 安装和引入
 
@@ -32,11 +32,6 @@ import {
   deepClone,
   copyText,
   fallbackCopyTextToClipboard, // 通用工具
-  isEmail,
-  isPhone,
-  isIdCard, // 验证工具
-  withInstall,
-  createNamespace, // Vue 工具
   createRequestManager // 请求管理
 } from '@bingwu/iip-ui-utils'
 ```
@@ -368,118 +363,6 @@ const copyTableAsCSV = async () => {
 - 现代 Clipboard API 需要在安全上下文（HTTPS 或 localhost）下使用
 - 降级方法 `execCommand('copy')` 虽然被标记为废弃，但仍被广泛支持
 - 在某些移动端浏览器中，复制功能可能需要用户交互触发
-
-## 数据验证工具 (Validate)
-
-### 基础验证
-
-```typescript
-import { isEmail, isPhone, isIdCard, isUrl, isIP, getPasswordStrength } from '@bingwu/iip-ui-utils'
-
-// 邮箱验证
-console.log(isEmail('test@example.com')) // true
-console.log(isEmail('user@domain.cn')) // true
-console.log(isEmail('invalid-email')) // false
-console.log(isEmail('test@')) // false
-
-// 手机号验证（中国大陆）
-console.log(isPhone('13812345678')) // true
-console.log(isPhone('15987654321')) // true
-console.log(isPhone('12345678901')) // false
-console.log(isPhone('1381234567')) // false
-
-// 身份证验证（中国大陆）
-console.log(isIdCard('110101199003077777')) // true
-console.log(isIdCard('12345678901234567')) // false
-console.log(isIdCard('110101199003077')) // false
-
-// URL 验证
-console.log(isUrl('https://example.com')) // true
-console.log(isUrl('http://localhost:3000')) // true
-console.log(isUrl('ftp://files.example.com')) // true
-console.log(isUrl('not-a-url')) // false
-
-// IP 地址验证
-console.log(isIP('192.168.1.1')) // true
-console.log(isIP('127.0.0.1')) // true
-console.log(isIP('256.1.1.1')) // false
-console.log(isIP('192.168.1')) // false
-
-// 密码强度检查
-console.log(getPasswordStrength('123456')) // 0 (太短)
-console.log(getPasswordStrength('12345678')) // 1 (仅数字)
-console.log(getPasswordStrength('password')) // 2 (仅小写字母)
-console.log(getPasswordStrength('Password')) // 3 (大小写字母)
-console.log(getPasswordStrength('Password123')) // 4 (大小写字母+数字)
-console.log(getPasswordStrength('Password123!')) // 4 (大小写字母+数字+特殊字符)
-
-// 自定义最小长度
-console.log(getPasswordStrength('Pass1!', 6)) // 4 (满足 6 位最小长度)
-console.log(getPasswordStrength('Pass1!', 10)) // 0 (不满足 10 位最小长度)
-```
-
-### 表单验证示例
-
-```typescript
-import { isEmail, isPhone, getPasswordStrength } from '@bingwu/iip-ui-utils'
-
-// 用户注册表单验证
-interface RegisterForm {
-  email: string
-  phone: string
-  password: string
-  confirmPassword: string
-}
-
-function validateRegisterForm(form: RegisterForm) {
-  const errors: string[] = []
-
-  // 验证邮箱
-  if (!form.email) {
-    errors.push('邮箱不能为空')
-  } else if (!isEmail(form.email)) {
-    errors.push('请输入有效的邮箱地址')
-  }
-
-  // 验证手机号
-  if (!form.phone) {
-    errors.push('手机号不能为空')
-  } else if (!isPhone(form.phone)) {
-    errors.push('请输入有效的手机号')
-  }
-
-  // 验证密码
-  if (!form.password) {
-    errors.push('密码不能为空')
-  } else {
-    const strength = getPasswordStrength(form.password)
-    if (strength < 3) {
-      errors.push('密码强度太低，请包含大小写字母和数字')
-    }
-  }
-
-  // 验证确认密码
-  if (form.password !== form.confirmPassword) {
-    errors.push('两次输入的密码不一致')
-  }
-
-  return {
-    valid: errors.length === 0,
-    errors
-  }
-}
-
-// 使用示例
-const formData = {
-  email: 'user@example.com',
-  phone: '13812345678',
-  password: 'MyPassword123',
-  confirmPassword: 'MyPassword123'
-}
-
-const validation = validateRegisterForm(formData)
-console.log(validation) // { valid: true, errors: [] }
-```
 
 ## 请求管理工具 (Request)
 
@@ -1036,7 +919,7 @@ const fetchDataWithErrorHandling = async () => {
 
 <script setup lang="ts">
 import { ref, computed, reactive, onMounted } from 'vue'
-import { debounce, deepClone, generateId, isEmail, isPhone } from '@bingwu/iip-ui-utils'
+import { debounce, deepClone, generateId } from '@bingwu/iip-ui-utils'
 
 // 响应式数据
 const loading = ref(false)
@@ -1054,32 +937,8 @@ const editForm = reactive({
 // 表单验证规则
 const formRules = {
   userName: [{ required: true, message: '请输入用户姓名', trigger: 'blur' }],
-  email: [
-    { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-    {
-      validator: (rule: any, value: string, callback: Function) => {
-        if (value && !isEmail(value)) {
-          callback(new Error('请输入有效的邮箱地址'))
-        } else {
-          callback()
-        }
-      },
-      trigger: 'blur'
-    }
-  ],
-  phone: [
-    { required: true, message: '请输入手机号码', trigger: 'blur' },
-    {
-      validator: (rule: any, value: string, callback: Function) => {
-        if (value && !isPhone(value)) {
-          callback(new Error('请输入有效的手机号码'))
-        } else {
-          callback()
-        }
-      },
-      trigger: 'blur'
-    }
-  ]
+  email: [{ required: true, message: '请输入邮箱地址', trigger: 'blur' }],
+  phone: [{ required: true, message: '请输入手机号码', trigger: 'blur' }]
 }
 
 // 防抖搜索
@@ -1280,25 +1139,6 @@ onMounted(() => {
 | `generateId(prefix?)`               | `string?`                    | `string`        | 生成唯一ID                   |
 | `copyText(text)`                    | `string`                     | `Promise<void>` | 复制文本到剪贴板（自动兼容） |
 | `fallbackCopyTextToClipboard(text)` | `string`                     | `Promise<void>` | 降级复制方法（兼容旧浏览器） |
-
-### 验证函数
-
-| 函数名                                      | 参数              | 返回值    | 描述             |
-| ------------------------------------------- | ----------------- | --------- | ---------------- |
-| `isEmail(email)`                            | `string`          | `boolean` | 验证邮箱格式     |
-| `isPhone(phone)`                            | `string`          | `boolean` | 验证手机号格式   |
-| `isIdCard(idCard)`                          | `string`          | `boolean` | 验证身份证格式   |
-| `isUrl(url)`                                | `string`          | `boolean` | 验证URL格式      |
-| `isIP(ip)`                                  | `string`          | `boolean` | 验证IP地址格式   |
-| `getPasswordStrength(password, minLength?)` | `string, number?` | `number`  | 获取密码强度等级 |
-
-### Vue 工具函数
-
-| 函数名                          | 参数               | 返回值              | 描述                    |
-| ------------------------------- | ------------------ | ------------------- | ----------------------- |
-| `withInstall(component)`        | `Component`        | `SFCWithInstall<T>` | 为组件添加 install 方法 |
-| `withInstallFunction(fn, name)` | `Function, string` | `Function`          | 为函数添加 install 方法 |
-| `createNamespace(name)`         | `string`           | `Object`            | 创建命名空间工具        |
 
 ### 请求管理工具
 
