@@ -264,7 +264,6 @@ const executeBeforeClose = async (action: 'confirm' | 'cancel'): Promise<boolean
         done,
         selectedRows: selectedRows.value
       })
-      console.log('result', result)
       // 如果返回 Promise，等待其完成
       if (result && typeof (result as any).then === 'function') {
         ;(result as Promise<void>)

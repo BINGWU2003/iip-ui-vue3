@@ -44,8 +44,8 @@ module.exports = {
         math: 'always'
       }
     ],
-    'no-console': 'off',
-    'no-debugger': 'off',
+    'no-console': 'warn',
+    'no-debugger': 'error',
     'prefer-const': 'error',
     'no-var': 'error'
   },

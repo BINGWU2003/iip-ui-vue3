@@ -6,5 +6,10 @@ export default defineConfig({
   dts: true,
   clean: true,
   sourcemap: false,
-  minify: 'terser'
+  minify: 'terser',
+  // 移除 console.log 和 debugger 语句
+  esbuildOptions(options) {
+    options.pure = ['console.log']
+    options.drop = ['debugger']
+  }
 })

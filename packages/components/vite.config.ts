@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import dts from 'vite-plugin-dts'
 import { resolve } from 'path'
+import strip from '@rollup/plugin-strip'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -15,6 +16,10 @@ export default defineConfig({
       staticImport: true,
       clearPureImport: true,
       include: ['src/**/*', 'index.ts']
+    }),
+    strip({
+      include: ['**/*.ts', '**/*.vue', '**/*.js'],
+      functions: ['console.log']
     })
   ],
   resolve: {
