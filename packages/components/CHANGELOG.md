@@ -1,5 +1,11 @@
 # @bingwu/iip-ui-components
 
+## 1.2.33
+
+### Patch Changes
+
+- dialog-select组件优化，打包配置优化
+
 ## 1.2.32
 
 ### Patch Changes
