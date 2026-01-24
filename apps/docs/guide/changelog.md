@@ -7,6 +7,25 @@
 
 ## components
 
+### 1.2.33
+
+- dialog-select组件优化，打包配置优化
+
+### 1.2.32
+
+- 在dialog-select组件中新增showSelectionPanel和selectedLabelFormatter属性，支持实时显示已选项、单个删除和清空操作。
+- 更新参数表，添加 showSelectionPanel 和 selectedLabelFormatter 属性的说明。
+- 优化示例代码，展示如何使用新功能。
+- 在 dialog-select 组件中新增 beforeClose 回调函数，允许用户在对话框关闭前执行自定义逻辑，如验证数据、显示确认提示或阻止关闭。
+- 更新文档，提供 beforeClose 的参数说明和多个使用示例，展示如何在确认和取消操作中使用该回调。
+- 在相关组件中实现 beforeClose 功能，确保用户可以根据选择的行数据进行相应的处理。
+- Updated dependencies
+  - @bingwu/iip-ui-utils@1.2.15
+
+### 1.2.31
+
+- 在 dialog-select 组件中新增 scrollToTopLeft 属性，允许用户在数据加载后自动滚动到顶部和左部，默认为 false。
+
 ### 1.2.30
 
 - style: 移除 dialog-select 组件的宽度样式，简化样式定义
@@ -80,6 +99,12 @@
   - @bingwu/iip-ui-utils@1.2.11
 
 ## utils
+
+### 1.2.15
+
+- 新增 isInteger、isNumeric 和 isNumericInteger 函数，用于检查整数和数字（包括数字字符串）。
+- 重构请求管理器，新增通用请求方法，支持 async/await 和 then/catch 写法。
+- 更新文档，提供新方法的使用示例和详细说明。
 
 ### 1.2.14
 

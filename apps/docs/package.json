@@ -24,7 +24,7 @@
     "@bingwu/iip-ui-utils": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^20.9.0",
+    "@types/node": "^22.16.5",
     "sass": "^1.90.0"
   },
   "keywords": [
