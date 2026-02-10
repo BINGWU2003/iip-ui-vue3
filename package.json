@@ -20,6 +20,7 @@
     "build:apps": "turbo run build --filter=./apps/*",
     "build:components": "turbo run build --filter=./packages/components",
     "build:utils": "turbo run build --filter=./packages/utils",
+    "build:uniapp-utils": "turbo run build --filter=./packages/uniapp-utils",
     "build:docs": "turbo run build --filter=./apps/docs",
     "build:theme": "turbo run build --filter=./packages/theme",
     "preview:docs": "pnpm --filter @bingwu/iip-ui-docs preview",
