@@ -1,7 +1,7 @@
 {
   "name": "@bingwu/iip-ui-uniapp-utils",
   "version": "1.0.0",
-  "description": "iip-ui-vue3 UniApp 工具函数库",
+  "description": "iip-ui-vue3 UniApp uni-app 工具函数库",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
