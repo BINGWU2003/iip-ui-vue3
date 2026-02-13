@@ -109,7 +109,7 @@ function compareVersions(v1: string, v2: string): number {
  * @param outputPath 输出文件路径
  */
 export function genChangelog(changelogDir: string, outputPath: string): void {
-  const packages = ['components', 'utils', 'theme']
+  const packages = ['components', 'utils', 'uniapp-utils', 'theme']
   const packageEntriesMap = new Map<string, ChangelogEntry[]>()
 
   // 读取所有包的 CHANGELOG，按包分组
