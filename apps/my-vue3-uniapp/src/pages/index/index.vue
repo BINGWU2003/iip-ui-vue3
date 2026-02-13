@@ -11,11 +11,13 @@
 import { ref } from 'vue'
 import { isString } from '@bingwu/iip-ui-utils'
 import { getStorage, setStorage } from '@bingwu/iip-ui-uniapp-utils'
-setStorage('test', 'hhhhhhh')
+import { myFunction } from '@/utils/my'
+console.log(myFunction(1, 2))
+setStorage('test', 'hhhhhh111h')
 const test = getStorage('test')
-const title = ref(`Hello World 111 ${test}`)
-
+const title = ref(`Hello Wor2l12d 111 ${test}`)
 console.log(isString(title.value))
+console.log(uni.getSystemInfoSync().uniPlatform)
 </script>
 
 <style>
