@@ -28,6 +28,9 @@
     "tsup": "^8.5.1",
     "typescript": "^5.3.2"
   },
+  "dependencies": {
+    "@bingwu/iip-ui-utils": "workspace:*"
+  },
   "keywords": [
     "uniapp",
     "utils",

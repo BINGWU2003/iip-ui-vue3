@@ -22,7 +22,13 @@ export default defineConfig({
     nav: [
       { text: '指南', link: '/guide/introduction' },
       { text: '组件', link: '/components/pagination-select' },
-      { text: '工具函数', link: '/utils/utils' },
+      {
+        text: '工具函数',
+        items: [
+          { text: 'Utils 工具函数', link: '/utils/utils' },
+          { text: 'UniApp Utils 工具函数', link: '/utils/uniapp-utils' }
+        ]
+      },
       { text: '主题', link: '/theme/theme' },
       { text: '更新日志', link: '/guide/changelog' },
       {
@@ -55,6 +61,15 @@ export default defineConfig({
         {
           text: '数据录入',
           items: componentItems
+        }
+      ],
+      '/utils/': [
+        {
+          text: '工具函数',
+          items: [
+            { text: 'Utils 工具函数', link: '/utils/utils' },
+            { text: 'UniApp Utils 工具函数', link: '/utils/uniapp-utils' }
+          ]
         }
       ]
     },

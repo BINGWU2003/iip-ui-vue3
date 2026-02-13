@@ -24,7 +24,4 @@ export function assertMiniProgramEnv(): void {
 }
 
 assertMiniProgramEnv()
-export * from './storage'
 export * from './system'
-// 类型导出
-export * from './types'

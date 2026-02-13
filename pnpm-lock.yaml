@@ -350,6 +350,10 @@ importers:
         version: 1.97.1
 
   packages/uniapp-utils:
+    dependencies:
+      '@bingwu/iip-ui-utils':
+        specifier: workspace:*
+        version: link:../utils
     devDependencies:
       '@dcloudio/types':
         specifier: ^3.4.14
@@ -6376,7 +6380,7 @@ packages:
     dependencies:
       '@vue/compiler-ssr': 3.5.26
       '@vue/shared': 3.5.26
-      vue: 3.5.26(typescript@5.8.3)
+      vue: 3.5.26(typescript@4.9.5)
 
   /@vue/shared@3.4.21:
     resolution: {integrity: sha512-PuJe7vDIi6VYSinuEbUIQgMIRZGgM8e4R+G+/dQTk0X1NEdvgvvgv7m+rfmDH1gZzyA1OjjoWskvHlfRNfQf3g==}

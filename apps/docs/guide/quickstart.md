@@ -14,8 +14,12 @@
 
 IIP UI Vue3 采用 Monorepo 架构，包含以下核心包：
 
-- **@bingwu/iip-ui-components**: 核心组件库 (包含组件和样式)
-- **@bingwu/iip-ui-utils**: 工具函数库 (类型检查等)
+| 包名                            | 说明                                           | 使用场景          |
+| ------------------------------- | ---------------------------------------------- | ----------------- |
+| **@bingwu/iip-ui-components**   | 核心组件库（包含组件和样式）                   | Web 应用开发      |
+| **@bingwu/iip-ui-utils**        | 通用工具函数库（类型检查、防抖节流等）         | Web 应用开发      |
+| **@bingwu/iip-ui-uniapp-utils** | UniApp 小程序工具函数库（系统信息、UI 尺寸等） | UniApp 小程序开发 |
+| **@bingwu/iip-ui-theme**        | 主题样式库                                     | 自定义主题        |
 
 ## 安装
 
@@ -60,6 +64,58 @@ yarn add element-plus@^2.11.2 vxe-table@^4.15.6 vxe-pc-ui@~4.8.15 xe-utils@^3.7.
 | `vxe-table`                 | **必需** | Table 组件依赖（peerDependency） |
 | `vxe-pc-ui`                 | **必需** | Table 组件依赖（peerDependency） |
 | `xe-utils`                  | **必需** | Table 组件依赖（peerDependency） |
+
+### UniApp 小程序安装
+
+如果你正在开发 UniApp 小程序应用，可以使用 `@bingwu/iip-ui-uniapp-utils` 工具库：
+
+::: code-group
+
+```bash [pnpm (推荐)]
+# 安装 UniApp 工具库
+pnpm add @bingwu/iip-ui-uniapp-utils
+```
+
+```bash [npm]
+# 安装 UniApp 工具库
+npm install @bingwu/iip-ui-uniapp-utils
+```
+
+```bash [yarn]
+# 安装 UniApp 工具库
+yarn add @bingwu/iip-ui-uniapp-utils
+```
+
+:::
+
+**使用示例：**
+
+```typescript
+// 导入系统信息相关工具
+import {
+  systemInfo,
+  safeAreaInsets,
+  customBarHeight,
+  statusBarHeight,
+  navBarHeight,
+  tabBarHeight
+} from '@bingwu/iip-ui-uniapp-utils'
+
+// 使用系统信息
+console.log('窗口宽度:', systemInfo.windowWidth)
+console.log('状态栏高度:', statusBarHeight)
+console.log('导航栏高度:', customBarHeight)
+console.log('底部安全区域:', safeAreaInsets?.bottom)
+```
+
+**适用场景：**
+
+- 自定义导航栏适配
+- 底部安全区域适配（iPhone X 等刘海屏）
+- 响应式布局计算
+- TabBar 高度适配
+
+详细使用文档请查看 [UniApp Utils 文档](/utils/uniapp-utils)。
 
 ## 完整引入 (推荐)
 
