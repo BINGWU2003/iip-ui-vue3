@@ -4,6 +4,7 @@
     "baseUrl": ".",
     "paths": {
       "@bingwu/iip-ui-utils": ["packages/utils/src/index.ts"],
+      "@bingwu/iip-ui-uniapp-utils": ["packages/uniapp-utils/src/index.ts"],
       "@bingwu/iip-ui-components": ["packages/components/src/index.ts"]
     },
     /* 公共配置 */

@@ -22,7 +22,8 @@
 ### Packages（核心包）
 
 - **@bingwu/iip-ui-components** - 核心组件库
-- **@bingwu/iip-ui-utils** - 工具函数库
+- **@bingwu/iip-ui-utils** - 通用工具函数库
+- **@bingwu/iip-ui-uniapp-utils** - UniApp 小程序工具函数库
 - **@bingwu/iip-ui-theme** - 主题样式库
 
 ### Apps（应用）
@@ -82,6 +83,9 @@ pnpm build:components
 
 # 单独构建工具库
 pnpm build:utils
+
+# 单独构建 UniApp 工具库
+pnpm build:uniapp-utils
 
 # 单独构建主题库
 pnpm build:theme
@@ -151,7 +155,7 @@ pnpm tag
    - 访问 [npm 访问令牌页面](https://www.npmjs.com/settings/bingwu/tokens)
    - 点击 "Generate New Token" → "Granular Access Token"
    - 配置权限：
-     - **Package Access**: 选择 `@bingwu/iip-ui-components`、`@bingwu/iip-ui-utils`、`@bingwu/iip-ui-theme`
+     - **Package Access**: 选择 `@bingwu/iip-ui-components`、`@bingwu/iip-ui-utils`、`@bingwu/iip-ui-uniapp-utils`、`@bingwu/iip-ui-theme`
      - **Permissions**: 选择 `Read and Publish`
      - **Expiration**: 根据需要设置（建议至少 1 年）
    - **重要**: 确保启用 "Automatically revoke this token when 2FA is disabled" 选项（这相当于 bypass 2FA）
@@ -231,6 +235,10 @@ npm publish
 
 # 发布工具库
 cd packages/utils
+npm publish
+
+# 发布 UniApp 工具库
+cd packages/uniapp-utils
 npm publish
 
 # 发布主题库
@@ -326,11 +334,12 @@ git commit -m "fix(input): 修复验证规则问题"
 
 ## 📦 包版本
 
-| 包名                                                                                 | 版本                                                           | 描述       |
-| ------------------------------------------------------------------------------------ | -------------------------------------------------------------- | ---------- |
-| [@bingwu/iip-ui-components](https://www.npmjs.com/package/@bingwu/iip-ui-components) | ![npm](https://img.shields.io/npm/v/@bingwu/iip-ui-components) | 核心组件库 |
-| [@bingwu/iip-ui-utils](https://www.npmjs.com/package/@bingwu/iip-ui-utils)           | ![npm](https://img.shields.io/npm/v/@bingwu/iip-ui-utils)      | 工具函数库 |
-| [@bingwu/iip-ui-theme](https://www.npmjs.com/package/@bingwu/iip-ui-theme)           | ![npm](https://img.shields.io/npm/v/@bingwu/iip-ui-theme)      | 主题样式库 |
+| 包名                                                                                     | 版本                                                             | 描述                    |
+| ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | ----------------------- |
+| [@bingwu/iip-ui-components](https://www.npmjs.com/package/@bingwu/iip-ui-components)     | ![npm](https://img.shields.io/npm/v/@bingwu/iip-ui-components)   | 核心组件库              |
+| [@bingwu/iip-ui-utils](https://www.npmjs.com/package/@bingwu/iip-ui-utils)               | ![npm](https://img.shields.io/npm/v/@bingwu/iip-ui-utils)        | 通用工具函数库          |
+| [@bingwu/iip-ui-uniapp-utils](https://www.npmjs.com/package/@bingwu/iip-ui-uniapp-utils) | ![npm](https://img.shields.io/npm/v/@bingwu/iip-ui-uniapp-utils) | UniApp 小程序工具函数库 |
+| [@bingwu/iip-ui-theme](https://www.npmjs.com/package/@bingwu/iip-ui-theme)               | ![npm](https://img.shields.io/npm/v/@bingwu/iip-ui-theme)        | 主题样式库              |
 
 ## 📄 许可证
 

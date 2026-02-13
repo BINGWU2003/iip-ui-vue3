@@ -1,0 +1,21 @@
+{
+  "name": "",
+  "appid": "",
+  "description": "",
+  "versionName": "1.0.0",
+  "versionCode": "100",
+  "transformPx": false,
+
+  "mp-weixin": {
+    "appid": "wx601a26f5d0af8b46",
+    "setting": {
+      "urlCheck": false
+    },
+    "usingComponents": true
+  },
+
+  "uniStatistics": {
+    "enable": false
+  },
+  "vueVersion": "3"
+}
