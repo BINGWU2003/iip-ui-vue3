@@ -32,7 +32,8 @@ export default defineConfig({
   root: resolve(__dirname, 'dev'),
   resolve: {
     alias: {
-      '@': resolve(__dirname, 'src')
+      '@': resolve(__dirname, 'src'),
+      '@bingwu/iip-ui-utils': resolve(__dirname, '../../packages/utils/src/index.ts')
     }
   },
   server: {
