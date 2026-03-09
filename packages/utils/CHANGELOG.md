@@ -1,5 +1,13 @@
 # @bingwu/iip-ui-utils
 
+## 1.2.16
+
+### Patch Changes
+
+- feat: 添加 omitObject 和 pickObject 函数及其测试
+- 在 `common.ts` 中新增 `omitObject` 和 `pickObject` 函数，用于从对象中排除或选取指定的键。
+- 在 `common.test.ts` 中为这两个函数添加了全面的测试用例，确保其功能正确性和边界情况处理。
+
 ## 1.2.15
 
 ### Patch Changes
