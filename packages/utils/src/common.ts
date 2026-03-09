@@ -118,3 +118,29 @@ export async function copyText(text: string) {
     await fallbackCopyTextToClipboard(text)
   }
 }
+
+/**
+ * 从对象中排除指定的 key，返回剩余属性组成的新对象
+ * @param obj 源对象
+ * @param keys 需要排除的 key 列表
+ * @returns 排除指定 key 后的新对象
+ * @example
+ * omitObject({ a: 1, b: 2, c: 3 }, ['a', 'c']) // => { b: 2 }
+ */
+export function omitObject<T extends object, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> {
+  const keysSet = new Set<string | symbol>(keys as (string | symbol)[])
+  return Object.fromEntries(Object.entries(obj).filter(([k]) => !keysSet.has(k))) as Omit<T, K>
+}
+
+/**
+ * 从对象中选取指定的 key，返回这些属性组成的新对象
+ * @param obj 源对象
+ * @param keys 需要保留的 key 列表
+ * @returns 只包含指定 key 的新对象
+ * @example
+ * pickObject({ a: 1, b: 2, c: 3 }, ['a', 'c']) // => { a: 1, c: 3 }
+ */
+export function pickObject<T extends object, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> {
+  const keysSet = new Set<string | symbol>(keys as (string | symbol)[])
+  return Object.fromEntries(Object.entries(obj).filter(([k]) => keysSet.has(k))) as Pick<T, K>
+}

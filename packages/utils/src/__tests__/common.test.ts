@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { debounce, throttle, deepClone, generateId } from '../common'
+import { debounce, throttle, deepClone, generateId, omitObject, pickObject } from '../common'
 
 describe('通用工具函数', () => {
   describe('debounce', () => {
@@ -139,6 +139,124 @@ describe('通用工具函数', () => {
       // ID 应该有一致的格式：prefix-9位字符
       expect(id1.split('-')[1]).toHaveLength(9)
       expect(id2.split('-')[1]).toHaveLength(9)
+    })
+  })
+
+  describe('omitObject', () => {
+    it('应该排除指定的单个 key', () => {
+      const obj = { a: 1, b: 2, c: 3 }
+      const result = omitObject(obj, ['a'])
+      expect(result).toEqual({ b: 2, c: 3 })
+      expect('a' in result).toBe(false)
+    })
+
+    it('应该排除指定的多个 key', () => {
+      const obj = { a: 1, b: 2, c: 3 }
+      const result = omitObject(obj, ['a', 'c'])
+      expect(result).toEqual({ b: 2 })
+    })
+
+    it('排除不存在的 key 时应返回原对象的浅拷贝', () => {
+      const obj = { a: 1, b: 2 }
+      // @ts-expect-error 故意传入不存在的 key 以测试运行时行为
+      const result = omitObject(obj, ['z'])
+      expect(result).toEqual({ a: 1, b: 2 })
+    })
+
+    it('keys 为空数组时应返回包含所有属性的新对象', () => {
+      const obj = { a: 1, b: 2, c: 3 }
+      const result = omitObject(obj, [])
+      expect(result).toEqual(obj)
+      expect(result).not.toBe(obj)
+    })
+
+    it('排除所有 key 时应返回空对象', () => {
+      const obj = { a: 1, b: 2 }
+      const result = omitObject(obj, ['a', 'b'])
+      expect(result).toEqual({})
+    })
+
+    it('不应修改原对象', () => {
+      const obj = { a: 1, b: 2, c: 3 }
+      omitObject(obj, ['a'])
+      expect(obj).toEqual({ a: 1, b: 2, c: 3 })
+    })
+
+    it('应支持值为 undefined / null / false / 0 的属性', () => {
+      const obj = { a: undefined, b: null, c: false, d: 0, e: 'keep' }
+      const result = omitObject(obj, ['a'])
+      expect(result).toEqual({ b: null, c: false, d: 0, e: 'keep' })
+    })
+
+    it('应保留嵌套对象的引用（浅拷贝语义）', () => {
+      const nested = { x: 1 }
+      const obj = { a: nested, b: 2 }
+      const result = omitObject(obj, ['b'])
+      expect(result.a).toBe(nested)
+    })
+  })
+
+  describe('pickObject', () => {
+    it('应该只保留指定的单个 key', () => {
+      const obj = { a: 1, b: 2, c: 3 }
+      const result = pickObject(obj, ['a'])
+      expect(result).toEqual({ a: 1 })
+      expect('b' in result).toBe(false)
+      expect('c' in result).toBe(false)
+    })
+
+    it('应该只保留指定的多个 key', () => {
+      const obj = { a: 1, b: 2, c: 3 }
+      const result = pickObject(obj, ['a', 'c'])
+      expect(result).toEqual({ a: 1, c: 3 })
+    })
+
+    it('pick 不存在的 key 时结果中不应出现该 key', () => {
+      const obj = { a: 1, b: 2 }
+      // @ts-expect-error 故意传入不存在的 key 以测试运行时行为
+      const result = pickObject(obj, ['z'])
+      expect(result).toEqual({})
+    })
+
+    it('keys 为空数组时应返回空对象', () => {
+      const obj = { a: 1, b: 2, c: 3 }
+      const result = pickObject(obj, [])
+      expect(result).toEqual({})
+    })
+
+    it('pick 所有 key 时应返回包含所有属性的新对象', () => {
+      const obj = { a: 1, b: 2 }
+      const result = pickObject(obj, ['a', 'b'])
+      expect(result).toEqual(obj)
+      expect(result).not.toBe(obj)
+    })
+
+    it('不应修改原对象', () => {
+      const obj = { a: 1, b: 2, c: 3 }
+      pickObject(obj, ['a'])
+      expect(obj).toEqual({ a: 1, b: 2, c: 3 })
+    })
+
+    it('应支持值为 undefined / null / false / 0 的属性', () => {
+      const obj = { a: undefined, b: null, c: false, d: 0, e: 'skip' }
+      const result = pickObject(obj, ['b', 'c', 'd'])
+      expect(result).toEqual({ b: null, c: false, d: 0 })
+    })
+
+    it('应保留嵌套对象的引用（浅拷贝语义）', () => {
+      const nested = { x: 1 }
+      const obj = { a: nested, b: 2 }
+      const result = pickObject(obj, ['a'])
+      expect(result.a).toBe(nested)
+    })
+
+    it('omitObject 与 pickObject 的结果应互补', () => {
+      const obj = { a: 1, b: 2, c: 3, d: 4 }
+      const keys = ['a', 'c'] as const
+      const picked = pickObject(obj, [...keys])
+      const omitted = omitObject(obj, [...keys])
+      // pick + omit 合并后应等于原对象
+      expect({ ...picked, ...omitted }).toEqual(obj)
     })
   })
 })
