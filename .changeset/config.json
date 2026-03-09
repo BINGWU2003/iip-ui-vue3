@@ -7,5 +7,5 @@
   "access": "restricted",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["@bingwu/iip-ui-docs", "@bingwu/vue-project-demo"]
+  "ignore": ["@bingwu/iip-ui-docs", "@bingwu/vue-project-demo", "@bingwu/my-vue3-uniapp"]
 }
