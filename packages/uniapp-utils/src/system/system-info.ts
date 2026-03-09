@@ -23,7 +23,9 @@ const safeAreaInsets = systemInfo.safeArea
   : null
 
 /** 胶囊按钮在页面内的位置信息（uni.getMenuButtonBoundingClientRect 返回值） */
-const menuButtonInfo = isFunction(uni.getMenuButtonBoundingClientRect)
+let menuButtonInfo = null
+// #ifdef MP-WEIXIN
+menuButtonInfo = isFunction(uni.getMenuButtonBoundingClientRect)
   ? uni.getMenuButtonBoundingClientRect()
   : {
       top: 0,
@@ -33,4 +35,14 @@ const menuButtonInfo = isFunction(uni.getMenuButtonBoundingClientRect)
       width: 0,
       height: 0
     }
+// #else
+menuButtonInfo = {
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 0,
+  width: 0,
+  height: 0
+}
+// #endif
 export { safeAreaInsets, systemInfo, menuButtonInfo }
