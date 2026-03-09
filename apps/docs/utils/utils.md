@@ -18,6 +18,8 @@ import {
   isNullOrUndefined,
   debounce,
   deepClone,
+  omitObject,
+  pickObject,
   copyText,
   createRequestManager
 } from '@bingwu/iip-ui-utils'
@@ -225,6 +227,65 @@ export default {
   }
 }
 ```
+
+### 对象操作工具
+
+`omitObject` 和 `pickObject` 互为一对，前者**排除**指定 key，后者**选取**指定 key，两者均利用 TypeScript 内置工具类型 `Omit<T, K>` / `Pick<T, K>` 提供精确的返回类型推导。
+
+```typescript
+import { omitObject, pickObject } from '@bingwu/iip-ui-utils'
+
+const user = {
+  id: 1,
+  name: '张三',
+  password: 'secret',
+  createdAt: '2024-01-01',
+  role: 'admin'
+}
+
+// omitObject：排除指定 key，返回剩余属性
+const safeUser = omitObject(user, ['password'])
+// => { id: 1, name: '张三', createdAt: '2024-01-01', role: 'admin' }
+// TypeScript 类型为 Omit<typeof user, 'password'>，password 属性已从类型中移除
+
+// pickObject：只保留指定 key，返回选取属性
+const userSummary = pickObject(user, ['id', 'name'])
+// => { id: 1, name: '张三' }
+// TypeScript 类型为 Pick<typeof user, 'id' | 'name'>
+
+// 两个函数的结果互补 —— pick + omit 合并后等于原对象
+const keys = ['id', 'name'] as const
+const picked = pickObject(user, [...keys])
+const omitted = omitObject(user, [...keys])
+console.log({ ...picked, ...omitted }) // 等价于原 user 对象
+```
+
+#### 常见场景
+
+```typescript
+import { omitObject, pickObject } from '@bingwu/iip-ui-utils'
+
+// 场景 1：提交表单时去掉无需上传的字段
+const formData = { username: 'foo', password: '123', confirmPassword: '123', rememberMe: true }
+const payload = omitObject(formData, ['confirmPassword', 'rememberMe'])
+// payload => { username: 'foo', password: '123' }
+
+// 场景 2：向子组件传 props 时只透传部分字段
+const allProps = { title: 'hello', size: 'lg', loading: false, onClose: () => {} }
+const buttonProps = pickObject(allProps, ['title', 'size', 'loading'])
+// buttonProps => { title: 'hello', size: 'lg', loading: false }
+
+// 场景 3：接口响应脱敏，排除敏感字段再展示
+const apiResponse = { id: 42, email: 'user@example.com', token: 'Bearer xxx', status: 1 }
+const display = omitObject(apiResponse, ['token'])
+// display => { id: 42, email: 'user@example.com', status: 1 }
+```
+
+#### 注意事项
+
+- 两个函数均为**浅操作**，嵌套对象的属性保持原引用，不做深拷贝
+- 传入不存在的 key 不会报运行时错误，但 TypeScript 会在编译期给出错误提示
+- 原对象**不会被修改**，始终返回一个新对象
 
 ### 文本复制工具
 
@@ -537,14 +598,16 @@ const debouncedSearch = debounce(async keyword => {
 
 ### 通用工具函数
 
-| 函数名                              | 参数                         | 返回值          | 描述                         |
-| ----------------------------------- | ---------------------------- | --------------- | ---------------------------- |
-| `debounce(func, wait, immediate?)`  | `Function, number, boolean?` | `Function`      | 创建防抖函数                 |
-| `throttle(func, limit)`             | `Function, number`           | `Function`      | 创建节流函数                 |
-| `deepClone(obj)`                    | `T`                          | `T`             | 深拷贝对象                   |
-| `generateId(prefix?)`               | `string?`                    | `string`        | 生成唯一ID                   |
-| `copyText(text)`                    | `string`                     | `Promise<void>` | 复制文本到剪贴板（自动兼容） |
-| `fallbackCopyTextToClipboard(text)` | `string`                     | `Promise<void>` | 降级复制方法（兼容旧浏览器） |
+| 函数名                              | 参数                         | 返回值          | 描述                                   |
+| ----------------------------------- | ---------------------------- | --------------- | -------------------------------------- |
+| `debounce(func, wait, immediate?)`  | `Function, number, boolean?` | `Function`      | 创建防抖函数                           |
+| `throttle(func, limit)`             | `Function, number`           | `Function`      | 创建节流函数                           |
+| `deepClone(obj)`                    | `T`                          | `T`             | 深拷贝对象                             |
+| `generateId(prefix?)`               | `string?`                    | `string`        | 生成唯一ID                             |
+| `omitObject(obj, keys)`             | `T, K[]`                     | `Omit<T, K>`    | 排除指定 key，返回剩余属性组成的新对象 |
+| `pickObject(obj, keys)`             | `T, K[]`                     | `Pick<T, K>`    | 选取指定 key，返回这些属性组成的新对象 |
+| `copyText(text)`                    | `string`                     | `Promise<void>` | 复制文本到剪贴板（自动兼容）           |
+| `fallbackCopyTextToClipboard(text)` | `string`                     | `Promise<void>` | 降级复制方法（兼容旧浏览器）           |
 
 ### 请求管理工具
 
