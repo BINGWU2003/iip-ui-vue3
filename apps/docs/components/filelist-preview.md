@@ -495,8 +495,6 @@ openFileListPreview({
 4. **自动清理（函数式）**: 使用 `openFileListPreview` 时，弹窗关闭后会自动移除 DOM 节点，无需手动管理。
 5. **组件式调用时弹窗默认隐藏**: 组件渲染在模板中，但弹窗默认不可见，需调用 `previewRef.value?.open()` 才会显示。
 
----
-
 ## 常见问题
 
 ### Q: 点击文档文件没有反应或报错？
