@@ -4,12 +4,24 @@ import type { FileListPreviewInstance, OpenFileListPreviewOptions, FilePreviewIt
 
 /**
  * 打开文件列表预览弹窗（函数式调用）
- * @param options - 配置选项，或者直接传入文件数组
- * @example
  *
- * // 传配置项
+ * @param options - 配置项对象
+ * @param options.files - 文件列表，每项包含：
+ *   - `name`   文件名（显示在左侧列表中）
+ *   - `url`    文件地址（用于预览和下载）
+ *   - `suffix` 文件后缀名（可选，优先级高于从 url 中自动解析；适用于 url 不含扩展名的场景）
+ * @param options.title - 弹窗标题，默认 `'文件列表'`
+ * @param options.animationDuration - 弹窗关闭动画时长（ms），默认 `300`
+ *
+ * @example
+ * // 传入配置项
  * openFileListPreview({ files: item.fileList, title: '附件列表' })
+ *
+ * // 直接传入文件数组（标题使用默认值 '文件列表'）
+ * openFileListPreview(item.fileList)
  */
+export function openFileListPreview(options: OpenFileListPreviewOptions): void
+export function openFileListPreview(files: FilePreviewItem[]): void
 export function openFileListPreview(
   optionsOrFiles: OpenFileListPreviewOptions | FilePreviewItem[] = {}
 ): void {
