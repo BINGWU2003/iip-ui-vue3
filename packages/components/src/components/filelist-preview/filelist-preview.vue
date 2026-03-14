@@ -83,17 +83,15 @@
 <script setup lang="ts">
 import { ElIcon, ElDialog, ElEmpty, ElButton, ElTooltip, ElImage } from 'element-plus'
 import { ref, computed } from 'vue'
-
-defineOptions({
-  name: 'IipFileListPreview'
-})
 import { Document, Download, Loading } from '@element-plus/icons-vue'
 import { Base64 } from 'js-base64'
 import type { FileListPreviewProps, FileListPreviewEmits, FilePreviewItem } from './types'
 import { getFileSuffix, omitObject, generateId, debounce } from '@bingwu/iip-ui-utils'
 import { globalConfig } from '../../config'
 import type { FileListPreviewInstance } from './types'
-
+defineOptions({
+  name: 'IipFileListPreview'
+})
 type FilePreviewItemWithId = FilePreviewItem & { _id: string }
 const fileListPreviewRef = ref<FileListPreviewInstance>()
 const props = withDefaults(defineProps<FileListPreviewProps>(), {
