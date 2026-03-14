@@ -3,12 +3,12 @@
     <div class="split-layout">
       <!-- 左侧文件列表 -->
       <div class="file-list-panel">
-        <template v-if="props.files.length">
+        <template v-if="filesWithId.length">
           <div
-            v-for="(item, index) in props.files"
-            :key="index"
+            v-for="item in filesWithId"
+            :key="item._id"
             class="file-preview-item"
-            :class="{ 'is-active': activeItem === item }"
+            :class="{ 'is-active': activeItem?._id === item._id }"
             @click="handlePreview(item)"
           >
             <el-icon class="file-preview-icon"><document /></el-icon>
@@ -38,11 +38,26 @@
         <div v-else-if="iframeError" class="iframe-error-wrapper">
           <el-empty :image-size="120" description="该文件类型暂不支持在线预览">
             <template #default>
-              <el-button type="primary" @click="handleDownload(activeItem as FilePreviewItem)">
+              <el-button
+                type="primary"
+                @click="handleDownload(activeItem as FilePreviewItemWithId)"
+              >
                 直接下载到本地查看
               </el-button>
             </template>
           </el-empty>
+        </div>
+
+        <!-- 图片预览 -->
+        <div v-else-if="isImage" class="image-preview-wrapper">
+          <el-image
+            :src="currentPreviewUrl"
+            fit="contain"
+            :preview-src-list="[currentPreviewUrl]"
+            :initial-index="0"
+            preview-teleported
+            class="preview-image"
+          />
         </div>
 
         <!-- iframe 预览 -->
@@ -52,6 +67,7 @@
             <span>正在为您解析文档，请稍候...</span>
           </div>
           <iframe
+            :key="currentPreviewUrl"
             :src="currentPreviewUrl"
             class="preview-iframe"
             :class="{ 'iframe-hidden': iframeLoading }"
@@ -65,7 +81,7 @@
 </template>
 
 <script setup lang="ts">
-import { ElIcon, ElDialog, ElEmpty, ElButton, ElTooltip } from 'element-plus'
+import { ElIcon, ElDialog, ElEmpty, ElButton, ElTooltip, ElImage } from 'element-plus'
 import { ref, computed } from 'vue'
 
 defineOptions({
@@ -74,9 +90,11 @@ defineOptions({
 import { Document, Download, Loading } from '@element-plus/icons-vue'
 import { Base64 } from 'js-base64'
 import type { FileListPreviewProps, FileListPreviewEmits, FilePreviewItem } from './types'
-import { getFileSuffix, omitObject } from '@bingwu/iip-ui-utils'
+import { getFileSuffix, omitObject, generateId, debounce } from '@bingwu/iip-ui-utils'
 import { globalConfig } from '../../config'
 import type { FileListPreviewInstance } from './types'
+
+type FilePreviewItemWithId = FilePreviewItem & { _id: string }
 const fileListPreviewRef = ref<FileListPreviewInstance>()
 const props = withDefaults(defineProps<FileListPreviewProps>(), {
   title: '文件列表',
@@ -91,6 +109,10 @@ const props = withDefaults(defineProps<FileListPreviewProps>(), {
 const emit = defineEmits<FileListPreviewEmits>()
 const visible = ref(false)
 const dialogProps = computed(() => omitObject(props, ['files', 'modelValue']))
+
+const filesWithId = computed<FilePreviewItemWithId[]>(() =>
+  props.files.map(item => ({ ...item, _id: generateId() }))
+)
 
 const getDisplaySuffix = (item: FilePreviewItem): string => {
   return item.suffix ?? getFileSuffix(item.url)
@@ -109,33 +131,45 @@ const handleClose = () => {
 const IMAGE_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'webp', 'svg']
 const UNSUPPORTED_EXTENSIONS = ['zip', 'rar', '7z', 'tar', 'gz', 'apk', 'exe', 'bin', 'dll']
 
-const activeItem = ref<FilePreviewItem | null>(null)
+const activeItem = ref<FilePreviewItemWithId | null>(null)
 const iframeLoading = ref(false)
 const iframeError = ref(false)
+const isImage = ref(false)
 const currentPreviewUrl = ref('')
 
-const handlePreview = (item: FilePreviewItem) => {
+const handlePreview = (item: FilePreviewItemWithId) => {
+  if (activeItem.value?._id === item._id) return
+  // 立即更新高亮，给用户即时反馈
+  activeItem.value = item
+  debouncedLoad(item)
+}
+
+const debouncedLoad = debounce((item: FilePreviewItemWithId) => {
   if (!item.url) {
     throw new Error('文件地址不能为空')
   }
 
-  activeItem.value = item
   const suffix = getDisplaySuffix(item).toLowerCase()
 
   // 不支持预览的类型
   if (UNSUPPORTED_EXTENSIONS.includes(suffix)) {
     iframeError.value = true
+    isImage.value = false
     return
   }
 
   iframeError.value = false
   iframeLoading.value = true
 
-  // 图片直接用 URL 作为 iframe src，浏览器原生渲染
+  // 图片用 el-image 展示
   if (IMAGE_EXTENSIONS.includes(suffix)) {
+    isImage.value = true
+    iframeLoading.value = false
     currentPreviewUrl.value = item.url
     return
   }
+
+  isImage.value = false
 
   // 文档类型走服务端预览
   const website = globalConfig.website
@@ -145,7 +179,7 @@ const handlePreview = (item: FilePreviewItem) => {
     )
   }
   currentPreviewUrl.value = website + '?url=' + encodeURIComponent(Base64.encode(item.url))
-}
+}, 300)
 
 const handleDownload = (item: FilePreviewItem) => {
   if (!item.url) return
@@ -275,6 +309,21 @@ defineExpose(
   flex: 1;
   overflow: hidden;
   position: relative;
+}
+
+.image-preview-wrapper {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f7fa;
+  overflow: hidden;
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: 100%;
+  cursor: zoom-in;
 }
 
 .preview-empty {
