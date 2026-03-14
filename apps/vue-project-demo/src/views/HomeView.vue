@@ -37,12 +37,23 @@ const handlePreview = () => {
     files: [
       {
         name: '项目需求文档.docx',
-        url: 'https://sdcdn.mes.iipcloud.com/upload/20260119/00908c587d0bb47e6657b79e41f30fa1.jpg',
+        url: 'https://cqk.cdn.iipcloud.com/upload/20260314/c2331e8086f9fa933908cb85d8b78f9a.docx',
       },
-      { name: '年度汇报PPT(无后缀的错误例子测试提取)', url: 'https://example.com/report' },
       {
-        name: '接口说明.pdf',
+        name: 'xlsx测试文件.xlsx',
+        url: 'https://cqk.cdn.iipcloud.com/upload/20260314/dcf613d3bbb877b94b11c955a7ee566f.xls',
+      },
+      {
+        name: '图片测试文件.png',
         url: 'https://sdcdn.mes.iipcloud.com/upload/20260309/120f3a43c621b11699ca2b620238b4a9.png',
+      },
+      // {
+      //   name: '111',
+      //   url: 'https://cqk.cdn.iipcloud.com/upload/20260314/c033fca1943c1796c992320cb9333fc2.docx',
+      // },
+      {
+        name: '11223211',
+        url: 'https://cqk.csssad/20260314/c033fca1943c1796c992320cb9333fc2.docx',
       },
     ],
   })
