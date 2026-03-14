@@ -1,4 +1,5 @@
 import type { App, Component } from 'vue'
+import { setGlobalConfig, type IipGlobalConfig } from './config'
 
 // 导入所有组件和函数
 import {
@@ -6,7 +7,9 @@ import {
   IipPaginationSelect,
   IipDialogSelect,
   openDialogSelect,
-  IipDropdownList
+  IipDropdownList,
+  IipFileListPreview,
+  openFileListPreview
 } from './components'
 
 // 所有组件列表
@@ -14,11 +17,16 @@ const components: Component[] = [
   IipDateRange,
   IipPaginationSelect,
   IipDialogSelect,
-  IipDropdownList
+  IipDropdownList,
+  IipFileListPreview
 ]
 
 // 定义 install 方法
-const install = (app: App): void => {
+const install = (app: App, options?: IipGlobalConfig): void => {
+  if (options) {
+    setGlobalConfig(options)
+  }
+
   // 注册所有组件
   components.forEach(component => {
     if (component.name) {
@@ -33,8 +41,10 @@ export {
   IipPaginationSelect,
   IipDialogSelect,
   IipDropdownList,
-  // 导出 openDialogSelect 函数
+  IipFileListPreview,
+  // 导出函数
   openDialogSelect,
+  openFileListPreview,
   // 导出 install 方法和版本号
   install
 }

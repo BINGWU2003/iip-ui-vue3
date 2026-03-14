@@ -293,6 +293,9 @@ importers:
       dayjs:
         specifier: ^1.11.13
         version: 1.11.19
+      js-base64:
+        specifier: ^3.7.8
+        version: 3.7.8
     devDependencies:
       '@rollup/plugin-strip':
         specifier: ^3.0.4
@@ -9773,6 +9776,10 @@ packages:
 
   /jpeg-js@0.3.7:
     resolution: {integrity: sha512-9IXdWudL61npZjvLuVe/ktHiA41iE8qFyLB+4VDTblEsWBzeg8WQTlktdUK4CdncUqtUgUg0bbOmTE2bKBKaBQ==}
+    dev: false
+
+  /js-base64@3.7.8:
+    resolution: {integrity: sha512-hNngCeKxIUQiEUN3GPJOkz4wF/YvdUdbNL9hsBcMQTkKzboD7T/q3OYOuuPZLUE6dBxSGpwhk5mwuDud7JVAow==}
     dev: false
 
   /js-tokens@10.0.0:

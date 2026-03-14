@@ -332,8 +332,8 @@ import type {
   TableRowItem
 } from '../src/components/dialog-select/types'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import type { DropdownListItemType } from '../src/components/dropdown-list/type'
-import type { DropdownListInstance } from '../src/components/dropdown-list/type'
+import type { DropdownListItemType } from '../src/components/dropdown-list/types'
+import type { DropdownListInstance } from '../src/components/dropdown-list/types'
 // DateRange 相关
 const dateRange1 = ref({ startTime: '', endTime: '' })
 const dateRange2 = ref({ startTime: '', endTime: '' })

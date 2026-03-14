@@ -1,4 +1,4 @@
 import IipDropdownList from './dropdown-list.vue'
-export * from './type'
+export * from './types'
 export default IipDropdownList
 export { IipDropdownList }

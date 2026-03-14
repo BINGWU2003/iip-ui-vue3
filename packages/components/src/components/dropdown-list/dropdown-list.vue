@@ -27,7 +27,7 @@ import type {
   DropdownListItemType,
   DropdownListSlots,
   DropdownListInstance
-} from './type'
+} from './types'
 
 defineOptions({
   name: 'iip-dropdown-list'

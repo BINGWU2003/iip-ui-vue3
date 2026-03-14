@@ -144,3 +144,22 @@ export function pickObject<T extends object, K extends keyof T>(obj: T, keys: K[
   const keysSet = new Set<string | symbol>(keys as (string | symbol)[])
   return Object.fromEntries(Object.entries(obj).filter(([k]) => keysSet.has(k))) as Pick<T, K>
 }
+
+/**
+ * 从 URL 中提取文件后缀名，使用浏览器原生 URL API 自动处理查询参数和 hash
+ * @param url 文件的完整 URL
+ * @returns 大写的后缀名，如 'PDF'、'DOCX'；无法解析时返回空字符串
+ * @example
+ * getFileSuffix('https://example.com/report.pdf?token=abc') // => 'PDF'
+ * getFileSuffix('https://example.com/file/doc.docx')        // => 'DOCX'
+ * getFileSuffix('https://example.com/noext')                // => ''
+ */
+export function getFileSuffix(url: string): string {
+  try {
+    const { pathname } = new URL(url)
+    const ext = pathname.split('.').pop()
+    return ext && ext !== pathname ? ext.toUpperCase() : ''
+  } catch {
+    return ''
+  }
+}
