@@ -1,5 +1,11 @@
 # @bingwu/iip-ui-utils
 
+## 1.2.17
+
+### Patch Changes
+
+- feat: 添加 getFileSuffix 函数，用于从 URL 提取大写文件后缀名
+
 ## 1.2.16
 
 ### Patch Changes

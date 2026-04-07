@@ -1,5 +1,12 @@
 # @bingwu/iip-ui-uniapp-utils
 
+## 1.0.3
+
+### Patch Changes
+
+- Updated dependencies
+  - @bingwu/iip-ui-utils@1.2.17
+
 ## 1.0.2
 
 ### Patch Changes

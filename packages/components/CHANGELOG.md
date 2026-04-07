@@ -1,5 +1,15 @@
 # @bingwu/iip-ui-components
 
+## 1.2.35
+
+### Patch Changes
+
+- 新增 `IipFileListPreview` 组件，用于展示文件列表并支持预览。
+- 新增 `openFileListPreview` 方法，支持以编程方式打开文件列表预览。
+- 更新 `IipUI` 安装逻辑，支持通过全局配置设置文件预览的基础 URL。
+- Updated dependencies
+  - @bingwu/iip-ui-utils@1.2.17
+
 ## 1.2.34
 
 ### Patch Changes
