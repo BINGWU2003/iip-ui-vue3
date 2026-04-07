@@ -21,6 +21,7 @@ import {
   omitObject,
   pickObject,
   copyText,
+  getFileSuffix,
   createRequestManager
 } from '@bingwu/iip-ui-utils'
 
@@ -457,6 +458,83 @@ const copyTableAsCSV = async () => {
 - 降级方法 `execCommand('copy')` 虽然被标记为废弃，但仍被广泛支持
 - 在某些移动端浏览器中，复制功能可能需要用户交互触发
 
+### 文件后缀获取
+
+从完整 URL 中提取文件后缀名，内部使用浏览器原生 `URL` API 解析路径，自动忽略查询参数和 hash，返回**大写**后缀字符串；无法解析时返回空字符串。
+
+```typescript
+import { getFileSuffix } from '@bingwu/iip-ui-utils'
+
+getFileSuffix('https://example.com/report.pdf?token=abc') // => 'PDF'
+getFileSuffix('https://example.com/file/doc.docx') // => 'DOCX'
+getFileSuffix('https://example.com/image.PNG') // => 'PNG'
+getFileSuffix('https://example.com/noext') // => ''
+getFileSuffix('not-a-valid-url') // => ''
+```
+
+#### 常见场景
+
+```typescript
+import { getFileSuffix } from '@bingwu/iip-ui-utils'
+
+// 场景 1：根据文件类型展示不同图标
+const fileUrl = 'https://oss.example.com/files/contract.pdf?sign=xxx'
+const suffix = getFileSuffix(fileUrl) // 'PDF'
+
+const iconMap: Record<string, string> = {
+  PDF: 'icon-pdf',
+  DOCX: 'icon-word',
+  XLSX: 'icon-excel',
+  PNG: 'icon-image',
+  JPG: 'icon-image'
+}
+const iconClass = iconMap[suffix] ?? 'icon-file'
+
+// 场景 2：限制上传文件类型（与列表对比）
+const allowedTypes = ['PDF', 'DOCX', 'XLSX']
+const uploadUrl = 'https://oss.example.com/upload/report.docx'
+const isAllowed = allowedTypes.includes(getFileSuffix(uploadUrl)) // true
+
+// 场景 3：在 Vue 模板中动态渲染文件类型标签
+```
+
+```vue
+<template>
+  <div class="file-list">
+    <div v-for="file in files" :key="file.url" class="file-item">
+      <el-tag :type="getTagType(file.url)" size="small">
+        {{ getFileSuffix(file.url) || '未知' }}
+      </el-tag>
+      <span class="file-name">{{ file.name }}</span>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { getFileSuffix } from '@bingwu/iip-ui-utils'
+
+const files = [
+  { name: '合同文件', url: 'https://oss.example.com/contract.pdf?token=abc' },
+  { name: '数据报表', url: 'https://oss.example.com/report.xlsx' },
+  { name: '说明文档', url: 'https://oss.example.com/readme.docx' }
+]
+
+const tagTypeMap: Record<string, 'danger' | 'success' | 'warning' | 'info'> = {
+  PDF: 'danger',
+  XLSX: 'success',
+  DOCX: 'warning'
+}
+
+const getTagType = (url: string) => tagTypeMap[getFileSuffix(url)] ?? 'info'
+</script>
+```
+
+#### 注意事项
+
+- 传入无效 URL（非标准格式）时**不会抛出异常**，而是安全返回空字符串
+- 返回值统一为**大写**，方便与常量枚举直接比较
+- 函数依赖浏览器或 Node.js 18+ 内置的 `URL` API，低版本 Node.js 环境需确认支持情况
+
 ## 请求管理工具 (Request)
 
 用于解决前端开发中常见的请求竞态问题。当用户快速触发多个异步请求时，确保只处理最新请求的响应。
@@ -608,6 +686,7 @@ const debouncedSearch = debounce(async keyword => {
 | `pickObject(obj, keys)`             | `T, K[]`                     | `Pick<T, K>`    | 选取指定 key，返回这些属性组成的新对象 |
 | `copyText(text)`                    | `string`                     | `Promise<void>` | 复制文本到剪贴板（自动兼容）           |
 | `fallbackCopyTextToClipboard(text)` | `string`                     | `Promise<void>` | 降级复制方法（兼容旧浏览器）           |
+| `getFileSuffix(url)`                | `string`                     | `string`        | 从 URL 提取大写文件后缀名              |
 
 ### 请求管理工具
 
