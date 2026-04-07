@@ -1,5 +1,13 @@
 import { describe, it, expect, vi } from 'vitest'
-import { debounce, throttle, deepClone, generateId, omitObject, pickObject } from '../common'
+import {
+  debounce,
+  throttle,
+  deepClone,
+  generateId,
+  omitObject,
+  pickObject,
+  getFileSuffix
+} from '../common'
 
 describe('通用工具函数', () => {
   describe('debounce', () => {
@@ -257,6 +265,28 @@ describe('通用工具函数', () => {
       const omitted = omitObject(obj, [...keys])
       // pick + omit 合并后应等于原对象
       expect({ ...picked, ...omitted }).toEqual(obj)
+    })
+  })
+
+  describe('getFileSuffix', () => {
+    it('应该正确提取带有查询参数的URL的文件后缀名并转换为大写', () => {
+      expect(getFileSuffix('https://example.com/report.pdf?token=abc')).toBe('PDF')
+    })
+
+    it('应该正确提取普通URL的文件后缀名并转换为大写', () => {
+      expect(getFileSuffix('https://example.com/file/doc.docx')).toBe('DOCX')
+    })
+
+    it('如果URL中没有文件后缀名，应该返回空字符串', () => {
+      expect(getFileSuffix('https://example.com/noext')).toBe('')
+    })
+
+    it('对于无效的URL，应该捕获异常并返回空字符串', () => {
+      expect(getFileSuffix('not-a-valid-url')).toBe('')
+    })
+
+    it('应该正确处理末尾带有点的特殊情况', () => {
+      expect(getFileSuffix('https://example.com/file/bad.')).toBe('')
     })
   })
 })

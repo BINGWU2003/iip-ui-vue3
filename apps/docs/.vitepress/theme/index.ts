@@ -21,6 +21,8 @@ export default {
     app.use(VxePCUI)
 
     // 一次性注册组件库的所有组件
-    app.use(IipUI)
+    app.use(IipUI, {
+      website: 'http://192.168.0.211:8012/onlinePreview'
+    })
   }
 } satisfies Theme

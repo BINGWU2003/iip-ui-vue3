@@ -7,6 +7,11 @@
 
 ## components
 
+### 1.2.34
+
+- Updated dependencies
+  - @bingwu/iip-ui-utils@1.2.16
+
 ### 1.2.33
 
 - dialog-select组件优化，打包配置优化
@@ -100,6 +105,12 @@
 
 ## utils
 
+### 1.2.16
+
+- feat: 添加 omitObject 和 pickObject 函数及其测试
+- 在 `common.ts` 中新增 `omitObject` 和 `pickObject` 函数，用于从对象中排除或选取指定的键。
+- 在 `common.test.ts` 中为这两个函数添加了全面的测试用例，确保其功能正确性和边界情况处理。
+
 ### 1.2.15
 
 - 新增 isInteger、isNumeric 和 isNumericInteger 函数，用于检查整数和数字（包括数字字符串）。
@@ -123,6 +134,14 @@
 - 优化发包
 
 ## uniapp-utils
+
+### 1.0.2
+
+- fix: 修复胶囊按钮位置信息的获取逻辑
+- 更新 `system-info.ts` 中的 `menuButtonInfo` 逻辑，确保在不同平台下正确返回胶囊按钮的位置信息。
+- 添加条件编译以支持微信小程序和其他平台的不同实现。
+- Updated dependencies
+  - @bingwu/iip-ui-utils@1.2.16
 
 ### 1.0.1
 

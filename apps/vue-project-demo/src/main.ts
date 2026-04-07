@@ -20,7 +20,9 @@ import router from './router'
 const app = createApp(App)
 
 app.use(createPinia())
-app.use(IipUI)
+app.use(IipUI, {
+  website: 'http://192.168.0.211:8012/onlinePreview',
+})
 app.use(VxeUITable)
 app.use(VxePCUI)
 app.use(router)
